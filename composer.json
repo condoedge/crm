@@ -1,0 +1,25 @@
+{
+    "name": "condoedge/crm",
+    "description": "Client relations and calendar management module for your kompo application",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Condoedge\\Crm\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^7.3|^8.0",
+        "laravel/framework": ">=5.6.0",
+        "kompo/auth": "^0.3"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Condoedge\\Crm\\CondoedgeCrmServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
