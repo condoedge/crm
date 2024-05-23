@@ -4,9 +4,9 @@ namespace Condoedge\Crm\Models;
 
 use Kompo\Auth\Models\ModelBase;
 
-class ActivityAudience extends ModelBase //No need for softdeletes here
+class EventAudience extends ModelBase //No need for softdeletes here
 {
-	use \Condoedge\Crm\Models\BelongsToActivityTrait;
+	use \Condoedge\Crm\Models\BelongsToEventTrait;
 
 	/* RELATIONS */
 

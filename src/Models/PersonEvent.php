@@ -4,11 +4,9 @@ namespace Condoedge\Crm\Models;
 
 use Kompo\Auth\Models\Model;
 
-class PersonRegistrable extends Model
+class PersonEvent extends Model
 {
 	use \Condoedge\Crm\Models\BelongsToPersonTrait;
-
-	use \Condoedge\Crm\Models\BelongsToActivityTrait;
 	use \Condoedge\Crm\Models\BelongsToEventTrait;
 
 	protected $casts = [
@@ -46,13 +44,7 @@ class PersonRegistrable extends Model
 
 	public function getRegistrable()
 	{
-		if ($this->activity_id) {
-			return $this->activity;
-		}
-
-		if ($this->event_id) {
-			return $this->event;
-		}
+		return $this->event;
 	}
 
 	public function getRelatedTargetTeam()
@@ -83,19 +75,11 @@ class PersonRegistrable extends Model
 	}
 
 	/* ACTIONS */
-	public static function createPersonRegistrable($personId, $registrable)
+	public static function createPersonRegistrable($personId, $event)
 	{
-		$pr = new PersonRegistrable();
+		$pr = new PersonEvent();
 		$pr->person_id = $personId;
-
-		if ($registrable instanceof Activity) {
-			$pr->activity_id = $registrable->id;
-		}
-		
-		if ($registrable instanceof Event) {
-			$pr->event_id = $registrable->id;
-		}
-
+		$pr->event_id = $event->id;
 		$pr->save();
 
 		return $pr;

@@ -24,9 +24,9 @@ class Person extends Model implements Searchable
 
 
 	/* RELATIONS */
-	public function personActivities()
+	public function personEvents()
 	{
-		return $this->hasMany(PersonActivity::class);
+		return $this->hasMany(PersonEvent::class);
 	}
 
 	public function relatedUser()

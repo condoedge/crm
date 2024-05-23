@@ -88,7 +88,6 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
     protected function loadRelationsMorphMap()
     {
         Relation::morphMap([
-            'activity' => config('condoedge-crm.activity-model-namespace'),
             'event' => config('condoedge-crm.event-model-namespace'),
             'person' => config('condoedge-crm.person-model-namespace'),
         ]);

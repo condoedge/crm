@@ -2,10 +2,16 @@
 
 namespace Condoedge\Crm\Models;
 
-class Event extends RegistrableModel
-{
-	use \Condoedge\Crm\Models\BelongsToActivityTrait;
+use Kompo\Auth\Models\Model;
 
+class Event extends Model
+{
+	use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
+	use \Condoedge\Crm\Models\BelongsToEventTrait;
+	use \Kompo\Auth\Models\Files\MorphManyFilesTrait;
+
+	use \Condoedge\Crm\Models\HasQrCodeTrait;
+	public const QRCODE_LENGTH = 8;
 	public const QRCODE_COLUMN_NAME = 'qrcode_ev';
 
 	protected $casts = [
@@ -14,10 +20,17 @@ class Event extends RegistrableModel
 		'cover_av' => 'array',
 	];
 
+	public function save(array $options = [])
+    {
+        $this->setQrCodeIfEmpty();
+
+        parent::save();
+    }
+
 	/* ABSTRACT */
 	public function getTargetTeam()
 	{
-		return $this->activity->team;
+		return $this->team;
 	}
 
 	public function getNextEvent()
@@ -26,8 +39,31 @@ class Event extends RegistrableModel
 	}
 
 	/* RELATIONS */
+	public function personEvents()
+	{
+		return $this->hasMany(PersonEvent::class);
+	}
+	
+    /* SCOPES */
+    public function scopeForRegistrationSystem($query)
+    {
+    	$query->whereNotNull('registration_system');
+    }
+
+    public function scopeWithoutRegistrationSystem($query)
+    {
+    	$query->whereNull('registration_system');
+    }
 
 	/* CALCULATED FIELDS */
+	public function getRegistrableConfirmationRoute($personId)
+    {
+        return \URL::signedRoute('inscription.registrable', [
+            'qr_code' => $this->getQrCodeString(),
+            'id' => $personId,
+        ]);
+    }
+
 	public function getScheduleWeekLabel()
 	{
 		return $this->schedule_start?->translatedFormat('l');
@@ -38,7 +74,27 @@ class Event extends RegistrableModel
 		return $this->schedule_start?->format('H:i').' - '.$this->schedule_end?->format('H:i');
 	}
 
+	public function getEventCoverUrl()
+	{
+		$coverPath = $this->cover_ev['path'] ?? null;
+
+		if (!$coverPath) {
+			return asset('images/base-email-image.png');
+		}
+
+		return \Storage::disk('public')->url($coverPath);
+	}
+
 	/* ACTIONS */
 
 	/* ELEMENTS */
+	public function getNextEventScheduleEls()
+	{
+		return _CalendarWithIcon(
+            _Rows(
+                _Html($this->getScheduleWeekLabel()),
+                _Html($this->getScheduleTimesLabel()),
+            ),
+        );
+	}
 }

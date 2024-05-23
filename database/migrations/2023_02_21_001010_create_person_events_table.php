@@ -12,12 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('person_registrables', function (Blueprint $table) {
+        Schema::dropIfExists('person_registrables');
+        
+        Schema::create('person_events', function (Blueprint $table) {
             
             addMetaData($table);
 
             $table->foreignId('person_id')->constrained('persons');
-            $table->foreignId('activity_id')->nullable()->constrained();
             $table->foreignId('event_id')->nullable()->constrained();
 
             $table->tinyInteger('register_status')->default(RegisterStatusEnum::RS_REQUESTED);
@@ -29,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('person_registrables');
+        Schema::dropIfExists('person_events');
     }
 };

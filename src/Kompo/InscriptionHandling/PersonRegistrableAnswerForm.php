@@ -39,7 +39,6 @@ class PersonRegistrableAnswerForm extends ModalScroll
         $this->model->acceptAndSend();
 
         return redirect()->route('person-registrables.list', [
-            'activity' => $this->model->activity_id,
             'event_id' => $this->model->event_id,
         ]);
     }

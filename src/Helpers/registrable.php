@@ -1,11 +1,10 @@
 <?php 
 
-use Condoedge\Crm\Models\Activity;
 use Condoedge\Crm\Models\Event;
 
 function registrableFromQrCode($qrCode)
 {
-	return Activity::forQrCode($qrCode)->first() ?: Event::forQrCode($qrCode)->first();
+	return Event::forQrCode($qrCode)->first();
 }
 
 /* ELEMENTS */

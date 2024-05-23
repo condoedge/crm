@@ -2,28 +2,26 @@
 
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
-use Condoedge\Crm\Models\PersonRegistrable;
+use Condoedge\Crm\Models\PersonEvent;
 use Kompo\Auth\Common\WhiteTable;
 
 class PersonRegistrablesList extends WhiteTable
 {
-    protected $activityId;
     protected $eventId;
 
     public function created()
     {
         $this->eventId = $this->prop('event_id');
-        $this->activityId = $this->prop('activity_id');
     }
 
     protected function queryForEvent()
     {
-        return PersonRegistrable::forEvent($this->eventId)->forActiviy($this->activityId);
+        return PersonEvent::forEvent($this->eventId);
     }
 
     public function query()
     {
-        return $this->queryForEvent()->latest()->with('person', 'activity.team', 'event.activity.team');
+        return $this->queryForEvent()->latest()->with('person', 'event.team');
     }
 
     public function top()
