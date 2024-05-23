@@ -2,17 +2,28 @@
 
 namespace Condoedge\Crm\Models;
 
-use Kompo\Auth\Models\Model;
-
-class Event extends Model
+class Event extends RegistrableModel
 {
-	use BelongsToActivityTrait;
+	use \Condoedge\Crm\Models\BelongsToActivityTrait;
+
+	public const QRCODE_COLUMN_NAME = 'qrcode_ev';
 
 	protected $casts = [
 		'schedule_start' => 'datetime',
 		'schedule_end' => 'datetime',
 		'cover_av' => 'array',
 	];
+
+	/* ABSTRACT */
+	public function getTargetTeam()
+	{
+		return $this->activity->team;
+	}
+
+	public function getNextEvent()
+	{
+		return $this;
+	}
 
 	/* RELATIONS */
 

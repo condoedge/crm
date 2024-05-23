@@ -4,37 +4,49 @@ namespace Condoedge\Crm\Models;
 
 use App\Models\Crm\PersonEvent;
 use Illuminate\Support\Carbon;
-use Kompo\Auth\Models\Model;
 
-class Activity extends Model
+class Activity extends RegistrableModel
 {
 	/* KOMPO TRAITS */
 	use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 	use \Kompo\Auth\Models\Files\MorphManyFilesTrait;
 
+	public const QRCODE_COLUMN_NAME = 'qrcode_av';
+
 	protected $casts = [
 		'cover_av' => 'array',
 	];
 
+	/* ABSTRACT */
+	public function getTargetTeam()
+	{
+		return $this->team;
+	}
+
+	public function getNextEvent()
+	{
+		return $this->nextEvent()->first();
+	}
+
 	/* RELATIONS */
-	public function eventSchedules()
+	public function events()
 	{
-		return $this->hasMany(EventSchedule::class);
+		return $this->hasMany(Event::class);
 	}
 
-	public function eventSchedule()
+	public function event()
 	{
-		return $this->hasOne(EventSchedule::class);
+		return $this->hasOne(Event::class);
 	}
 
-	public function eventAudiences()
+	public function nextEvent()
 	{
-		return $this->hasMany(EventAudience::class);
+		return $this->event()->where('schedule_start', '>', Carbon::now());
 	}
 
-	public function nextSchedule()
+	public function activityAudiences()
 	{
-		return $this->eventSchedule()->where('schedule_start', '>', Carbon::now());
+		return $this->hasMany(ActivityAudience::class);
 	}
 
 	public function personEvents()

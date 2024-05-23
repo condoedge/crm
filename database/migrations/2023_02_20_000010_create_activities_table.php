@@ -1,6 +1,6 @@
 <?php
 
-use Condoedge\Calendar\Models\ScheduleFrequencyEnum;
+use Condoedge\Crm\Models\ScheduleFrequencyEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

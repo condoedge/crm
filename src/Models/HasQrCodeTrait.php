@@ -4,24 +4,41 @@ namespace Condoedge\Crm\Models;
 
 trait HasQrCodeTrait
 {
+	//public const QRCODE_COLUMN_NAME = 'qrcode_col_name';
+	//public const QRCODE_LENGTH = 8;
+
     /* RELATIONS */
-    public function event()
-    {
-        return $this->belongsTo(config('condoedge-calendar.event-model-namespace'));
-    }
 
     /* CALCULATED FIELDS */
-    public function getActivityName()
+    public function getQrCodeString()
     {
-        return $this->event->name_av;
+        return $this->{static::QRCODE_COLUMN_NAME};
     }
 
     /* ACTIONS */
+    public function setQrCodeIfEmpty()
+    {
+        if ($this->{static::QRCODE_COLUMN_NAME}) {
+            return;
+        }
+
+        $this->setNewQrCode();
+    }
+
+    public function setNewQrCode($qrCode = null)
+    {
+        $this->{static::QRCODE_COLUMN_NAME} = $qrCode ?: static::getNewQrCode();
+    }
+
+    public static function getNewQrCode()
+    {
+        return \Str::random(static::QRCODE_LENGTH);
+    }
 
     /* SCOPES */
-    public function scopeForEvent($query, $idOrIds)
+    public function scopeForQrCode($query, $qrCode)
     {
-        scopeWhereBelongsTo($query, 'event_id', $idOrIds);
+    	$query->where(static::QRCODE_COLUMN_NAME, $qrCode);
     }
 
 }

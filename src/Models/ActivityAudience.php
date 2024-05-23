@@ -4,13 +4,11 @@ namespace Condoedge\Crm\Models;
 
 use Kompo\Auth\Models\ModelBase;
 
-class EventAudience extends ModelBase //No need for softdeletes here
+class ActivityAudience extends ModelBase //No need for softdeletes here
 {
+	use \Condoedge\Crm\Models\BelongsToActivityTrait;
+
 	/* RELATIONS */
-	public function event()
-	{
-		return $this->belongsTo(Event::class);
-	}
 
 	/* SCOPES */
 	public function scopeForAudienceConcern($query, $concern)

@@ -11,9 +11,9 @@ trait BelongsToEventTrait
     }
 
     /* CALCULATED FIELDS */
-    public function getActivityName()
+    public function getEventName()
     {
-        return $this->event->name_av;
+        return $this->event->name_ev;
     }
 
     /* ACTIONS */
