@@ -3,6 +3,7 @@
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
 use Condoedge\Crm\Models\Person;
+use Condoedge\Crm\Models\PersonEvent;
 use Condoedge\Crm\Models\PersonRegistrable;
 use Kompo\Auth\Common\ImgFormLayout;
 
@@ -45,7 +46,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     {
         $this->assignMemberToUnit();
 
-        return redirect($this->inscriptionMember->inscription->getInscriptionMemberRoute());
+        return redirect($this->model->registeredBy->getInscriptionMemberRoute());
     }
 
     public function registerAndFinish()
@@ -57,7 +58,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     protected function assignMemberToUnit()
     {
-        $pr = PersonRegistrable::createPersonRegistrable($this->model->id, $this->registrable); 
+        $pr = PersonEvent::createPersonRegistrable($this->model->id, $this->registrable); 
 
         return $pr;
     }

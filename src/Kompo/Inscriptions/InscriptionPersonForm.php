@@ -10,6 +10,7 @@ use Kompo\Auth\Models\Teams\EmailRequest;
 class InscriptionPersonForm extends ImgFormLayout
 {
     protected $imgUrl = 'images/base-email-image.png';
+	protected $rightColumnBodyWrapperClass = '';
 
 	public $model = Person::class;
 

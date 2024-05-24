@@ -46,5 +46,14 @@ class PersonLink extends Model
 		return $this;
 	}
 
+	public static function getLinkBetween($person1, $person2)
+	{
+		return self::where(function ($query) use ($person1, $person2) {
+			$query->where('person1_id', $person1->id)->where('person2_id', $person2->id);
+		})->orWhere(function ($query) use ($person1, $person2) {
+			$query->where('person1_id', $person2->id)->where('person2_id', $person1->id);
+		})->first();
+	} 
+
 	/* ELEMENTS */
 }

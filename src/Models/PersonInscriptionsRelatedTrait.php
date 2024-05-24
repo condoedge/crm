@@ -7,12 +7,12 @@ trait PersonInscriptionsRelatedTrait
     /* RELATIONS */
     public function registeredBy()
     {
-        return $this->belongsTo(Person::class, 'registered_by');
+        return $this->belongsTo(config('condoedge-crm.person-model-namespace'), 'registered_by');
     }
 
     public function registeredBys()
     {
-        return $this->hasMany(Person::class, 'registered_by');
+        return $this->hasMany(config('condoedge-crm.person-model-namespace'), 'registered_by');
     }
 
     /* CALCULATED FIELDS */
@@ -51,6 +51,11 @@ trait PersonInscriptionsRelatedTrait
             'id' => $this->id,
         ]);
     }
+
+    public function getInscriptionMemberRoute()
+	{
+		return \URL::signedRoute('inscription.person-link', ['person_id' => $this->id]);
+	}
 
     /* ACTIONS */
     public static function getOrCreatePersonFromEmail($email)

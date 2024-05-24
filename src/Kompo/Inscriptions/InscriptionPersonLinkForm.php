@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Models\Crm\GenderEnum;
+use Condoedge\Crm\Models\GenderEnum;
 use Condoedge\Crm\Models\Person;
 use Kompo\Auth\Common\ImgFormLayout;
 
