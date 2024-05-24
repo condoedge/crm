@@ -39,11 +39,26 @@ class Event extends Model
 	}
 
 	/* RELATIONS */
+	public function eventAudiences()
+	{
+		return $this->hasMany(EventAudience::class);
+	}
+
 	public function personEvents()
 	{
 		return $this->hasMany(PersonEvent::class);
 	}
-	
+
+    public function countedPersonEvents()
+    {
+    	return $this->personEvents()->countInTotal();
+    }
+
+    public function awaitingPersonEvents()
+    {
+    	return $this->personEvents()->awaitingApproval();
+    }
+
     /* SCOPES */
     public function scopeForRegistrationSystem($query)
     {
@@ -52,7 +67,7 @@ class Event extends Model
 
     public function scopeWithoutRegistrationSystem($query)
     {
-    	$query->whereNull('registration_system');
+    	$query->where(fn($q) => $q->whereNull('registration_system')->orWhere('registration_system', 0));
     }
 
 	/* CALCULATED FIELDS */

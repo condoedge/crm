@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_attendences', function (Blueprint $table) {
-            
-            addMetaData($table);
+        Schema::table('events', function (Blueprint $table) {
 
-            $table->foreignId('event_id')->constrained();
-
-            $table->nullableMorphs('attendable');
+            $table->tinyInteger('is_template')->nullable();
+            $table->decimal('kickback_price', 12, 2)->nullable();
             
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('event_attendences');
+        Schema::dropIfExists('events');
     }
 };

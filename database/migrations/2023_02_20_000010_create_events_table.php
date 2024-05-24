@@ -32,14 +32,11 @@ return new class extends Migration
             $table->dateTime('end_date')->nullable();
 
             $table->tinyInteger('registration_system')->nullable();
-            $table->string('registration_name')->nullable();
-            $table->dateTime('registration_start')->nullable();
-            $table->dateTime('registration_end')->nullable();
-            $table->decimal('registration_price', 12, 2)->nullable();
+            $table->string('qrcode_ev')->nullable();
+            
+            $table->decimal('event_price', 12, 2)->nullable();
             
             $table->integer('event_max_members')->nullable();
-
-            $table->string('qrcode_ev')->nullable();
 
             $table->text('cover_ev')->nullable();
             $table->string('color_ev')->nullable();
