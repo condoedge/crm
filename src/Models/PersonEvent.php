@@ -85,7 +85,7 @@ class PersonEvent extends Model
 		return $pr;
 	}
 
-	public function acceptAndSend()
+	public function approveAndSend()
 	{
 		$this->register_status = RegisterStatusEnum::RS_ACCEPTED;
 		$this->save();

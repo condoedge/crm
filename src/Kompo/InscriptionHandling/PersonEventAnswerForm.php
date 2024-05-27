@@ -2,12 +2,12 @@
 
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
-use Condoedge\Crm\Models\PersonRegistrable;
+use Condoedge\Crm\Models\PersonEvent;
 use Kompo\Auth\Common\ModalScroll;
 
-class PersonRegistrableAnswerForm extends ModalScroll
+class PersonEventAnswerForm extends ModalScroll
 {
-    public $model = PersonRegistrable::class;
+    public $model = PersonEvent::class;
 
     protected $person;
     protected $event;
@@ -31,14 +31,14 @@ class PersonRegistrableAnswerForm extends ModalScroll
         $this->model->team_id = request('change_to_team_id');
         $this->model->save();
         
-        return $this->acceptPersonToRegistrable();
+        return $this->approvePersonToEvent();
     }
 
-    public function acceptPersonToRegistrable()
+    public function approvePersonToEvent()
     {        
-        $this->model->acceptAndSend();
+        $this->model->approveAndSend();
 
-        return redirect()->route('person-registrables.list', [
+        return redirect()->route('person-events.list', [
             'event_id' => $this->model->event_id,
         ]);
     }
@@ -56,7 +56,7 @@ class PersonRegistrableAnswerForm extends ModalScroll
                     ),
                 )->p4(),
 
-                _Button('inscriptions.accept')->selfPost('acceptPersonToRegistrable')->redirect(),
+                _Button('inscriptions.accept')->selfPost('approvePersonToEvent')->redirect(),
             )->class('space-y-4'),
             /*_Rows(
                 _Html(' --- or ---')->class('text-center mb-4'),

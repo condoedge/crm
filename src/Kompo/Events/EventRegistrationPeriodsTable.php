@@ -22,26 +22,17 @@ class EventRegistrationPeriodsTable extends Table
     public function top()
     {
         return _FlexBetween(
-            _Html('Registration periods')->class('text-2xl font-semibold'),
-            _Button('add')->selfCreate('getItemForm')->inModal(),
+            _TitleMini('Registration periods'),
+            _Link()->iconCreate()->selfCreate('getItemForm')->inModal(),
         );
-    }
-
-    public function headers()
-    {
-        return [
-            _Th('Registration'),
-            _Th('Starts at'),
-            _Th('Ends at'),
-        ];
     }
 
     public function render($erp)
     {
         return _TableRow(
             _Html($erp->registration_name),
-            _Html($erp->addedBy->name),
-            _Html($erp->date_nt->format('Y-m-d H:i')),
+            _HtmlDateTime($erp->registration_start),
+            _HtmlDateTime($erp->registration_end),
         )->selfUpdate('getItemForm', ['id' => $erp->id])->inModal();
     }
 

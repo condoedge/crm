@@ -32,7 +32,7 @@ Route::middleware(['signed', 'throttle:10,1'])->group(function(){
 //Registration Management in dashboard
 Route::layout('layouts.dashboard')->middleware(['auth'])->group(function(){
 
-    Route::get('person-registrables/{event_id}', Condoedge\Crm\Kompo\InscriptionHandling\PersonRegistrablesList::class)
-    	->name('person-registrables.list');
+    Route::get('person-events/{event_id}', Condoedge\Crm\Kompo\InscriptionHandling\PersonEventsList::class)
+    	->name('person-events.list');
 });
 

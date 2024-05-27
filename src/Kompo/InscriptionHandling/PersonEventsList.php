@@ -5,7 +5,7 @@ namespace Condoedge\Crm\Kompo\InscriptionHandling;
 use Condoedge\Crm\Models\PersonEvent;
 use Kompo\Auth\Common\WhiteTable;
 
-class PersonRegistrablesList extends WhiteTable
+class PersonEventsList extends WhiteTable
 {
     protected $eventId;
 
@@ -62,13 +62,13 @@ class PersonRegistrablesList extends WhiteTable
             _Html($pr->getRegistrable()->getTargetTeam()->team_name),
             _HtmlDate($pr->created_at),
             _Pill($pr->ie_status_label),
-        )->selfUpdate('getPersonRegistrableAnswerForm', [
+        )->selfUpdate('getPersonEventAnswerForm', [
             'id' => $pr->id,
         ])->inModal();
     }
 
-    public function getPersonRegistrableAnswerForm($id)
+    public function getPersonEventAnswerForm($id)
     {
-        return new PersonRegistrableAnswerForm($id);
+        return new PersonEventAnswerForm($id);
     }
 }

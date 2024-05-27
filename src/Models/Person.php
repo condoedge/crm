@@ -48,11 +48,6 @@ class Person extends Model implements Searchable
 	{
 		return $this->hasMany(PersonTeam::class);
 	}
-	
-	public function personHealthRecord()
-	{
-		return $this->hasOne(PersonHealthRecord::class);
-	}
 
 	/* SCOPES */
 
