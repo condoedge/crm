@@ -6,7 +6,7 @@ use App\Models\User;
 use Kompo\Auth\Models\Contracts\Searchable;
 use Kompo\Auth\Models\Model;
 
-class Person extends Model implements Searchable
+abstract class Person extends Model implements Searchable
 {
 	use \Kompo\Auth\Models\Maps\MorphManyAddresses;
 	use \Kompo\Auth\Models\Phone\MorphManyPhones;

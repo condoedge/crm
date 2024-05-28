@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 use Kompo\Auth\Models\Model;
 
-class Event extends Model
+abstract class Event extends Model
 {
 	use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 	use \Condoedge\Crm\Models\BelongsToEventTrait;
@@ -71,14 +71,6 @@ class Event extends Model
     }
 
 	/* CALCULATED FIELDS */
-	public function getRegistrableConfirmationRoute($personId)
-    {
-        return \URL::signedRoute('inscription.registrable', [
-            'qr_code' => $this->getQrCodeString(),
-            'id' => $personId,
-        ]);
-    }
-
 	public function getScheduleWeekLabel()
 	{
 		return $this->schedule_start?->translatedFormat('l');

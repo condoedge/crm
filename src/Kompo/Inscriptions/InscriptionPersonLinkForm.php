@@ -2,8 +2,9 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
+use App\Models\Crm\Person;
 use Condoedge\Crm\Models\GenderEnum;
-use Condoedge\Crm\Models\Person;
+use Condoedge\Crm\Models\Inscription;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionPersonLinkForm extends ImgFormLayout
@@ -12,26 +13,31 @@ class InscriptionPersonLinkForm extends ImgFormLayout
 
 	public $model = Person::class;
 
+    protected $inscriptionId;
+    protected $inscription;
 	protected $mainPersonId;
 	protected $mainPerson;
-    protected $qrCode;
 
 	public function created()
 	{
-        $this->qrCode = $this->prop('qr_code');
+        $this->inscriptionId = $this->prop('inscription_id');
+        $this->inscription = Inscription::findOrFail($this->inscriptionId);
 
-		$this->mainPersonId = $this->prop('person_id');
+		$this->mainPersonId = $this->inscription->inscribed_by;
 		$this->mainPerson = Person::findOrFail($this->mainPersonId);
 	}
 
 	public function beforeSave()
 	{
 		$this->model->registered_by = $this->mainPersonId;
+		$this->model->inscription_id = $this->inscriptionId;
 	}
 
 	public function response()
 	{
-		return redirect($this->model->getInscriptionTeamRoute($this->qrCode));
+		$this->inscription->deleteInscriptionEventsIfAny($this->model->id);
+
+		return redirect($this->model->getInscriptionTeamRoute($this->inscription));
 	}
 
 	public function rightColumnBody()
@@ -46,9 +52,19 @@ class InscriptionPersonLinkForm extends ImgFormLayout
 			),
 			_Date('inscriptions.dob')->name('date_of_birth')->class('mb-12'),
 			_TwoColumnsButtons(
-				_Link2Outlined('inscriptions.back')->href($this->mainPerson->getInscriptionPersonRoute($this->qrCode)),
+				_Link2Outlined('inscriptions.back')
+					->href($this->getBackLinkRoute()),
 				_SubmitButton2('inscriptions.continue')->redirect(),
 			),
 		];
+	}
+
+	public function getBackLinkRoute()
+	{
+		if ($prevPerson = $this->model->getPreviousInscriptionPerson($this->inscriptionId)) {
+			return $this->inscription->getInscriptionPersonLinkRoute($prevPerson->id);
+		}
+
+		return $this->mainPerson->getInscriptionPersonRoute($this->inscription->qr_inscription);
 	}
 }

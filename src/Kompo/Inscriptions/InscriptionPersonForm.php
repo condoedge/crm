@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use Condoedge\Crm\Models\Person;
+use App\Models\Crm\Person;
 use Condoedge\Crm\Models\SpokenLanguageEnum;
 use Kompo\Auth\Common\ImgFormLayout;
 use Kompo\Auth\Models\Teams\EmailRequest;
@@ -40,7 +40,9 @@ class InscriptionPersonForm extends ImgFormLayout
 
 	public function response()
 	{
-		return redirect($this->model->getInscriptionPersonLinkRoute($this->qrCode));
+		$inscription = $this->model->createOrUpdateInscription($this->qrCode);
+
+		return redirect($inscription->getInscriptionPersonLinkRoute());
 	}
 
 	public function rightColumnBody()

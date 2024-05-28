@@ -16,13 +16,13 @@ trait HasQrCodeTrait
     }
 
     /* ACTIONS */
-    public function setQrCodeIfEmpty()
+    public function setQrCodeIfEmpty($qrCode = null)
     {
         if ($this->{static::QRCODE_COLUMN_NAME}) {
             return;
         }
 
-        $this->setNewQrCode();
+        $this->setNewQrCode($qrCode);
     }
 
     public function setNewQrCode($qrCode = null)

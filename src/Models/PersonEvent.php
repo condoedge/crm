@@ -52,6 +52,21 @@ class PersonEvent extends Model
 		return $this->getRegistrable()->getTargetTeam();
 	}
 
+	public function getFirstRegisteredPerson()
+	{
+		return $this->getRelatedRegistrations()->first();
+	}
+
+	public function getNextRegisteredPerson()
+	{
+		return $this->getRelatedRegistrations()->where('id', '>', $this->id)->first();
+	}
+
+	public function getRelatedRegistrations()
+	{
+		return PersonEvent::where('inscription_id', $this->inscription_id)->get();
+	}
+
 	/* ROUTES */
 	public function getAcceptInscriptionUrl()
 	{
@@ -75,11 +90,12 @@ class PersonEvent extends Model
 	}
 
 	/* ACTIONS */
-	public static function createPersonRegistrable($personId, $event)
+	public static function createPersonEvent($person, $event, $inscription)
 	{
 		$pr = new PersonEvent();
-		$pr->person_id = $personId;
+		$pr->person_id = $person->id;
 		$pr->event_id = $event->id;
+		$pr->inscription_id = $inscription->id;
 		$pr->save();
 
 		return $pr;

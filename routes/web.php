@@ -11,9 +11,9 @@ Route::layout('layouts.guest')->group(function(){
 
     	Route::get('inscription/person-info/{id}/{qr_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionPersonForm::class)->name('inscription.person');
 
-    	Route::get('inscription/person-link-info/{person_id}/link{id?}/{qr_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionPersonLinkForm::class)->name('inscription.person-link');
+    	Route::get('inscription/person-link-info/{inscription_id}/{id?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionPersonLinkForm::class)->name('inscription.person-link');
 
-    	Route::get('inscription/registrable/{qr_code}/{id}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.registrable');
+    	Route::get('inscription/confirmation/{inscription_id}/{id}/{event_id}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
 
     	Route::get('create-account/{pr_id}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
 

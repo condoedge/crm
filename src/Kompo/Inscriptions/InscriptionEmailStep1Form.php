@@ -3,7 +3,7 @@
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
 use App\Models\User;
-use Condoedge\Crm\Models\Person;
+use App\Models\Crm\Person;
 use Kompo\Auth\Common\ImgFormLayout;
 use Kompo\Auth\Models\Teams\EmailRequest;
 

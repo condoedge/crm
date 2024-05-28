@@ -2,17 +2,19 @@
 
 namespace Condoedge\Crm\Models;
 
+use App\Models\Crm\Person;
+
 trait PersonInscriptionsRelatedTrait
 {
     /* RELATIONS */
     public function registeredBy()
     {
-        return $this->belongsTo(config('condoedge-crm.person-model-namespace'), 'registered_by');
+        return $this->belongsTo(Person::class, 'registered_by');
     }
 
     public function registeredBys()
     {
-        return $this->hasMany(config('condoedge-crm.person-model-namespace'), 'registered_by');
+        return $this->hasMany(Person::class, 'registered_by');
     }
 
     /* CALCULATED FIELDS */
@@ -24,38 +26,32 @@ trait PersonInscriptionsRelatedTrait
         ]);
     }
 
-    public function getInscriptionPersonLinkRoute($qrCode = null, $personLinkId = null)
+    public function getInscriptionTeamRoute($inscription = null)
     {
-        return \URL::signedRoute('inscription.person-link', [
-            'person_id' => $this->id,
-            'id' => $this->registeredBys()->value('id') ?: $personLinkId, //In case the user clicked back and then continued
-            'qr_code' => $qrCode,
-        ]);
-    }
-
-    public function getInscriptionRouteAsPerson2()
-    {
-        return \URL::signedRoute('inscription.person-link', [
-            'person_id' => $this->registered_by,
-            'id' => $this->id,
-        ]);
-    }
-
-    public function getInscriptionTeamRoute($qrCode = null)
-    {
-        if ($registrable = registrableFromQrCode($qrCode)) {
-            return $registrable->getRegistrableConfirmationRoute($this->id);
+        if ($inscription && ($registrable = registrableFromQrCode($inscription->qr_inscription))) {
+            return $inscription->getInscriptionConfirmationRoute($this->id, $registrable->id);
         }
 
         return \URL::signedRoute('inscription.team', [
+            'inscription_id' => $inscription->id,
             'id' => $this->id,
         ]);
     }
 
-    public function getInscriptionMemberRoute()
-	{
-		return \URL::signedRoute('inscription.person-link', ['person_id' => $this->id]);
-	}
+    public static function getSameInscriptionPersons($inscriptionId)
+    {
+        return Person::where('inscription_id', $inscriptionId)->get();
+    }
+
+    public function getPreviousInscriptionPerson($inscriptionId)
+    {
+        $sortedPersons = static::getSameInscriptionPersons($inscriptionId)->sortByDesc('id');
+
+        if ($this->id) {
+            $sortedPersons = $sortedPersons->where('id', '<', $this->id);
+        }
+        return $sortedPersons->first();
+    }
 
     /* ACTIONS */
     public static function getOrCreatePersonFromEmail($email)
@@ -83,6 +79,20 @@ trait PersonInscriptionsRelatedTrait
         $person->email_identity = $email;
 
         return $person;
+    }
+
+    public function createOrUpdateInscription($qrCode)
+    {
+        $inscription = Inscription::where('inscribed_by', $this->id)->where('qr_inscription', $qrCode)->first();
+
+        if (!$inscription) {
+            $inscription = new Inscription();
+            $inscription->inscribed_by = $this->id;
+            $inscription->setNewQrCode($qrCode);
+            $inscription->save();
+        }
+
+        return $inscription;
     }
 
     /* SCOPES */

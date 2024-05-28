@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Events;
 
-use Condoedge\Crm\Models\Event;
+use App\Models\Events\Event;
 use Condoedge\Crm\Models\EventRegistrationPeriod;
 use Condoedge\Crm\Models\RegistrationTypeEnum;
 use Kompo\Auth\Common\ModalScroll;

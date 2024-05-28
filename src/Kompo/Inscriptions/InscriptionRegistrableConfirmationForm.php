@@ -2,24 +2,30 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use Condoedge\Crm\Models\Person;
-use Condoedge\Crm\Models\PersonEvent;
-use Condoedge\Crm\Models\PersonRegistrable;
+use App\Models\Crm\Person;
+use App\Models\Crm\PersonEvent;
+use App\Models\Events\Event;
+use Condoedge\Crm\Models\Inscription;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 {
     protected $imgUrl = 'images/base-email-image.png';
 
-    protected $qrCode;
-    protected $registrable;
+    protected $inscriptionId;
+    protected $inscription;
+    protected $eventId;
+    protected $event;
 
     public $model = Person::class;
 
     public function created()
     {
-        $this->qrCode = $this->prop('qr_code');
-        $this->registrable = registrableFromQrCode($this->qrCode);
+        $this->inscriptionId = $this->prop('inscription_id');
+        $this->inscription = Inscription::findOrFail($this->inscriptionId);
+
+        $this->eventId = $this->prop('event_id');
+        $this->event = Event::findOrFail($this->eventId);
     }
 
     public function rightColumnBody()
@@ -46,20 +52,20 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     {
         $this->assignMemberToUnit();
 
-        return redirect($this->model->registeredBy->getInscriptionMemberRoute());
+        return redirect($this->inscription->getInscriptionPersonLinkRoute());
     }
 
     public function registerAndFinish()
     {
-        $iev = $this->assignMemberToUnit();
+        $pe = $this->assignMemberToUnit();
 
-        return redirect($iev->getInscriptionDoneRoute());
+        return redirect($pe->getInscriptionDoneRoute());
     }
 
     protected function assignMemberToUnit()
     {
-        $pr = PersonEvent::createPersonRegistrable($this->model->id, $this->registrable); 
+        $pe = PersonEvent::createPersonEvent($this->model, $this->event, $this->inscription); 
 
-        return $pr;
+        return $pe;
     }
 }

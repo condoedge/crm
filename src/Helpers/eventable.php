@@ -1,6 +1,6 @@
 <?php 
 
-use Condoedge\Crm\Models\Event;
+use App\Models\Events\Event;
 
 function registrableFromQrCode($qrCode)
 {

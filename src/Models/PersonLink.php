@@ -23,6 +23,20 @@ class PersonLink extends Model
 	/* CALCULATED FIELDS */
 
 	/* ACTIONS */
+	public static function upsertLinkBetween($person1, $person2, $linkTypeId)
+	{
+		$personLink = PersonLink::getLinkBetween($person1, $person2);
+
+		if ($personLink) {
+			$personLink->link_type_id = $linkTypeId;
+			$personLink->save();
+		} else {
+			$personLink = PersonLink::createLinkBetween($person1, $person2, $linkTypeId);
+		}
+
+		return $personLink;
+	}
+
 	public static function createLinkBetween($person1, $person2, $linkTypeId)
 	{
 		$personLink = new PersonLink();

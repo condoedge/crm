@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
-use Condoedge\Crm\Models\PersonEvent;
+use App\Models\Crm\PersonEvent;
 use Kompo\Auth\Common\ModalScroll;
 
 class PersonEventAnswerForm extends ModalScroll
