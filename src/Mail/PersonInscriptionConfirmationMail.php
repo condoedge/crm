@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Mail;
 
-use Condoedge\Crm\Models\PersonRegistrable;
+use Condoedge\Crm\Models\PersonEvent;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -12,13 +12,13 @@ class PersonInscriptionConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $personRegistrableId;
-    protected $personRegistrable;
+    protected $personEventId;
+    protected $personEvent;
 
-    public function __construct($personRegistrableId)
+    public function __construct($personEventId)
     {
-        $this->personRegistrableId = $personRegistrableId;
-        $this->personRegistrable = PersonRegistrable::findOrFail($this->personRegistrableId);
+        $this->personEventId = $personEventId;
+        $this->personEvent = PersonEvent::findOrFail($this->personEventId);
     }
 
     /**
@@ -31,7 +31,7 @@ class PersonInscriptionConfirmationMail extends Mailable
         return $this->subject(__('mail.congratulations-your-registration-is-approved'))
             ->markdown('emails.inscription-confirmation-mail')
             ->with([
-                'acceptInscriptionUrl' => $this->personRegistrable->getAcceptInscriptionUrl(),
+                'acceptInscriptionUrl' => $this->personEvent->getAcceptInscriptionUrl(),
             ]);
     }
 }

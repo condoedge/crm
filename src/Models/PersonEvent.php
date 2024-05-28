@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
+use App\Models\Crm\PersonTeam;
 use Kompo\Auth\Models\Model;
 
 class PersonEvent extends Model
@@ -39,17 +40,12 @@ class PersonEvent extends Model
 
 	public function getRelatedEmail()
 	{
-		return $this->person->email_identity;
-	}
-
-	public function getRegistrable()
-	{
-		return $this->event;
+		return $this->person->email_identity ?: $this->person->registeredBy?->email_identity;
 	}
 
 	public function getRelatedTargetTeam()
 	{
-		return $this->getRegistrable()->getTargetTeam();
+		return $this->event->team;
 	}
 
 	public function getFirstRegisteredPerson()
@@ -106,8 +102,10 @@ class PersonEvent extends Model
 		$this->register_status = RegisterStatusEnum::RS_ACCEPTED;
 		$this->save();
 
+		PersonTeam::createFirstJoin($this->person_id, $this->event->team_id);
+
 		\Mail::to($this->getRelatedEmail())
-            ->send(new \App\Mail\InscriptionConfirmationMail($this->id));
+            ->send(new \Condoedge\Crm\Mail\PersonInscriptionConfirmationMail($this->id));
 	}
 
 	/* ELEMENTS */

@@ -59,7 +59,7 @@ class PersonEventsList extends WhiteTable
                 _Html($person->age_label),
             ),
             _Pill($person->gender_label),
-            _Html($pr->getRegistrable()->getTargetTeam()->team_name),
+            _Html($pr->getRelatedTargetTeam()->team_name),
             _HtmlDate($pr->created_at),
             _Pill($pr->ie_status_label),
         )->selfUpdate('getPersonEventAnswerForm', [

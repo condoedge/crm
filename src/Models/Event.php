@@ -33,11 +33,6 @@ abstract class Event extends Model
 		return $this->team;
 	}
 
-	public function getNextEvent()
-	{
-		return $this;
-	}
-
 	/* RELATIONS */
 	public function eventAudiences()
 	{
