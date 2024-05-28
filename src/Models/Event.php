@@ -28,12 +28,22 @@ abstract class Event extends Model
     }
 
 	/* ABSTRACT */
-	public function getTargetTeam()
+	public function getRegistrableId()
 	{
-		return $this->team;
+		return $this->id;
 	}
 
 	/* RELATIONS */
+	public function eventRegistationPeriods()
+	{
+		return $this->hasMany(EventRegistrationPeriod::class);
+	}
+
+	public function openPeriods()
+	{
+		return $this->eventRegistationPeriods()->currentlyOpen();
+	}
+
 	public function eventAudiences()
 	{
 		return $this->hasMany(EventAudience::class);
@@ -86,6 +96,11 @@ abstract class Event extends Model
 
 		return \Storage::disk('public')->url($coverPath);
 	}
+
+    public function getDisplayableQrInfo()
+    {
+        return route('inscription.landing', ['qr_code' => $this->getQrCodeString()]);
+    }
 
 	/* ACTIONS */
 

@@ -1,10 +1,15 @@
 <?php 
 
 use App\Models\Events\Event;
+use App\Models\Events\EventRegistrationPeriod;
 
 function registrableFromQrCode($qrCode)
 {
-	return Event::forQrCode($qrCode)->first();
+	if (!$qrCode) {
+		return;
+	}
+	
+	return EventRegistrationPeriod::forQrCode($qrCode)->first() ?: Event::forQrCode($qrCode)->first();
 }
 
 /* ELEMENTS */

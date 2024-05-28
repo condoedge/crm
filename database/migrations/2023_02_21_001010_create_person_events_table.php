@@ -20,6 +20,7 @@ return new class extends Migration
 
             $table->foreignId('person_id')->constrained('persons');
             $table->foreignId('event_id')->nullable()->constrained();
+            $table->foreignId('inscription_id')->nullable()->constrained();
 
             $table->tinyInteger('register_status')->default(RegisterStatusEnum::RS_REQUESTED);
         });

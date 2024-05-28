@@ -29,7 +29,7 @@ trait PersonInscriptionsRelatedTrait
     public function getInscriptionTeamRoute($inscription = null)
     {
         if ($inscription && ($registrable = registrableFromQrCode($inscription->qr_inscription))) {
-            return $inscription->getInscriptionConfirmationRoute($this->id, $registrable->id);
+            return $inscription->getInscriptionConfirmationRoute($this->id, $registrable->getRegistrableId());
         }
 
         return \URL::signedRoute('inscription.team', [
