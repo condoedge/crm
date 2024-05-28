@@ -2,7 +2,6 @@
 
 namespace Condoedge\Crm\Models;
 
-use App\Models\Crm\PersonTeam;
 use Kompo\Auth\Models\Model;
 
 class PersonEvent extends Model
@@ -102,10 +101,15 @@ class PersonEvent extends Model
 		$this->register_status = RegisterStatusEnum::RS_ACCEPTED;
 		$this->save();
 
-		PersonTeam::createFirstJoin($this->person_id, $this->event->team_id);
+		$this->approveAndSendCustomCode();
 
 		\Mail::to($this->getRelatedEmail())
             ->send(new \Condoedge\Crm\Mail\PersonInscriptionConfirmationMail($this->id));
+	}
+
+	protected function approveAndSendCustomCode()
+	{
+		//Override in App
 	}
 
 	/* ELEMENTS */
