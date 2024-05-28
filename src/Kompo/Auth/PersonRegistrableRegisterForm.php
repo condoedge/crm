@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Kompo\Auth;
 
 use App\Models\Roles\ParentRole;
 use App\Models\User;
-use Condoedge\Crm\Models\PersonRegistrable;
+use Condoedge\Crm\Models\PersonEvent;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class PersonRegistrableRegisterForm extends ImgFormLayout
@@ -21,7 +21,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     public function created()
     {
         $this->prId = $this->prop('pr_id');
-        $this->personRegistrable = PersonRegistrable::findOrFail($this->prId);
+        $this->personRegistrable = PersonEvent::findOrFail($this->prId);
         $this->team = $this->personRegistrable->getRelatedTargetTeam();
         $this->person = $this->personRegistrable->person;
         $this->parentEmail = $this->personRegistrable->getRelatedEmail();
