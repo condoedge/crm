@@ -5,13 +5,13 @@ namespace Condoedge\Crm\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Roles\ParentRole;
 use App\Models\User;
-use Condoedge\Crm\Models\PersonRegistrable;
+use Condoedge\Crm\Models\PersonEvent;
 
 class PersonRegistrableAcceptController extends Controller
 {
     public function __invoke($id)
     {
-        $pr = PersonRegistrable::findOrFail($id);
+        $pr = PersonEvent::findOrFail($id);
         $email = $pr->getRelatedEmail();
         $team = $pr->getRelatedTargetTeam();
 
