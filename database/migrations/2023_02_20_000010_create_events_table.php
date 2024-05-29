@@ -35,7 +35,7 @@ return new class extends Migration
             $table->tinyInteger('registration_system')->nullable();
             $table->string('qrcode_ev')->nullable();
             
-            $table->decimal('event_price', 12, 2)->nullable();
+            $table->decimal('registration_price', 12, 2)->nullable();
             $table->tinyInteger('is_template')->nullable();
             $table->decimal('kickback_price', 12, 2)->nullable();
             
