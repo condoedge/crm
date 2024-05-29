@@ -14,22 +14,23 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     public $model = User::class;
 
     protected $prId;
-    protected $personRegistrable;
+    protected $personEvent;
     protected $team;
     protected $person;
+    protected $registeringEmail;
 
     public function created()
     {
         $this->prId = $this->prop('pr_id');
-        $this->personRegistrable = PersonEvent::findOrFail($this->prId);
-        $this->team = $this->personRegistrable->getRelatedTargetTeam();
-        $this->person = $this->personRegistrable->person;
-        $this->parentEmail = $this->personRegistrable->getRelatedEmail();
+        $this->personEvent = PersonEvent::findOrFail($this->prId);
+        $this->team = $this->personEvent->getRelatedTargetTeam();
+        $this->person = $this->personEvent->getRegisteringPerson();
+        $this->registeringEmail = $this->personEvent->getRegisteringPersonEmail();
     }
 
     public function beforeSave()
     {
-        $this->model->email = $this->parentEmail; //ensures the email in the inscription is used
+        $this->model->email = $this->registeringEmail; //ensures the email in the inscription is used
         $this->model->email_verified_at = now();
 
         $this->model->handleRegisterNames();
@@ -38,6 +39,9 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     public function afterSave()
     {
         $this->model->createTeamRole($this->team, ParentRole::ROLE_KEY);
+
+        $this->person->user_id = $this->model->id;
+        $this->person->save();
 
         fireRegisteredEvent($this->model);
 
@@ -53,7 +57,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     {
         return [
             _Input('inscriptions.your-invitation-email')->name('show_email', false)->readOnly()
-                ->value($this->parentEmail)->inputClass('bg-gray-50 rounded-xl'),
+                ->value($this->registeringEmail)->inputClass('bg-gray-50 rounded-xl'),
 
             _InputRegisterNames($this->person->first_name, $this->person->last_name),
             _InputRegisterPasswords(),

@@ -3,6 +3,7 @@
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
 use App\Models\Crm\PersonEvent;
+use App\Models\Events\Event;
 use Kompo\Auth\Common\ModalScroll;
 
 class PersonEventAnswerForm extends ModalScroll
@@ -12,7 +13,7 @@ class PersonEventAnswerForm extends ModalScroll
     protected $person;
     protected $event;
     protected $team;
-    protected $otherUnitsOptions;
+    protected $otherEventsOptions;
 
     protected $_Title = 'inscriptions.approve-registration-for';
     protected $noHeaderButtons = true;
@@ -23,12 +24,17 @@ class PersonEventAnswerForm extends ModalScroll
         $this->event = $this->model->event;
         $this->team = $this->event?->team;
 
-        $this->otherUnitsOptions = $this->team->parentTeam->teams()->pluck('team_name', 'id');
+        $this->otherEventsOptions = !$this->team->isUnitLevel() ? collect() : 
+            Event::ofTypeYearlyRegistration()->has('openPeriods')
+                ->forTeam($this->team->parentTeam->teams()->pluck('id'))
+                ->with('team')->get()->mapWithKeys(fn($event) => [
+                    $event->id => $event->getTeamName(),
+                ]);
     }
 
     public function handle()
     {
-        $this->model->team_id = request('change_to_team_id');
+        $this->model->event_id = request('change_to_event_id');
         $this->model->save();
         
         return $this->approvePersonToEvent();
@@ -58,15 +64,15 @@ class PersonEventAnswerForm extends ModalScroll
 
                 _Button('inscriptions.accept')->selfPost('approvePersonToEvent')->redirect(),
             )->class('space-y-4'),
-            /*_Rows(
+            !$this->otherEventsOptions->count() ? null : _Rows(
                 _Html(' --- or ---')->class('text-center mb-4'),
                 _CardGray100P4(
                     _TitleModal('Move to another unit'),
-                    _Select()->name('change_to_team_id', false)
-                        ->options($this->otherUnitsOptions),
+                    _Select()->name('change_to_event_id', false)
+                        ->options($this->otherEventsOptions),
                     _SubmitButton('Move to this unit'),
                 ),
-            )->class('pb-10')*/
+            )->class('pb-10')
         );
     }
 

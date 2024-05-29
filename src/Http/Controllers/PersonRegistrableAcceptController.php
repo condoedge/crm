@@ -12,7 +12,7 @@ class PersonRegistrableAcceptController extends Controller
     public function __invoke($id)
     {
         $pr = PersonEvent::findOrFail($id);
-        $email = $pr->getRelatedEmail();
+        $email = $pr->getRegisteringPersonEmail();
         $team = $pr->getRelatedTargetTeam();
 
         if ($user = User::where('email', $email)->first()) {

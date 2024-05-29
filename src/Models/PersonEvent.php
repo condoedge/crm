@@ -37,9 +37,14 @@ class PersonEvent extends Model
 		return $this->register_status->label();
 	}
 
-	public function getRelatedEmail()
+	public function getRegisteringPerson()
 	{
-		return $this->person->email_identity ?: $this->person->registeredBy?->email_identity;
+		return $this->person->registeredBy ?: $this->person;
+	}
+
+	public function getRegisteringPersonEmail()
+	{
+		return $this->getRegisteringPerson()->email_identity;
 	}
 
 	public function getRelatedTargetTeam()
@@ -103,7 +108,7 @@ class PersonEvent extends Model
 
 		$this->approveAndSendCustomCode();
 
-		\Mail::to($this->getRelatedEmail())
+		\Mail::to($this->getRegisteringPersonEmail())
             ->send(new \Condoedge\Crm\Mail\PersonInscriptionConfirmationMail($this->id));
 	}
 

@@ -22,7 +22,6 @@ class EventRegistrationPeriodsTable extends Table
     public function top()
     {
         return _FlexBetween(
-            _TitleMini('Registration periods'),
             _Link()->iconCreate()->selfCreate('getItemForm')->inModal(),
         );
     }
@@ -33,6 +32,7 @@ class EventRegistrationPeriodsTable extends Table
             _Html($erp->registration_name),
             _HtmlDateTime($erp->registration_start),
             _HtmlDateTime($erp->registration_end),
+            _Link()->iconSax('barcode')->selfGet('displayQrCode', ['id' => $erp->id])->inModal(),
         )->selfUpdate('getItemForm', ['id' => $erp->id])->inModal();
     }
 
@@ -41,5 +41,12 @@ class EventRegistrationPeriodsTable extends Table
         return new EventRegistrationPeriodForm($id, [
             'event_id' => $this->eventId,
         ]);
+    }
+
+    public function displayQrCode($id)
+    {
+        $erp = EventRegistrationPeriod::findOrFail($id);
+
+        return $erp->getDisplayableQrInfoEls();
     }
 }

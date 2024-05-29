@@ -15,6 +15,11 @@ trait HasQrCodeTrait
         return $this->{static::QRCODE_COLUMN_NAME};
     }
 
+    public function getDisplayableQrInfo()
+    {
+        return $this->getQrCodeString();
+    }
+
     /* ACTIONS */
     public function setQrCodeIfEmpty($qrCode = null)
     {
@@ -39,6 +44,14 @@ trait HasQrCodeTrait
     public function scopeForQrCode($query, $qrCode)
     {
     	$query->where(static::QRCODE_COLUMN_NAME, $qrCode);
+    }
+
+    /* ELEMENTS */
+    public function getDisplayableQrInfoEls()
+    {
+        return _CardWhiteP4(
+            _Html($this->getDisplayableQrInfo()),
+        )->class('m-4');
     }
 
 }

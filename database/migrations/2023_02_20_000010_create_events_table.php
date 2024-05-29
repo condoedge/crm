@@ -20,6 +20,7 @@ return new class extends Migration
             $table->foreignId('team_id')->nullable()->constrained();
             $table->foreignId('event_id')->nullable()->constrained(); //recursive one event can have multiple ones below
 
+            $table->tinyInteger('event_type')->nullable();
             $table->string('name_ev');
             $table->string('subtitle_ev')->nullable();
             $table->string('description_ev')->nullable();
@@ -34,7 +35,9 @@ return new class extends Migration
             $table->tinyInteger('registration_system')->nullable();
             $table->string('qrcode_ev')->nullable();
             
-            $table->decimal('event_price', 12, 2)->nullable();
+            $table->decimal('registration_price', 12, 2)->nullable();
+            $table->tinyInteger('is_template')->nullable();
+            $table->decimal('kickback_price', 12, 2)->nullable();
             
             $table->integer('event_max_members')->nullable();
 
