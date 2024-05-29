@@ -16,7 +16,7 @@ return new class extends Migration
             addMetaData($table);
 
             $table->foreignId('team_id')->constrained();
-            $table->foreignId('person_id')->constrained();
+            $table->foreignId('person_id')->constrained('persons');
 
             $table->date('from')->nullable();
             $table->date('to')->nullable();
