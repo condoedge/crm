@@ -50,6 +50,20 @@ abstract class Person extends Model implements Searchable
 	}
 
 	/* SCOPES */
+	public function scopeActive($query)
+	{
+		return $query->whereHas('personTeams', fn($q) => $q->whereNull('to'));
+	}
+
+	public function scopeParent($query)
+	{
+		return $query->whereDoesntHave('person2Links');
+	}
+
+	public function scopeChild($query)
+	{
+		return $query->whereHas('person2Links');
+	}
 
 	/* CALCULATED FIELDS */
 	public function getAllPersonLinks()

@@ -13,6 +13,10 @@ class PersonTeam extends Model
 	/* RELATIONS */
 
 	/* SCOPES */
+	public function scopeActive($query)
+	{
+		return $query->whereNull('to');
+	}
 
 	/* CALCULATED FIELDS */
 
