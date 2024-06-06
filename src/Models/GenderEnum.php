@@ -32,13 +32,33 @@ enum GenderEnum: int
         };
     }
 
+    public function letter()
+    {
+        return match ($this)
+        {
+            static::FEMALE => 'F',
+            static::MALE => 'M',
+            static::OTHER => 'O',
+        };
+    }
+
     public function bgColor()
     {
         return match ($this)
         {
-            static::FEMALE => 'bg-red-400',
+            static::FEMALE => 'bg-pink-400',
             static::MALE => 'bg-blue-400',
-            static::OTHER => 'bg-purple-400',
+            static::OTHER => 'bg-gray-400',
+        };
+    }
+
+    public function textColor()
+    {
+        return match ($this)
+        {
+            static::FEMALE => 'text-pink-500',
+            static::MALE => 'text-blue-600',
+            static::OTHER => 'text-gray-500',
         };
     }
 }
