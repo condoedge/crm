@@ -28,21 +28,19 @@ class EventRegistrationPeriodForm extends ModalScroll
     public function render()
     {
         return _Rows(
-            _Card(
                 _Input('inscriptions.title')->name('registration_name')
                     ->default(__('inscriptions.registrations').' '.$this->event->name_ev),
                 _Columns(
-                    _Select('Registration type')->name('registration_type')->options(RegistrationTypeEnum::optionsWithLabels()),
+                    _Select('inscriptions.registration-type')->name('registration_type')->options(RegistrationTypeEnum::optionsWithLabels()),
                 ),
-                _Columns(
-                    _DateTime('inscriptions.registration-period-start')->name('registration_start'),
-                    _DateTime('inscriptions.registration-period-end')->name('registration_end'),
-                ),
-                _Columns(
-                    _InputDollar('inscriptions.amount-for-registration')->name('registration_price'),
-                    _Input('inscriptions.number-of-participants')->name('registration_max_members'),
-                ),
-            ),
+                _CardLevel5(
+                    _Columns(
+                        _DateTime('inscriptions.registration-period-start')->name('registration_start'),
+                        _DateTime('inscriptions.registration-period-end')->name('registration_end'),
+                    ),
+                )->class('px-6 pb-2'),
+                _InputDollar('inscriptions.amount-for-registration')->name('registration_price'),
+                _Input('inscriptions.number-of-participants')->name('registration_max_members'),
             _SubmitButton('inscriptions.save'),
         )->class('p-8');
     }
