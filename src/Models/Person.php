@@ -50,9 +50,11 @@ abstract class Person extends Model implements Searchable
 	}
 
 	/* SCOPES */
-	public function scopeActive($query)
+	public function scopeActive($query, $teamId = null)
 	{
-		return $query->whereHas('personTeams', fn($q) => $q->whereNull('to'));
+		return $query->whereHas('personTeams', fn($q) => $q->whereNull('to')
+			->when($teamId, fn($q) => $q->where('team_id', $teamId))
+		);
 	}
 
 	public function scopeParent($query)
