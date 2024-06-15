@@ -33,7 +33,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
         $this->model->email = $this->registeringEmail; //ensures the email in the inscription is used
         $this->model->email_verified_at = now();
 
-        $this->model->handleRegisterNames();
+        // $this->model->handleRegisterNames();
     }
 
     public function afterSave()
@@ -59,7 +59,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
             _Input('inscriptions.your-invitation-email')->name('show_email', false)->readOnly()
                 ->value($this->registeringEmail)->inputClass('bg-gray-50 rounded-xl'),
 
-            _InputRegisterNames($this->person->first_name, $this->person->last_name),
+            // _InputRegisterNames($this->person->first_name, $this->person->last_name),
             _InputRegisterPasswords(),
             _CheckboxTerms(),
             _FlexEnd(

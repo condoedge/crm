@@ -108,8 +108,8 @@ class PersonEvent extends Model
 
 		$this->approveAndSendCustomCode();
 
-		\Mail::to($this->getRegisteringPersonEmail())
-            ->send(new \Condoedge\Crm\Mail\PersonInscriptionConfirmationMail($this->id));
+		// \Mail::to($this->getRegisteringPersonEmail())
+        //     ->send(new \Condoedge\Crm\Mail\PersonInscriptionConfirmationMail($this->id));
 	}
 
 	protected function approveAndSendCustomCode()
