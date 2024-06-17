@@ -7,6 +7,8 @@ use Kompo\Auth\Common\WhiteTable;
 
 class PersonEventsList extends WhiteTable
 {
+
+
     protected $eventId;
 
     public function created()

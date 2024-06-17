@@ -65,12 +65,12 @@ class PersonEventAnswerForm extends ModalScroll
                 _Button('inscriptions.accept')->selfPost('approvePersonToEvent')->redirect(),
             )->class('space-y-4'),
             !$this->otherEventsOptions->count() ? null : _Rows(
-                _Html(' --- or ---')->class('text-center mb-4'),
+                _Html('inscriptions.-or-')->class('text-center mb-4'),
                 _CardGray100P4(
-                    _TitleModal('Move to another unit'),
+                    _TitleModal('inscriptions.move-to-another-unit'),
                     _Select()->name('change_to_event_id', false)
                         ->options($this->otherEventsOptions),
-                    _SubmitButton('Move to this unit'),
+                    _SubmitButton('inscriptions.move-to-this-unit'),
                 ),
             )->class('pb-10')
         );
