@@ -70,6 +70,9 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function rules()
     {
-        return registerRules();
+        return [
+            'password' => passwordRules(),
+            'terms' => ['required', 'accepted'],
+        ];
     }
 }
