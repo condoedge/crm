@@ -134,6 +134,6 @@ abstract class Person extends Model implements Searchable
 			!$phone ? null : _PhoneWithIcon($phone),
 			!$this->email_identity ? null : _EmailWithIcon($this->email_identity),
             !$address ? null : _AddressWithIcon($address),
-		);
+		)->class('mb-3');
 	}
 }
