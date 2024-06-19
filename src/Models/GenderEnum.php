@@ -36,9 +36,9 @@ enum GenderEnum: int
     {
         return match ($this)
         {
-            static::FEMALE => 'F',
-            static::MALE => 'M',
-            static::OTHER => 'O',
+            static::FEMALE => __('crm.female-letter'),
+            static::MALE => __('crm.male-letter'),
+            static::OTHER => __('crm.mixed-letter'),
         };
     }
 
