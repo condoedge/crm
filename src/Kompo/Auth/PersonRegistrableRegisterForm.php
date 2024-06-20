@@ -26,6 +26,9 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
         $this->team = $this->personEvent->getRelatedTargetTeam();
         $this->person = $this->personEvent->getRegisteringPerson();
         $this->registeringEmail = $this->personEvent->getRegisteringPersonEmail();
+
+        $this->model->first_name = $this->person->first_name;
+        $this->model->last_name = $this->person->last_name;
     }
 
     public function beforeSave()
@@ -33,7 +36,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
         $this->model->email = $this->registeringEmail; //ensures the email in the inscription is used
         $this->model->email_verified_at = now();
 
-        // $this->model->handleRegisterNames();
+        $this->model->handleRegisterNames();
     }
 
     public function afterSave()
