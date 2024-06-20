@@ -27,7 +27,7 @@ class PersonEventAnswerForm extends ModalScroll
         $this->otherEventsOptions = !$this->team->isUnitLevel() ? collect() : 
             Event::ofTypeYearlyRegistration()->has('openPeriods')
                 ->forTeam($this->team->parentTeam->teams()->pluck('id'))
-                ->with('team')->get()->mapWithKeys(fn($event) => [
+                ->with('team')->get()->unique(fn($e) => $e->team_id)->mapWithKeys(fn($event) => [
                     $event->id => $event->getTeamName(),
                 ]);
     }
