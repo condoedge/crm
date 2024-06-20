@@ -38,7 +38,7 @@ enum GenderEnum: int
         {
             static::FEMALE => __('crm.female-letter'),
             static::MALE => __('crm.male-letter'),
-            static::OTHER => __('crm.mixed-letter'),
+            static::OTHER => __('crm.other-letter'),
         };
     }
 
@@ -46,9 +46,9 @@ enum GenderEnum: int
     {
         return match ($this)
         {
-            static::FEMALE => 'bg-pinklight',
-            static::MALE => 'bg-infolight',
-            static::OTHER => 'bg-graylight',
+            static::FEMALE => 'bg-pink',
+            static::MALE => 'bg-info',
+            static::OTHER => 'bg-gray',
         };
     }
 
@@ -56,9 +56,9 @@ enum GenderEnum: int
     {
         return match ($this)
         {
-            static::FEMALE => 'text-pink',
-            static::MALE => 'text-info',
-            static::OTHER => 'text-gray-700',
+            static::FEMALE => 'text-white',
+            static::MALE => 'text-white',
+            static::OTHER => 'text-white',
         };
     }
 }
