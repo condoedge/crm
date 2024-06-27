@@ -64,7 +64,7 @@ class PersonEvent extends Model
 
 	public function getRelatedRegistrations()
 	{
-		return PersonEvent::where('inscription_id', $this->inscription_id)->get();
+		return static::where('inscription_id', $this->inscription_id)->get();
 	}
 
 	/* ROUTES */
@@ -92,7 +92,7 @@ class PersonEvent extends Model
 	/* ACTIONS */
 	public static function createPersonEvent($person, $event, $inscription)
 	{
-		$pr = new PersonEvent();
+		$pr = new static();
 		$pr->person_id = $person->id;
 		$pr->event_id = $event->id;
 		$pr->inscription_id = $inscription->id;
