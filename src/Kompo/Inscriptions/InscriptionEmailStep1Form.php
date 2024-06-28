@@ -49,9 +49,7 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 		return [
             _TitleMain('inscriptions.your-information')->class('absolute self-center')->style('top:4rem;'),
 			_Input('inscriptions.my-email')->name('email'),
-            _Flex(
-                _SubmitButtonBig2('inscriptions.verify-my-email')->redirect()->class('w-full md:mx-16 mx-6'),
-            )->class('absolute')->style('bottom:6rem; left: 0; right: 0;'),
+            _SubmitButtonBig2('inscriptions.verify-my-email')->redirect(),
 		];
 	}
 }

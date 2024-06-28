@@ -36,9 +36,7 @@ class InscriptionLandingPage extends ImgFormLayout
 		return _Rows(
 			_LogoOnly()->class('self-center')->style('margin-bottom:100px;'),
             _RegistrableFromQrCodeTitle($this->qrCode),
-            _Flex(
-                _SubmitButtonBig2('inscriptions.i-want-to-register')->redirect()->class('w-full md:mx-16 mx-6'),
-            )->class('absolute')->style('bottom:6rem; left: 0; right: 0;'),
+            _SubmitButtonBig2('inscriptions.i-want-to-register')->redirect(),
 		);
 	}
 }

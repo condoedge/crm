@@ -48,7 +48,7 @@ enum GenderEnum: int
         {
             static::FEMALE => 'bg-pink',
             static::MALE => 'bg-info',
-            static::OTHER => 'bg-gray',
+            static::OTHER => 'bg-grayscout',
         };
     }
 
