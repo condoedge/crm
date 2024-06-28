@@ -28,12 +28,14 @@ enum ScheduleFrequencyEnum: int
 
     public function nextDate($date, $diff = 0)
     {
+        $dateCopy = $date->copy();
+
         return match ($this) 
         {
-            static::DAILY => $date->addDays($diff + 1),
-            static::WEEKLY => $date->addWeeks($diff + 1),
-            static::MONTHLY => $date->addMonths($diff + 1),
-            static::YEARLY => $date->addYears($diff + 1),
+            static::DAILY => $dateCopy->addDays($diff + 1),
+            static::WEEKLY => $dateCopy->addWeeks($diff + 1),
+            static::MONTHLY => $dateCopy->addMonths($diff + 1),
+            static::YEARLY => $dateCopy->addYears($diff + 1),
             static::SINGLE => null,
             static::CUSTOM => null,
         };
