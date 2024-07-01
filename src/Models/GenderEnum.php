@@ -42,6 +42,7 @@ enum GenderEnum: int
         };
     }
 
+    // DESIGN 1
     public function bgColor()
     {
         return match ($this)
@@ -59,6 +60,27 @@ enum GenderEnum: int
             static::FEMALE => 'text-white',
             static::MALE => 'text-white',
             static::OTHER => 'text-white',
+        };
+    }
+
+    // DESIGN 2
+    public function bgColor2()
+    {
+        return match ($this)
+        {
+            static::FEMALE => 'bg-pinklight',
+            static::MALE => 'bg-infolight',
+            static::OTHER => 'bg-graylight',
+        };
+    }
+
+    public function textColor2()
+    {
+        return match ($this)
+        {
+            static::FEMALE => 'text-pink',
+            static::MALE => 'text-info',
+            static::OTHER => 'text-grayscout',
         };
     }
 }

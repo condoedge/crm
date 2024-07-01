@@ -6,3 +6,8 @@ use Condoedge\Crm\Models\GenderEnum;
     return $this->asPill()
         ->class($gender->bgColor() . ' '. $gender->textColor());
 });
+
+\Kompo\Elements\Element::macro('asGenderPillDesign2', function (GenderEnum $gender) {
+    return $this->asPill()
+        ->class($gender->bgColor2() . ' '. $gender->textColor2());
+});
