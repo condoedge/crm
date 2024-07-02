@@ -57,9 +57,9 @@ enum GenderEnum: int
     {
         return match ($this)
         {
-            static::FEMALE => 'text-pink',
-            static::MALE => 'text-info',
-            static::OTHER => 'text-grayscout',
+            static::FEMALE => 'text-pinkdark',
+            static::MALE => 'text-infodark',
+            static::OTHER => 'text-graydark',
         };
     }
 
@@ -78,9 +78,9 @@ enum GenderEnum: int
     {
         return match ($this)
         {
-            static::FEMALE => 'text-pink',
-            static::MALE => 'text-info',
-            static::OTHER => 'text-grayscout',
+            static::FEMALE => 'text-pinkdark',
+            static::MALE => 'text-infodark',
+            static::OTHER => 'text-graydark',
         };
     }
 }
