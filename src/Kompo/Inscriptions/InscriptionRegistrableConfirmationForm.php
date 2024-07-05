@@ -32,12 +32,12 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     {
         return _Rows(
             _Rows(
-                _TitleModal($this->model->full_name),
+                _Html($this->model->full_name)->class('text-2xl'),
                 _TitleModalSub($this->model->age_label),
             )->class('text-center mb-4'),
-
-            $this->customRegistrableInfo(),
             
+            $this->customRegistrableInfo(),
+
             _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
             _Button('inscriptions.register-and-complete')->selfPost('registerAndFinish')->redirect(),
         )->class('p-8');
