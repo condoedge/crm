@@ -48,6 +48,6 @@ trait PersonCharacteristicsRelatedTrait
 
     public function genderLabelPill()
     {
-        return _Pill($this->gender_label)->class($this->gender->bgColor());
+        return _Pill($this->gender_label)->class($this->gender->bgColor2() . ' ' . $this->gender->textColor2());
     }
 }
