@@ -56,6 +56,11 @@ abstract class Person extends Model implements Searchable
 			->when($teamId, fn($q) => $q->where('team_id', $teamId))
 		);
 	}
+	
+    public function scopeAddFullName($query)
+    {
+    	$query->selectRaw("id, CONCAT(first_name,' ',last_name) as person_full_name");
+    }
 
 	public function scopeParent($query)
 	{
@@ -91,6 +96,11 @@ abstract class Person extends Model implements Searchable
 		}
 
 		return 'Inactive';
+	}
+
+	public static function getOptionsForTeamWithFullName($teamId)
+	{
+		return static::active($teamId)->addFullName()->pluck('person_full_name', 'id');
 	}
 
 	/* ACTIONS */
