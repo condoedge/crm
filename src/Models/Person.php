@@ -49,6 +49,11 @@ abstract class Person extends Model implements Searchable
 		return $this->hasMany(PersonTeam::class);
 	}
 
+	public function diciplinaryActions()
+	{
+		return $this->hasMany(DiciplinaryAction::class);
+	}
+
 	/* SCOPES */
 	public function scopeActive($query, $teamId = null)
 	{
@@ -72,6 +77,16 @@ abstract class Person extends Model implements Searchable
 		return $query->whereHas('person2Links');
 	}
 
+	public function scopeHasActiveTeam($query)
+	{
+		return $query->whereHas('personTeams', fn($q) => $q->active());
+	}
+
+	public function scopeOnlyInThisTeam($query, $teamId = null)
+	{
+		return $query->whereHas('personTeams', fn($q) => $q->where('team_id', $teamId ?? currentTeamId()));
+	}
+
 	/* CALCULATED FIELDS */
 	public function getAllPersonLinks()
 	{
@@ -87,15 +102,23 @@ abstract class Person extends Model implements Searchable
 
 	public function getActivityStatus()
 	{
+		if($this->diciplinaryActions()->active()->banType()->exists()) {
+			return 'translate.banned';
+		}
+
+		if($this->diciplinaryActions()->active()->blockType()->exists()) {
+			return 'translate.blocked';
+		}
+
 		if (!$this->personTeams->count()) {
-			return 'En attente';
+			return 'translate.en-attente';
 		}
 
 		if ($this->personTeams->whereNull('to')->first()) {
-			return 'Active';
+			return 'translate.active';
 		}
 
-		return 'Inactive';
+		return 'translate.inactive';
 	}
 
 	public static function getOptionsForTeamWithFullName($teamId)

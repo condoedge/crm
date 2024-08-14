@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
+use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\Person;
 use Kompo\Auth\Models\Model;
 
@@ -10,12 +11,12 @@ class PersonLink extends Model
 	/* RELATIONS */
 	public function person1()
 	{
-		return $this->belongsTo(config('condoedge-crm.person-model-namespace'), 'person1_id');
+		return $this->belongsTo(PersonModel::getClass(), 'person1_id');
 	}
 
 	public function person2()
 	{
-		return $this->belongsTo(config('condoedge-crm.person-model-namespace'), 'person2_id');
+		return $this->belongsTo(PersonModel::getClass(), 'person2_id');
 	}
 
 	/* SCOPES */
