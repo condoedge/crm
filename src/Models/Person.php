@@ -100,13 +100,23 @@ abstract class Person extends Model implements Searchable
 		return getFullName($this->first_name, $this->last_name);
 	}
 
+	public function hasActiveBlock()
+	{
+		return $this->diciplinaryActions()->active()->blockType()->exists();
+	}
+
+	public function hasActiveBan()
+	{
+		return $this->diciplinaryActions()->active()->banType()->exists();
+	}
+
 	public function getActivityStatus()
 	{
-		if($this->diciplinaryActions()->active()->banType()->exists()) {
+		if($this->hasActiveBan()) {
 			return 'translate.banned';
 		}
 
-		if($this->diciplinaryActions()->active()->blockType()->exists()) {
+		if($this->hasActiveBlock()) {
 			return 'translate.blocked';
 		}
 

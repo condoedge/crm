@@ -93,6 +93,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
     {
         $this->commands([
             \Condoedge\Crm\Console\Commands\SyncDiciplinaryActionsCommand::class,
+            \Condoedge\Crm\Console\Commands\SyncTeamRolesCommand::class,
         ]);
     }
 
@@ -101,6 +102,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
         $schedule = $this->app->make(Schedule::class);
 
         $schedule->command('crm:sync-diciplinary-actions-command')->daily();
+        $schedule->command('crm:sync-team-roles-command')->daily();
     }
     
     /**
