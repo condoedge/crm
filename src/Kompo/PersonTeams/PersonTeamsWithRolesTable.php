@@ -63,6 +63,7 @@ class PersonTeamsWithRolesTable extends Table
             _Html(),
 
             _TripleDotsDropdown(
+                _Link('translate.delete')->class('py-1 px-3')->selfPost('deleteAsignation', ['team_role_id' => $personTeam->id])->refresh(),
                 ($personTeam->teamRole && !$personTeam->teamRole->terminated_at || !$personTeam->to) 
                     ? _Link('translate.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->refresh()
                     : null,
@@ -74,6 +75,12 @@ class PersonTeamsWithRolesTable extends Table
     {
         $teamRole = PersonTeam::findOrFail($personTeamId);
         $teamRole->terminate();
+    }
+
+    public function deleteAsignation($personTeamId)
+    {
+        $teamRole = PersonTeam::findOrFail($personTeamId);
+        $teamRole->deleteAsignation();
     }
 
     public function getAssignRoleModal()

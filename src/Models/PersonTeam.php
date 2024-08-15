@@ -39,6 +39,12 @@ class PersonTeam extends Model
 		$this->teamRole?->terminate();
 	}
 
+	public function deleteAsignation()
+	{
+		$this->teamRole?->deleteAsignation();
+		$this->delete();
+	}
+
 	public static function createFromTeamRole($teamRole)
 	{
 		$personTeam = new static;
