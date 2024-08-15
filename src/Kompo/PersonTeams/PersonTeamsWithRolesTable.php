@@ -78,6 +78,11 @@ class PersonTeamsWithRolesTable extends Table
 
     public function getAssignRoleModal()
     {
+        if (!$this->person->relatedUser) {
+            // Here we could open a modal to set a new personTeam without teamRole
+            return _CardWhiteP4(_Html('translate.user-not-linked'));
+        }
+
         return new (config('kompo-auth.assign-role-modal-namespace'))([
             'user_id' => $this->person->relatedUser?->id,
         ]);
