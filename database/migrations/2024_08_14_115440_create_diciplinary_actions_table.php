@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('action_reason_description');
             $table->tinyInteger('action_type'); // ENUM
 
-            $table->foreignId('person_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('person_id')->constrained('persons')->cascadeOnDelete();
 
             $table->timestamp('action_from');
             $table->timestamp('action_to')->nullable();
