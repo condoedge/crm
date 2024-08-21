@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('diciplinary_actions', function (Blueprint $table) {
-            addMetaData($table);
+        if (!Schema::hasTable('diciplinary_actions')) {
+            Schema::create('diciplinary_actions', function (Blueprint $table) {
+                addMetaData($table);
 
-            $table->tinyInteger('action_reason_type'); // ENUM
-            $table->text('action_reason_description');
-            $table->tinyInteger('action_type'); // ENUM
+                $table->tinyInteger('action_reason_type'); // ENUM
+                $table->text('action_reason_description');
+                $table->tinyInteger('action_type'); // ENUM
 
-            $table->foreignId('person_id')->constrained('persons')->cascadeOnDelete();
+                $table->foreignId('person_id')->constrained('persons')->cascadeOnDelete();
 
-            $table->timestamp('action_from');
-            $table->timestamp('action_to')->nullable();
-        });
+                $table->timestamp('action_from');
+                $table->timestamp('action_to')->nullable();
+            });
+        }
     }
 
     /**
