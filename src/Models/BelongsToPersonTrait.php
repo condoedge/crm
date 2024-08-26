@@ -17,6 +17,10 @@ trait BelongsToPersonTrait
     }
 
 	/* CALCULATED FIELDS */
+    public function getPersonLabelAttribute()
+    {
+        return $this->person?->full_name;
+    }
 
 	/* ACTIONS */
 
