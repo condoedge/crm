@@ -2,6 +2,8 @@
 
 namespace Condoedge\Crm;
 
+use Condoedge\Crm\Facades\PersonModel;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 
@@ -29,6 +31,9 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
         $this->loadConfig();
 
         $this->loadRelationsMorphMap();
+
+        $this->setCommands();
+        $this->setCronJobs();
     }
 
     /**
@@ -42,6 +47,8 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
         $this->booted(function () {
             \Route::middleware('web')->group(__DIR__.'/../routes/web.php');
         });
+
+        $this->app->bind('person-model', config('condoedge-crm.person-model-namespace'));
     }
 
     protected function loadHelpers()
@@ -81,6 +88,22 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
             $this->mergeConfigFrom($path, $key);
         }
     }
+
+    protected function setCommands()
+    {
+        $this->commands([
+            \Condoedge\Crm\Console\Commands\SyncDiciplinaryActionsCommand::class,
+            \Condoedge\Crm\Console\Commands\SyncTeamRolesCommand::class,
+        ]);
+    }
+
+    protected function setCronJobs()
+    {
+        $schedule = $this->app->make(Schedule::class);
+
+        $schedule->command('crm:sync-diciplinary-actions-command')->daily();
+        $schedule->command('crm:sync-team-roles-command')->daily();
+    }
     
     /**
      * Loads a relations morph map.
@@ -89,7 +112,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'event' => config('condoedge-crm.event-model-namespace'),
-            'person' => config('condoedge-crm.person-model-namespace'),
+            'person' => PersonModel::getClass(),
         ]);
     }
 }

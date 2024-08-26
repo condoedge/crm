@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
+use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\Person;
 
 trait HasManyPersonsTrait
@@ -9,7 +10,7 @@ trait HasManyPersonsTrait
 	/* RELATIONS */
     public function persons()
     {
-        return $this->hasMany(config('condoedge-crm.person-model-namespace'));
+        return $this->hasMany(PersonModel::getClass());
     }
 
     public function latestPersons()

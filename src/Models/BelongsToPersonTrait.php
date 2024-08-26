@@ -2,12 +2,14 @@
 
 namespace Condoedge\Crm\Models;
 
+use Condoedge\Crm\Facades\PersonModel;
+
 trait BelongsToPersonTrait
 {
 	/* RELATIONS */
     public function person()
     {
-        return $this->belongsTo(config('condoedge-crm.person-model-namespace'));
+        return $this->belongsTo(PersonModel::getClass());
     }
 
     /* SCOPES */

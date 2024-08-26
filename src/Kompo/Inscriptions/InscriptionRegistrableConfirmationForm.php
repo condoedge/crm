@@ -2,9 +2,9 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Models\Crm\Person;
 use App\Models\Crm\PersonEvent;
 use App\Models\Events\Event;
+use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\Inscription;
 use Kompo\Auth\Common\ImgFormLayout;
 
@@ -17,7 +17,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     protected $eventId;
     protected $event;
 
-    public $model = Person::class;
+    public $model = PersonModel::class;
 
     public function created()
     {

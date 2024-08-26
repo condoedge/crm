@@ -3,18 +3,19 @@
 namespace Condoedge\Crm\Models;
 
 use App\Models\Crm\Person;
+use Condoedge\Crm\Facades\PersonModel;
 
 trait PersonInscriptionsRelatedTrait
 {
     /* RELATIONS */
     public function registeredBy()
     {
-        return $this->belongsTo(Person::class, 'registered_by');
+        return $this->belongsTo(PersonModel::getClass(), 'registered_by');
     }
 
     public function registeredBys()
     {
-        return $this->hasMany(Person::class, 'registered_by');
+        return $this->hasMany(PersonModel::getClass(), 'registered_by');
     }
 
     /* CALCULATED FIELDS */

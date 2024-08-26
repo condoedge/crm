@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Models\Crm\Person;
+use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\GenderEnum;
 use Condoedge\Crm\Models\Inscription;
 use Kompo\Auth\Common\ImgFormLayout;
@@ -11,7 +11,7 @@ class InscriptionPersonLinkForm extends ImgFormLayout
 {
     protected $imgUrl = 'images/base-email-image.png';
 
-	public $model = Person::class;
+	public $model = PersonModel::class;
 
     protected $inscriptionId;
     protected $inscription;

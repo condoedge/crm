@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Models\Crm\Person;
+use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\SpokenLanguageEnum;
 use Kompo\Auth\Common\ImgFormLayout;
 use Kompo\Auth\Models\Teams\EmailRequest;
@@ -12,7 +12,7 @@ class InscriptionPersonForm extends ImgFormLayout
     protected $imgUrl = 'images/base-email-image.png';
 	protected $rightColumnBodyWrapperClass = '';
 
-	public $model = Person::class;
+	public $model = PersonModel::class;
 
     protected $qrCode;
 

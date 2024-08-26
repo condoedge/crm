@@ -17,7 +17,7 @@ abstract class Event extends Model
 	protected $casts = [
 		'schedule_start' => 'datetime',
 		'schedule_end' => 'datetime',
-		'cover_av' => 'array',
+		'cover_ev' => 'array',
 	];
 
 	public function save(array $options = [])
