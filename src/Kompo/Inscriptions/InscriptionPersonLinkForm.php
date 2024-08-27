@@ -24,7 +24,7 @@ class InscriptionPersonLinkForm extends ImgFormLayout
         $this->inscription = Inscription::findOrFail($this->inscriptionId);
 
 		$this->mainPersonId = $this->inscription->inscribed_by;
-		$this->mainPerson = Person::findOrFail($this->mainPersonId);
+		$this->mainPerson = PersonModel::findOrFail($this->mainPersonId);
 	}
 
 	public function beforeSave()

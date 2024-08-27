@@ -35,7 +35,7 @@ trait HasManyPersonsTrait
 
     public function createPersonFromUser()
     {
-        $person = Person::newPersonFromEmail($this->email);
+        $person = PersonModel::newPersonFromEmail($this->email);
         $person->user_id = $this->id;
         $person->first_name = $this->first_name;
         $person->last_name = $this->last_name;

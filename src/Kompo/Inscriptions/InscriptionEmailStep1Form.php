@@ -2,8 +2,9 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
+use App\Kompo\Inscriptions\InscriptionTypeEnum;
 use App\Models\User;
-use App\Models\Crm\Person;
+use Condoedge\Crm\Facades\PersonModel;
 use Kompo\Auth\Common\ImgFormLayout;
 use Kompo\Auth\Models\Teams\EmailRequest;
 
@@ -12,18 +13,20 @@ class InscriptionEmailStep1Form extends ImgFormLayout
     protected $imgUrl = 'images/base-email-image.png';
 
     protected $qrCode;
+	protected $type;
 
     public function created()
     {
         $this->qrCode = $this->prop('qr_code');
+		$this->type = $this->prop('type') ?? collect(getInscriptionTypesKeys())->first() ?? null;
     }
 
 	public function handle()
 	{
 		$email = request('email');
 
-		$person = Person::getOrCreatePersonFromEmail($email);
-		$redirectTo = $person->getInscriptionPersonRoute($this->qrCode);
+		$person = PersonModel::getOrCreatePersonFromEmail($email);
+		$redirectTo = $this->getRedirectUrl($person);
 
 		if ($user = User::where('email', $email)->first()) {
 			return redirect(route('login.password', [
@@ -42,6 +45,11 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 		}
 
 
+	}
+
+	protected function getRedirectUrl($person)
+	{
+		return InscriptionTypeEnum::from($this->type)->registerRoute($person, $this->qrCode);
 	}
 
 	public function rightColumnBody()

@@ -3,11 +3,14 @@
 namespace Condoedge\Crm\Models;
 
 use App\Models\User;
+use Condoedge\Crm\Facades\PersonModel;
 use Kompo\Auth\Models\Contracts\Searchable;
 use Kompo\Auth\Models\Model;
+use Kompo\Auth\Models\Email\Email;
 
 abstract class Person extends Model implements Searchable
 {
+	use \Kompo\Auth\Models\Email\MorphManyEmails;
 	use \Kompo\Auth\Models\Maps\MorphManyAddresses;
 	use \Kompo\Auth\Models\Phone\MorphManyPhones;
 	use \Kompo\Auth\Models\Files\MorphManyFilesTrait;
@@ -21,6 +24,20 @@ abstract class Person extends Model implements Searchable
 	];
 
 	protected $table = 'persons';
+
+	public function save(array $options = [])
+	{
+		if ($this->email_identity && $this->getDirty('email_identity') && ($email = $this->emails()->where('address_em', $this->getOriginal("email_identity"))->first())) {
+			$email->address_em = $this->email_identity;
+			$email->save();
+		}
+
+		if ($this->email_identity && !$this->emails()->count()) {
+			Email::createMainFor($this, $this->email_identity);
+		}
+
+		parent::save($options);
+	}
 
 
 	/* RELATIONS */
@@ -87,6 +104,13 @@ abstract class Person extends Model implements Searchable
 		return $query->whereHas('personTeams', fn($q) => $q->where('team_id', $teamId ?? currentTeamId()));
 	}
 
+	public function scopeSearchByEmail($query, $email)
+	{
+		return $query->where(fn($q) => $q->where('email_identity', $email)
+			->orWhereHas('emails', fn($q) => $q->where('address_em', $email))
+		);
+	}
+
 	/* CALCULATED FIELDS */
 	public function getAllPersonLinks()
 	{
@@ -139,10 +163,10 @@ abstract class Person extends Model implements Searchable
 	/* ACTIONS */
 	public static function retrieveByEmailIdentity($email)
 	{
-		$person = Person::where('email_identity', $email)->first();
+		$person = PersonModel::searchByEmail($email)->first();
 
 		if (!$person) {
-			$person = Person::newPersonFromEmail($email);
+			$person = PersonModel::newPersonFromEmail($email);
 		}
 
 		return $person;
