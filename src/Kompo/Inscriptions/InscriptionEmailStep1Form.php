@@ -49,7 +49,7 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 
 	protected function getRedirectUrl($person)
 	{
-		return InscriptionTypeEnum::from($this->type)->registerRoute($person, $this->qrCode);
+		return getInscriptionTypes()[$this->type]->registerRoute($person, $this->qrCode);
 	}
 
 	public function rightColumnBody()

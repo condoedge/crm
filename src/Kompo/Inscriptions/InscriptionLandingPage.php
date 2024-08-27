@@ -21,7 +21,7 @@ class InscriptionLandingPage extends ImgFormLayout
         if (auth()->user()) {
             $person = auth()->user()->getRelatedMainPerson();
 
-    		return redirect(getInscriptionTypesKeys()[$type]->registerRoute($person, $this->qrCode));
+    		return redirect(getInscriptionTypes()[$type]->registerRoute($person, $this->qrCode));
     	} else {
     		return redirect()->route('inscription.email.step1', [
                 'qr_code' => $this->qrCode,
@@ -46,7 +46,6 @@ class InscriptionLandingPage extends ImgFormLayout
 	}
 
     /**
-     * Summary of optionButton
      * @param \Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum $type 
      * @return mixed
      */
