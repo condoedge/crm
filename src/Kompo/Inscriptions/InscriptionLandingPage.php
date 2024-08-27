@@ -2,7 +2,6 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Kompo\Inscriptions\InscriptionTypeEnum;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionLandingPage extends ImgFormLayout
