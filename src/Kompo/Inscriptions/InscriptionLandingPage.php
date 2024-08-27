@@ -21,7 +21,7 @@ class InscriptionLandingPage extends ImgFormLayout
         if (auth()->user()) {
             $person = auth()->user()->getRelatedMainPerson();
 
-    		return redirect(InscriptionTypeEnum::from($type)->registerRoute($person, $this->qrCode));
+    		return redirect(getInscriptionTypesKeys()[$type]->registerRoute($person, $this->qrCode));
     	} else {
     		return redirect()->route('inscription.email.step1', [
                 'qr_code' => $this->qrCode,
@@ -38,14 +38,19 @@ class InscriptionLandingPage extends ImgFormLayout
             _Html('translate.inscriptions.i-want-to-register-and-i-am')->class('mb-6 text-lg'),
 
             _Rows(
-                collect(InscriptionTypeEnum::cases())->map(function($type) {
+                collect(getInscriptionTypes())->map(function($type) {
                     return $this->optionButton($type);
                 }),
             )->class('gap-6'),
 		);
 	}
 
-    protected function optionButton(InscriptionTypeEnum $type)
+    /**
+     * Summary of optionButton
+     * @param \Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum $type 
+     * @return mixed
+     */
+    protected function optionButton($type)
     {
         return _Rows(
             _Html($type->registerTitle())->class('text-center !text-level1 font-semibold text-xl mb-2'),
