@@ -1,6 +1,6 @@
 <?php
 
-use App\Kompo\Inscriptions\InscriptionTypeEnum;
+use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 
 return [
     'event-model-namespace' => Condoedge\Crm\Models\Event::class,

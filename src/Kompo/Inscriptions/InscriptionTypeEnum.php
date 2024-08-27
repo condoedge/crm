@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Kompo\Inscriptions;
+namespace Condoedge\Crm\Kompo\Inscriptions;
 
 enum InscriptionTypeEnum: string
 {
