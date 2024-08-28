@@ -26,4 +26,11 @@ enum InscriptionTypeEnum: string
             self::GENERIC => $person->getInscriptionPersonRoute($qrCode),
         };
     }
+
+    public function getRole()
+    {
+        return match ($this) {
+            self::GENERIC => 'parent',
+        };
+    }
 }

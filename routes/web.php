@@ -15,7 +15,7 @@ Route::layout('layouts.guest')->group(function(){
 
     	Route::get('inscription/confirmation/{inscription_id}/{id}/{event_id}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
 
-    	Route::get('create-account/{pr_id}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
+    	Route::get('create-account/{inscription_id}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
 
 
     });

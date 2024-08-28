@@ -4,8 +4,8 @@ namespace Condoedge\Crm\Kompo\Inscriptions;
 
 use App\Models\Crm\PersonEvent;
 use App\Models\Events\Event;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
-use Condoedge\Crm\Models\Inscription;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionRegistrableConfirmationForm extends ImgFormLayout
@@ -22,7 +22,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     public function created()
     {
         $this->inscriptionId = $this->prop('inscription_id');
-        $this->inscription = Inscription::findOrFail($this->inscriptionId);
+        $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
 
         $this->eventId = $this->prop('event_id');
         $this->event = Event::findOrFail($this->eventId);

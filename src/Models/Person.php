@@ -160,6 +160,16 @@ abstract class Person extends Model implements Searchable
 		return static::active($teamId)->addFullName()->pluck('person_full_name', 'id');
 	}
 
+	public function getRegisteringPerson()
+	{
+		return $this->registeredBy ?: $this;
+	}
+
+	public function getRegisteringPersonEmail()
+	{
+		return $this->getRegisteringPerson()->email_identity;
+	}
+
 	/* ACTIONS */
 	public static function retrieveByEmailIdentity($email)
 	{
