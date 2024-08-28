@@ -24,9 +24,9 @@ class PersonTeamsWithRolesTable extends Table
     public function top()
     {
         return _FlexEnd(
-            _Dropdown('translate.actions')->button()
+            _Dropdown('permissions.actions')->button()
                 ->submenu(
-                    _Link('translate.assign-role')->class('py-1 px-3')->selfGet('getAssignRoleModal')->inModal(),
+                    _Link('permissions.assign-role')->class('py-1 px-3')->selfGet('getAssignRoleModal')->inModal(),
                 ),
         )->class('mb-3');
     }
@@ -43,10 +43,10 @@ class PersonTeamsWithRolesTable extends Table
     public function headers()
     {
         return [
-            _Th('translate.role'),
-            _Th('translate.team'),
-            _Th('translate.date'),
-            _Th('translate.status'),
+            _Th('permissions.role'),
+            _Th('permissions.team'),
+            _Th('permissions.date'),
+            _Th('permissions.status'),
             _Th()->class('w-8'),
         ];
     }
@@ -63,9 +63,9 @@ class PersonTeamsWithRolesTable extends Table
             _Html(),
 
             _TripleDotsDropdown(
-                _Link('translate.delete')->class('py-1 px-3')->selfPost('deleteAsignation', ['team_role_id' => $personTeam->id])->refresh(),
+                _Link('permissions.delete')->class('py-1 px-3')->selfPost('deleteAsignation', ['team_role_id' => $personTeam->id])->refresh(),
                 ($personTeam->teamRole && !$personTeam->teamRole->terminated_at || !$personTeam->to) 
-                    ? _Link('translate.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->refresh()
+                    ? _Link('permissions.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->refresh()
                     : null,
             ),
         );
@@ -87,7 +87,7 @@ class PersonTeamsWithRolesTable extends Table
     {
         if (!$this->person->relatedUser) {
             // Here we could open a modal to set a new personTeam without teamRole
-            return _CardWhiteP4(_Html('translate.user-not-linked'));
+            return _CardWhiteP4(_Html('permissions.user-not-linked'));
         }
 
         return new (config('kompo-auth.assign-role-modal-namespace'))([

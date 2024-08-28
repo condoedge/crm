@@ -137,22 +137,22 @@ abstract class Person extends Model implements Searchable
 	public function getActivityStatus()
 	{
 		if($this->hasActiveBan()) {
-			return 'translate.banned';
+			return 'crm.banned';
 		}
 
 		if($this->hasActiveBlock()) {
-			return 'translate.blocked';
+			return 'crm.blocked';
 		}
 
 		if (!$this->personTeams->count()) {
-			return 'translate.en-attente';
+			return 'crm.pending';
 		}
 
 		if ($this->personTeams->whereNull('to')->first()) {
-			return 'translate.active';
+			return 'crm.active';
 		}
 
-		return 'translate.inactive';
+		return 'crm.inactive';
 	}
 
 	public static function getOptionsForTeamWithFullName($teamId)
