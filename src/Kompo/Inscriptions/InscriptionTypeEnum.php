@@ -9,14 +9,14 @@ enum InscriptionTypeEnum: string
     public function registerTitle()
     {
         return match ($this) {
-            self::GENERIC => 'translate.inscriptions.a-parent',
+            self::GENERIC => 'inscriptions.a-parent',
         };
     }
 
     public function registerDescription()
     {
         return match ($this) {
-            self::GENERIC => 'translate.inscriptions.a-parent-desc',
+            self::GENERIC => 'inscriptions.a-parent-desc',
         };
     }
 

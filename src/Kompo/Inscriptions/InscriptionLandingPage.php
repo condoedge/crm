@@ -35,7 +35,7 @@ class InscriptionLandingPage extends ImgFormLayout
 		return _Rows(
 			_LogoOnly()->class('self-center')->style('margin-bottom:60px;'),
             _RegistrableFromQrCodeTitle($this->qrCode),
-            _Html('translate.inscriptions.i-want-to-register-and-i-am')->class('mb-6 text-lg'),
+            _Html('inscriptions.i-want-to-register-and-i-am')->class('mb-6 text-lg'),
 
             _Rows(
                 collect(getInscriptionTypes())->map(function($type) {
