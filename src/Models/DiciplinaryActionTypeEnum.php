@@ -12,16 +12,16 @@ enum DiciplinaryActionTypeEnum: int
     public function label()
     {
         return match ($this) {
-            self::BLOCK => 'translate.block',
-            self::BAN => 'translate.ban',
+            self::BLOCK => 'disciplinary.block',
+            self::BAN => 'disciplinary.ban',
         };
     }
 
     public function formTitle()
     {
         return match ($this) {
-            self::BLOCK => 'translate.block-this-member',
-            self::BAN => 'translate.ban-this-member',
+            self::BLOCK => 'disciplinary.block-this-member',
+            self::BAN => 'disciplinary.ban-this-member',
         };
     }
 

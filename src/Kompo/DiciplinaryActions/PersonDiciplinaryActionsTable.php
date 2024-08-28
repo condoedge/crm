@@ -20,8 +20,8 @@ class PersonDiciplinaryActionsTable extends WhiteTable
     public function top()
     {
         return _FlexBetween(
-            _TitleMain('translate.diciplinary-actions'),
-            _Button('translate.add-new-diciplinary-action')->selfCreate('getDiciplinaryActionForm')->inModal(),
+            _TitleMain('disciplinary.disciplinary-actions'),
+            _Button('disciplinary.add-new-disciplinary-action')->selfCreate('getDiciplinaryActionForm')->inModal(),
         )->class('mb-4');
     }
 
@@ -33,11 +33,11 @@ class PersonDiciplinaryActionsTable extends WhiteTable
     public function headers()
     {
         return [
-            _Th('translate.effective-date'),
-            _Th('translate.reason'),
-            _Th('translate.reason-description'),
-            _Th('translate.added-by'),
-            _Th('translate.action-type'),
+            _Th('disciplinary.effective-date'),
+            _Th('disciplinary.reason'),
+            _Th('disciplinary.reason-description'),
+            _Th('disciplinary.added-by'),
+            _Th('disciplinary.action-type'),
             _Th('')->class('w-8'),
         ];  
     }
@@ -55,8 +55,8 @@ class PersonDiciplinaryActionsTable extends WhiteTable
             $diciplinaryAction->actionTypePill(),
 
             _TripleDotsDropdown(
-                _Link('translate.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
-                _Link('translate.finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh(),
+                _Link('disciplinary.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
+                _Link('disciplinary.finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh(),
             ),
         );
     }
