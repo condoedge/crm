@@ -5,7 +5,7 @@ namespace Condoedge\Crm\Kompo\PersonTeams;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\PersonTeam;
 use Kompo\Auth\Models\Teams\TeamRole;
-use Kompo\Table;
+use Kompo\Auth\Common\Table;
 
 class PersonTeamsWithRolesTable extends Table
 {

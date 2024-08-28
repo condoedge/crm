@@ -41,7 +41,7 @@ trait PersonInscriptionsRelatedTrait
 
     public static function getSameInscriptionPersons($inscriptionId)
     {
-        return Person::where('inscription_id', $inscriptionId)->get();
+        return PersonModel::where('inscription_id', $inscriptionId)->get();
     }
 
     public function getPreviousInscriptionPerson($inscriptionId)
@@ -57,10 +57,10 @@ trait PersonInscriptionsRelatedTrait
     /* ACTIONS */
     public static function getOrCreatePersonFromEmail($email)
     {
-        $person = Person::where('email_identity', $email)->latest()->first();
+        $person = PersonModel::where('email_identity', $email)->latest()->first();
 
         if (!$person) {
-            $person = Person::createPersonFromEmail($email);
+            $person = PersonModel::createPersonFromEmail($email);
         }
 
         return $person;
@@ -68,7 +68,7 @@ trait PersonInscriptionsRelatedTrait
 
     public static function createPersonFromEmail($email)
     {
-        $person = Person::newPersonFromEmail($email);
+        $person = PersonModel::newPersonFromEmail($email);
         $person->save();
 
         return $person;
