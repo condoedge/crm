@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
+use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Model;
@@ -26,6 +27,11 @@ class Inscription extends Model
     public function role()
     {
         return $this->belongsTo(RoleModel::getClass());
+    }
+
+    public function inscribedBy()
+    {
+        return $this->belongsTo(PersonModel::getClass(), 'inscribed_by');
     }
 
 	/* SCOPES */
@@ -67,6 +73,11 @@ class Inscription extends Model
         return InscriptionTypeEnum::GENERIC;
     }
 
+    public function isApproved()
+    {
+        $this->status == InscriptionStatusEnum::APPROVED;
+    }
+
 	/* ACTIONS */
 	public function deleteInscriptionEventsIfAny($personId)
 	{
@@ -78,7 +89,7 @@ class Inscription extends Model
         return static::where('person_id', $personId)->where('team_id', $teamId)->where('type', $inscriptionType)->first();
     }
 
-    public static function getOrCreateForPerson($personId, $teamId, $inscriptionType)
+    public static function getOrCreateForPerson($personId, $teamId, $inscriptionType, $roleId = null)
     {
         if ($inscription = static::getForPerson($personId, $teamId, $inscriptionType)) {
             return $inscription;
@@ -88,6 +99,8 @@ class Inscription extends Model
         $inscription->person_id = $personId;
         $inscription->team_id = $teamId;
         $inscription->type = $inscriptionType;
+        $inscription->inscribed_by = auth()->user()->persons()->forTeams([currentTeamId()])->first()?->id; // We get the current person of the user
+        $inscription->role_id = $roleId;
         $inscription->save();
 
         return $inscription;
