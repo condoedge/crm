@@ -32,7 +32,7 @@ abstract class Person extends Model implements Searchable
 			$email->save();
 		}
 
-		if ($this->email_identity && !$this->emails()->count()) {
+		if ($this->exists && $this->email_identity && !$this->emails()->count()) {
 			Email::createMainFor($this, $this->email_identity);
 		}
 
@@ -78,7 +78,7 @@ abstract class Person extends Model implements Searchable
 			->when($teamId, fn($q) => $q->where('team_id', $teamId))
 		);
 	}
-	
+
     public function scopeAddFullName($query)
     {
     	$query->selectRaw("id, CONCAT(first_name,' ',last_name) as person_full_name");

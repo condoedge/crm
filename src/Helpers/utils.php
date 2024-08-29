@@ -3,6 +3,7 @@
 
 function getInscriptionTypes()
 {
+	dd(collect(config('condoedge-crm.inscription-types')));
     return collect(config('condoedge-crm.inscription-types'))->mapWithKeys(fn($e) => [$e->value => $e]);
 }
 
