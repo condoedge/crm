@@ -72,7 +72,7 @@ class PersonEvent extends Model
 	/* ROUTES */
 	public function getAcceptInscriptionUrl()
 	{
-		$inscription = InscriptionModel::getOrCreateForPerson($this->person_id, $this->event->team_id, InscriptionTypeEnum::GENERIC);
+		$inscription = InscriptionModel::getOrCreateForPerson($this->person_id, $this->event->team_id, InscriptionModel::defaultTypeForPersonEvent());
 		
 		return $inscription->getAcceptInscriptionUrl();
 	}

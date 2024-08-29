@@ -40,7 +40,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function afterSave()
     {
-        $this->model->createTeamRole($this->team, $this->inscription->type?->getRole() ?? 'parent');
+        $this->model->createTeamRole($this->team, $this->inscription->type?->getRole($this->inscription) ?? 'parent');
 
         $this->person->user_id = $this->model->id;
         $this->person->save();

@@ -17,7 +17,7 @@ class PersonRegistrableAcceptController extends Controller
         if ($user = User::where('email', $email)->first()) {
             
             if (!$team->hasUserWithEmail($email)) {
-                $user->createTeamRole($team, $inscription->type?->getRole() ?? 'parent');
+                $user->createTeamRole($team, $inscription->type?->getRole($inscription) ?? 'parent');
             }
 
             return redirect()->route('login.password', ['email' => $email]);

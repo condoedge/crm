@@ -25,7 +25,7 @@ class Inscription extends Model
 	/* RELATIONS */
     public function role()
     {
-        return $this->belongsTo(RoleModel::class);
+        return $this->belongsTo(RoleModel::getClass());
     }
 
 	/* SCOPES */
@@ -61,6 +61,11 @@ class Inscription extends Model
             'id' => $this->id,
         ]);
 	}
+
+    public static function defaultTypeForPersonEvent()
+    {
+        return InscriptionTypeEnum::GENERIC;
+    }
 
 	/* ACTIONS */
 	public function deleteInscriptionEventsIfAny($personId)

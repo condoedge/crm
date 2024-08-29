@@ -27,10 +27,15 @@ enum InscriptionTypeEnum: string
         };
     }
 
-    public function getRole()
+    public function getRole($inscription)
     {
         return match ($this) {
             self::GENERIC => 'parent',
         };
+    }
+
+    public static function defaultPersonEvent()
+    {
+
     }
 }
