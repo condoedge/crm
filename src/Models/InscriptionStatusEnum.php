@@ -13,9 +13,9 @@ enum InscriptionStatusEnum: int
     public function label(): string
     {
         return match ($this) {
-            self::PENDING => 'translate.pending',
-            self::APPROVED => 'translate.approved',
-            self::REJECTED => 'translate.rejected',
+            self::PENDING => 'crm.pending',
+            self::APPROVED => 'crm.approved',
+            self::REJECTED => 'crm.rejected',
         };
     }
 
