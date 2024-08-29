@@ -23,7 +23,7 @@ enum InscriptionStatusEnum: int
     {
         return match ($this) {
             self::PENDING => 'bg-warning',
-            self::APPROVED => 'bg-success',
+            self::APPROVED => 'bg-positive',
             self::REJECTED => 'bg-danger',
         };
     }

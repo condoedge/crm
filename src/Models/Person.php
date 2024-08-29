@@ -48,7 +48,7 @@ abstract class Person extends Model implements Searchable
 
 	public function relatedUser()
 	{
-		return $this->hasOne(User::class);
+		return $this->belongsTo(User::class, 'user_id');
 	}
 
 	public function person1Links()
