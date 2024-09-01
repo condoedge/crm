@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
+use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\GenderEnum;
 use Condoedge\Crm\Models\Inscription;
@@ -21,7 +22,7 @@ class InscriptionPersonLinkForm extends ImgFormLayout
 	public function created()
 	{
         $this->inscriptionId = $this->prop('inscription_id');
-        $this->inscription = Inscription::findOrFail($this->inscriptionId);
+        $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
 
 		$this->mainPersonId = $this->inscription->inscribed_by;
 		$this->mainPerson = PersonModel::findOrFail($this->mainPersonId);

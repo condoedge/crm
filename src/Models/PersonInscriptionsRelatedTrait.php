@@ -3,6 +3,7 @@
 namespace Condoedge\Crm\Models;
 
 use App\Models\Crm\Person;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 
 trait PersonInscriptionsRelatedTrait
@@ -84,10 +85,10 @@ trait PersonInscriptionsRelatedTrait
 
     public function createOrUpdateInscription($qrCode)
     {
-        $inscription = Inscription::where('inscribed_by', $this->id)->where('qr_inscription', $qrCode)->first();
+        $inscription = InscriptionModel::where('inscribed_by', $this->id)->where('qr_inscription', $qrCode)->first();
 
         if (!$inscription) {
-            $inscription = new Inscription();
+            $inscription = new (InscriptionModel::getClass());
             $inscription->inscribed_by = $this->id;
             $inscription->setNewQrCode($qrCode);
             $inscription->save();

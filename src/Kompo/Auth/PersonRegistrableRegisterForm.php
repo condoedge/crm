@@ -2,9 +2,8 @@
 
 namespace Condoedge\Crm\Kompo\Auth;
 
-use App\Models\Roles\ParentRole;
 use App\Models\User;
-use Condoedge\Crm\Models\PersonEvent;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class PersonRegistrableRegisterForm extends ImgFormLayout
@@ -13,19 +12,19 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public $model = User::class;
 
-    protected $prId;
-    protected $personEvent;
+    protected $inscriptionId;
+    protected $inscription;
     protected $team;
     protected $person;
     protected $registeringEmail;
 
     public function created()
     {
-        $this->prId = $this->prop('pr_id');
-        $this->personEvent = PersonEvent::findOrFail($this->prId);
-        $this->team = $this->personEvent->getRelatedTargetTeam();
-        $this->person = $this->personEvent->getRegisteringPerson();
-        $this->registeringEmail = $this->personEvent->getRegisteringPersonEmail();
+        $this->inscriptionId = $this->prop('inscription_id');
+        $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
+        $this->team = $this->inscription->team;
+        $this->person = $this->inscription->person->getRegisteringPerson();
+        $this->registeringEmail = $this->person->email_identity;
 
         $this->model->first_name = $this->person->first_name;
         $this->model->last_name = $this->person->last_name;
@@ -41,7 +40,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function afterSave()
     {
-        $this->model->createTeamRole($this->team, ParentRole::ROLE_KEY);
+        $this->model->createTeamRole($this->team, $this->inscription->type?->getRole($this->inscription) ?? 'parent');
 
         $this->person->user_id = $this->model->id;
         $this->person->save();
@@ -74,6 +73,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     public function rules()
     {
         return [
+            'show_email' => ['required', 'email', 'unique:users,email'],
             'password' => passwordRules(),
             'terms' => ['required', 'accepted'],
         ];

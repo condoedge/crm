@@ -48,7 +48,13 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
             \Route::middleware('web')->group(__DIR__.'/../routes/web.php');
         });
 
-        $this->app->bind('person-model', config('condoedge-crm.person-model-namespace'));
+        $this->app->bind('person-model', function () {
+            return new (config('condoedge-crm.person-model-namespace'));
+        });
+
+        $this->app->bind('inscription-model', function () {
+            return new (config('condoedge-crm.inscription-model-namespace'));
+        });
     }
 
     protected function loadHelpers()

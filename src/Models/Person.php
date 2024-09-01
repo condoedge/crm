@@ -32,7 +32,7 @@ abstract class Person extends Model implements Searchable
 			$email->save();
 		}
 
-		if ($this->email_identity && !$this->emails()->count()) {
+		if ($this->exists && $this->email_identity && !$this->emails()->count()) {
 			Email::createMainFor($this, $this->email_identity);
 		}
 
@@ -48,7 +48,7 @@ abstract class Person extends Model implements Searchable
 
 	public function relatedUser()
 	{
-		return $this->hasOne(User::class);
+		return $this->belongsTo(User::class, 'user_id');
 	}
 
 	public function person1Links()
@@ -78,7 +78,7 @@ abstract class Person extends Model implements Searchable
 			->when($teamId, fn($q) => $q->where('team_id', $teamId))
 		);
 	}
-	
+
     public function scopeAddFullName($query)
     {
     	$query->selectRaw("id, CONCAT(first_name,' ',last_name) as person_full_name");
@@ -158,6 +158,16 @@ abstract class Person extends Model implements Searchable
 	public static function getOptionsForTeamWithFullName($teamId)
 	{
 		return static::active($teamId)->addFullName()->pluck('person_full_name', 'id');
+	}
+
+	public function getRegisteringPerson()
+	{
+		return $this->registeredBy ?: $this;
+	}
+
+	public function getRegisteringPersonEmail()
+	{
+		return $this->getRegisteringPerson()->email_identity;
 	}
 
 	/* ACTIONS */
