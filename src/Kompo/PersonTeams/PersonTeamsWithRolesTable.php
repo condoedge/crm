@@ -4,7 +4,6 @@ namespace Condoedge\Crm\Kompo\PersonTeams;
 
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\PersonTeam;
-use Kompo\Auth\Models\Teams\TeamRole;
 use Kompo\Auth\Common\Table;
 
 class PersonTeamsWithRolesTable extends Table
@@ -24,20 +23,25 @@ class PersonTeamsWithRolesTable extends Table
     public function top()
     {
         return _FlexEnd(
+            _Toggle('translate.show-inactive')->name('show_all', false)->filter()
+                ->class('[&>.vlFormLabel]:w-max !mb-0'),
             _Dropdown('permissions.actions')->button()
                 ->submenu(
                     _Link('permissions.assign-role')->class('py-1 px-3')->selfGet('getAssignRoleModal')->inModal(),
                 ),
-        )->class('mb-3');
+        )->class('mb-3 gap-6 items-center');
     }
 
     public function query()
     {
-        return $this->person->personTeams()->with([
-            'team', 
-            'teamRole' => fn($q) => $q->withoutGlobalScopes(),
-            'teamRole.roleRelation',
-        ]);
+        return $this->person->personTeams()
+            ->when(!request('show_all'), fn($q) => $q->active())
+            ->orderByDesc('from')
+            ->with([
+                'team', 
+                'teamRole' => fn($q) => $q->withoutGlobalScopes(), // Here is only visual and we need to get the terminated roles so we remove the global scope
+                'teamRole.roleRelation',
+            ]);
     }
 
     public function headers()
@@ -63,9 +67,9 @@ class PersonTeamsWithRolesTable extends Table
             _Html(),
 
             _TripleDotsDropdown(
-                _Link('permissions.delete')->class('py-1 px-3')->selfPost('deleteAsignation', ['team_role_id' => $personTeam->id])->refresh(),
+                _DeleteLink('permissions.delete')->class('py-1 px-3 text-danger')->selfDelete('deleteAsignation', ['team_role_id' => $personTeam->id])->browse(),
                 ($personTeam->teamRole && !$personTeam->teamRole->terminated_at || !$personTeam->to) 
-                    ? _Link('permissions.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->refresh()
+                    ? _Link('permissions.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                     : null,
             ),
         );
