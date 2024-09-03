@@ -23,7 +23,7 @@ class PersonTeamsWithRolesTable extends Table
     public function top()
     {
         return _FlexEnd(
-            _Toggle('translate.show-inactive')->name('show_all', false)->filter()
+            _Toggle('permissions.show-inactive')->name('show_all', false)->filter()
                 ->class('[&>.vlFormLabel]:w-max !mb-0'),
             _Dropdown('permissions.actions')->button()
                 ->submenu(
