@@ -1,13 +1,14 @@
 <?php
 
-namespace Condoedge\Crm\Kompo\Inscriptions;
+namespace Condoedge\Crm\Kompo\Inscriptions\InscriptionFromParent;
 
 use Condoedge\Crm\Facades\PersonModel;
+use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Condoedge\Crm\Models\SpokenLanguageEnum;
 use Kompo\Auth\Common\ImgFormLayout;
 use Kompo\Auth\Models\Teams\EmailRequest;
 
-class InscriptionPersonForm extends ImgFormLayout
+class InscriptionFromParentForm extends ImgFormLayout
 {
     protected $imgUrl = 'images/base-email-image.png';
 	protected $rightColumnBodyWrapperClass = '';
@@ -40,7 +41,7 @@ class InscriptionPersonForm extends ImgFormLayout
 
 	public function response()
 	{
-		$inscription = $this->model->createOrUpdateInscription($this->qrCode);
+		$inscription = $this->model->createOrUpdateInscription($this->qrCode, InscriptionTypeEnum::PARENT);
 
 		return redirect($inscription->getInscriptionPersonLinkRoute());
 	}

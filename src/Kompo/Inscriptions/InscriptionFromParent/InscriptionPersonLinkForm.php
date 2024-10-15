@@ -1,6 +1,6 @@
 <?php
 
-namespace Condoedge\Crm\Kompo\Inscriptions;
+namespace Condoedge\Crm\Kompo\Inscriptions\InscriptionFromParent;
 
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
@@ -66,6 +66,6 @@ class InscriptionPersonLinkForm extends ImgFormLayout
 			return $this->inscription->getInscriptionPersonLinkRoute($prevPerson->id);
 		}
 
-		return $this->mainPerson->getInscriptionPersonRoute($this->inscription->qr_inscription);
+		return $this->mainPerson->getInscriptionFromPersonLinkRoute($this->inscription->qr_inscription);
 	}
 }

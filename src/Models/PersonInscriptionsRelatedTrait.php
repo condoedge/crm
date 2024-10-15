@@ -20,9 +20,9 @@ trait PersonInscriptionsRelatedTrait
     }
 
     /* CALCULATED FIELDS */
-    public function getInscriptionPersonRoute($qrCode = null)
+    public function getInscriptionFromPersonLinkRoute($qrCode = null)
     {
-        return \URL::signedRoute('inscription.person', [
+        return \URL::signedRoute('inscription.from-person-link', [
             'id' => $this->id,
             'qr_code' => $qrCode,
         ]);
@@ -83,12 +83,13 @@ trait PersonInscriptionsRelatedTrait
         return $person;
     }
 
-    public function createOrUpdateInscription($qrCode)
+    public function createOrUpdateInscription($qrCode, $type = null)
     {
         $inscription = InscriptionModel::where('inscribed_by', $this->id)->where('qr_inscription', $qrCode)->first();
 
         if (!$inscription) {
             $inscription = new (InscriptionModel::getClass());
+            $inscription->type = $type;
             $inscription->inscribed_by = $this->id;
             $inscription->setNewQrCode($qrCode);
             $inscription->save();

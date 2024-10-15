@@ -22,7 +22,6 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     {
         $this->inscriptionId = $this->prop('inscription_id');
         $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
-        $this->team = $this->inscription->team;
         $this->person = $this->inscription->person->getRegisteringPerson();
         $this->registeringEmail = $this->person->email_identity;
 
@@ -40,12 +39,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function afterSave()
     {
-        $this->model->createTeamRole($this->team, $this->inscription->type?->getRole($this->inscription) ?? 'parent');
-
-        $this->person->user_id = $this->model->id;
-        $this->person->save();
-
-        fireRegisteredEvent($this->model);
+        $this->inscription->confirmUserRegistration($this->model);
 
         auth()->guard()->login($this->model);
     }

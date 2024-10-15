@@ -99,11 +99,26 @@ class Inscription extends Model
         $inscription->person_id = $personId;
         $inscription->team_id = $teamId;
         $inscription->type = $inscriptionType;
-        $inscription->inscribed_by = auth()->user()->persons()->forTeams([currentTeamId()])->first()?->id; // We get the current person of the user
+        $inscription->inscribed_by = auth()->user()?->getRelatedMainPerson()?->id;
         $inscription->role_id = $roleId;
         $inscription->save();
 
         return $inscription;
     }
+
+    public function confirmUserRegistration($user)
+    {
+        $person = $this->person->getRegisteringPerson();
+
+        $role = RoleModel::getOrCreate($this->type->getRole($this));
+
+        $user->createTeamRole($this->team, $role);
+
+        $person->user_id = $user->id;
+        $person->save();
+
+        fireRegisteredEvent($user);
+    }
+
 	/* ELEMENTS */
 }
