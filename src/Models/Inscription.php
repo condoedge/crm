@@ -112,8 +112,9 @@ class Inscription extends Model
 
         $role = RoleModel::getOrCreate($this->type->getRole($this));
 
-        $user->createTeamRole($this->team, $role);
+        $teamRole = $user->createTeamRole($this->team, $role);
 
+        $person->personTeams()->where('team_id', $this->team->id)->update(['team_role_id' => $teamRole->id]);
         $person->user_id = $user->id;
         $person->save();
 

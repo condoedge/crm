@@ -89,7 +89,7 @@ trait PersonInscriptionsRelatedTrait
 
         if (!$inscription) {
             $inscription = new (InscriptionModel::getClass());
-            $inscription->type = $type;
+            $inscription->type = $type->value;
             $inscription->inscribed_by = $this->id;
             $inscription->setNewQrCode($qrCode);
             $inscription->save();

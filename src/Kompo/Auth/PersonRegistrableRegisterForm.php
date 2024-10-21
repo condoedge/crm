@@ -25,6 +25,13 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
         $this->person = $this->inscription->person->getRegisteringPerson();
         $this->registeringEmail = $this->person->email_identity;
 
+        $user = $this->person->relatedUser;
+
+        if ($user) {
+            $this->model($user);
+        }
+
+
         $this->model->first_name = $this->person->first_name;
         $this->model->last_name = $this->person->last_name;
     }
@@ -56,7 +63,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
                 ->value($this->registeringEmail)->inputClass('bg-gray-50 rounded-xl'),
 
             // _InputRegisterNames($this->person->first_name, $this->person->last_name),
-            _InputRegisterPasswords(),
+            $this->model->id ? null : _InputRegisterPasswords(),
             _CheckboxTerms(),
             _FlexEnd(
                 _SubmitButton('inscriptions.accept-invitation')
@@ -66,8 +73,13 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function rules()
     {
+        if ($this->model->id) {
+            return [
+                'terms' => ['required', 'accepted'],
+            ];
+        }
+
         return [
-            'show_email' => ['required', 'email', 'unique:users,email'],
             'password' => passwordRules(),
             'terms' => ['required', 'accepted'],
         ];
