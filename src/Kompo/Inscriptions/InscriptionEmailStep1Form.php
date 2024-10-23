@@ -60,4 +60,11 @@ class InscriptionEmailStep1Form extends ImgFormLayout
             _SubmitButtonBig2('inscriptions.verify-my-email')->redirect(),
 		];
 	}
+
+	public function rules()
+	{
+		return [
+			'email' => 'required|email'
+		];
+	}
 }

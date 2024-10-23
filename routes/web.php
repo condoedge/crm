@@ -9,10 +9,6 @@ Route::layout('layouts.guest')->group(function(){
 
 	Route::middleware(['signed'])->group(function(){
 
-    	Route::get('inscription/person-info/{id}/{qr_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionFromParent\InscriptionFromParentForm::class)->name('inscription.from-person-link');
-
-    	Route::get('inscription/person-link-info/{inscription_id}/{id?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionFromParent\InscriptionPersonLinkForm::class)->name('inscription.person-link');
-
     	Route::get('inscription/confirmation/{inscription_id}/{id}/{event_id}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
 
     	Route::get('create-account/{inscription_id}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');

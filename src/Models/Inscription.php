@@ -37,14 +37,6 @@ class Inscription extends Model
 	/* SCOPES */
 
 	/* CALCULATED FIELDS */
-    public function getInscriptionPersonLinkRoute($personLinkId = null)
-    {
-        return \URL::signedRoute('inscription.person-link', [
-            'inscription_id' => $this->id,
-            'id' => $personLinkId,
-        ]);
-    }
-
 	public function getInscriptionConfirmationRoute($personId, $eventId)
     {
         return \URL::signedRoute('inscription.confirmation', [
@@ -112,7 +104,7 @@ class Inscription extends Model
 
         $role = RoleModel::getOrCreate($this->type->getRole($this));
 
-        $teamRole = $user->createTeamRole($this->team, $role);
+        $teamRole = $user->createTeamRole($this->team, $role->id);
 
         $person->personTeams()->where('team_id', $this->team->id)->update(['team_role_id' => $teamRole->id]);
         $person->user_id = $user->id;

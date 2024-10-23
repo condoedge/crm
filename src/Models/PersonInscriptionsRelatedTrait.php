@@ -20,26 +20,6 @@ trait PersonInscriptionsRelatedTrait
     }
 
     /* CALCULATED FIELDS */
-    public function getInscriptionFromPersonLinkRoute($qrCode = null)
-    {
-        return \URL::signedRoute('inscription.from-person-link', [
-            'id' => $this->id,
-            'qr_code' => $qrCode,
-        ]);
-    }
-
-    public function getInscriptionTeamRoute($inscription = null)
-    {
-        if ($inscription && ($registrable = registrableFromQrCode($inscription->qr_inscription))) {
-            return $inscription->getInscriptionConfirmationRoute($this->id, $registrable->getRegistrableId());
-        }
-
-        return \URL::signedRoute('inscription.team', [
-            'inscription_id' => $inscription->id,
-            'id' => $this->id,
-        ]);
-    }
-
     public static function getSameInscriptionPersons($inscriptionId)
     {
         return PersonModel::where('inscription_id', $inscriptionId)->get();
@@ -89,8 +69,8 @@ trait PersonInscriptionsRelatedTrait
 
         if (!$inscription) {
             $inscription = new (InscriptionModel::getClass());
-            $inscription->type = $type->value;
-            $inscription->inscribed_by = $this->id;
+            $inscription->type = $type?->value;
+            $inscription->person_id = $this->id;
             $inscription->setNewQrCode($qrCode);
             $inscription->save();
         }

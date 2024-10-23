@@ -4,8 +4,6 @@ namespace Condoedge\Crm\Kompo\Inscriptions;
 
 enum InscriptionTypeEnum: string
 {
-    case PARENT = 'parent';
-
     /**
      * Get the title for the inscription type
      * @return string
@@ -13,7 +11,7 @@ enum InscriptionTypeEnum: string
     public function registerTitle()
     {
         return match ($this) {
-            self::PARENT => 'inscriptions.a-parent',
+            
         };
     }
 
@@ -24,7 +22,7 @@ enum InscriptionTypeEnum: string
     public function registerDescription()
     {
         return match ($this) {
-            self::PARENT => 'inscriptions.a-parent-desc',
+            
         };
     }
 
@@ -37,7 +35,7 @@ enum InscriptionTypeEnum: string
     public function registerRoute($person, $qrCode)
     {
         return match ($this) {
-            self::PARENT => $person->getInscriptionFromPersonLinkRoute($qrCode),
+            
         };
     }
 
@@ -49,7 +47,21 @@ enum InscriptionTypeEnum: string
     public function getRole($inscription)
     {
         return match ($this) {
-            self::PARENT => 'parent',
+            
+        };
+    }
+
+    public function confirmationRoute()
+    {
+        return match ($this) {
+            default => 'inscription.confirmation',
+        };
+    }
+
+    public function createForPerson($person, $qrCode)
+    {
+        return match ($this) {
+            default => $person->createOrUpdateInscription($qrCode, self::class),
         };
     }
 

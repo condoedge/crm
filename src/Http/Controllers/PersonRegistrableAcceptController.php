@@ -17,10 +17,10 @@ class PersonRegistrableAcceptController extends Controller
         if ($user = User::where('email', $email)->first()) {
             
             if (!$team->hasUserWithEmail($email)) {
-                $role = $inscription->type->getRole($inscription);
-                RoleModel::getOrCreate($role);
+                $roleId = $inscription->type->getRole($inscription);
+                RoleModel::getOrCreate($roleId);
                 
-                $user->createTeamRole($team, $role);
+                $user->createTeamRole($team, $roleId);
             }
 
             return redirect()->route('login.password', ['email' => $email]);

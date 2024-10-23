@@ -3,7 +3,6 @@
 namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\InscriptionModel;
-use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Kompo\Auth\Models\Model;
 
 class PersonEvent extends Model
@@ -16,6 +15,10 @@ class PersonEvent extends Model
 	];
 
 	/* RELATIONS */
+	public function inscription()
+	{
+		return $this->belongsTo(InscriptionModel::getClass());
+	}
 
 	/* SCOPES */
 	public function scopeCountInTotal($query)
@@ -72,8 +75,13 @@ class PersonEvent extends Model
 	/* ROUTES */
 	public function getAcceptInscriptionUrl()
 	{
-		$inscription = InscriptionModel::getOrCreateForPerson($this->person_id, $this->event->team_id, InscriptionModel::defaultTypeForPersonEvent());
+		$inscription = $this->inscription ?: InscriptionModel::getOrCreateForPerson($this->person_id, $this->event->team_id, InscriptionModel::defaultTypeForPersonEvent());
 		
+		if (!$inscription->team_id) {
+			$inscription->team_id = $this->event->team_id;
+			$inscription->save();
+		}
+
 		return $inscription->getAcceptInscriptionUrl();
 	}
 
