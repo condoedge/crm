@@ -183,17 +183,19 @@ abstract class Person extends Model implements Searchable
 		return $person;
 	}
 
+	public function constructFakeEmail()
+	{
+		return \Str::slug($this->full_name) . '@user.coolecto.com';
+	}
+
 	public function createOrGetUserByRegisteredBy($inscription, $team)
 	{
-		$user = null;
-
-		if($this->email) {
-			$user = User::where('email', $this->email)->first();
-		}
+		$user = User::where('email', $this->email ?: $this->constructFakeEmail())->first();
 
 		if(!$user) {
 			$user = User::create([
-				'email' => $this->email,
+				'name' => $this->full_name,
+				'email' => $this->constructFakeEmail(), // TODO we could do the email nullable 
 				'password' => bcrypt(value: \Str::random(12)),
 			]);
 		}
@@ -201,7 +203,10 @@ abstract class Person extends Model implements Searchable
 		if ($role = $inscription->type->getRegisteredByRole()) {
 			RoleModel::getOrCreate($role);
 			
-			$user->createTeamRole($team, $role);
+			$teamRole = $user->createTeamRole($team, $role);
+
+			PersonTeam::where('person_id', $this->id)->where('team_id', $team->id)->whereNull('team_role_id')
+				->update(['team_role_id' => $teamRole->id]);
 		}
 		
 	}
