@@ -51,6 +51,13 @@ enum InscriptionTypeEnum: string
         };
     }
 
+    public function getRegisteredByRole()
+    {
+        return match ($this) {
+            
+        };
+    }
+
     public function confirmationRoute()
     {
         return match ($this) {
