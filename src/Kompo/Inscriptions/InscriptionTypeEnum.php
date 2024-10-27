@@ -4,33 +4,71 @@ namespace Condoedge\Crm\Kompo\Inscriptions;
 
 enum InscriptionTypeEnum: string
 {
-    case GENERIC = 'generic';
-
+    /**
+     * Get the title for the inscription type
+     * @return string
+     */
     public function registerTitle()
     {
         return match ($this) {
-            self::GENERIC => 'inscriptions.a-parent',
+            
         };
     }
 
+    /**
+     * Get the description for the inscription type
+     * @return string
+     */
     public function registerDescription()
     {
         return match ($this) {
-            self::GENERIC => 'inscriptions.a-parent-desc',
+            
         };
     }
 
+    /**
+     *  Get the route for the inscription type
+     * @param \Condoedge\Crm\Models\Person; $person
+     * @param string|null $qrCode
+     * @return string
+     */
     public function registerRoute($person, $qrCode)
     {
         return match ($this) {
-            self::GENERIC => $person->getInscriptionPersonRoute($qrCode),
+            
         };
     }
 
+    /**
+     * Get the role id for the inscription type
+     * @param \Condoedge\Crm\Models\Inscription $inscription
+     * @return string
+     */
     public function getRole($inscription)
     {
         return match ($this) {
-            self::GENERIC => 'parent',
+            
+        };
+    }
+
+    public function getRegisteredByRole()
+    {
+        return match ($this) {
+            
+        };
+    }
+
+    public function confirmationRoute()
+    {
+        return match ($this) {
+            default => 'inscription.confirmation',
+        };
+    }
+
+    public function createForPerson($person, $qrCode)
+    {
+        return match ($this) {
+            default => $person->createOrUpdateInscription($qrCode, self::class),
         };
     }
 

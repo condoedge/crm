@@ -11,6 +11,10 @@ class PersonTeam extends Model
 {
 	use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 	use \Condoedge\Crm\Models\BelongsToPersonTrait;
+
+	protected $fillable = [
+		'team_role_id',
+	];
 	
 	/* RELATIONS */
 	public function teamRole()

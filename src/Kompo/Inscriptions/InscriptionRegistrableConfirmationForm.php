@@ -38,7 +38,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
             
             $this->customRegistrableInfo(),
 
-            _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
+            !$this->model->registered_by ? null : _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
             _Button('inscriptions.register-and-complete')->selfPost('registerAndFinish')->redirect(),
         )->class('p-8');
     }
@@ -50,9 +50,9 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function registerAndAddAnother()
     {
-        $this->assignMemberToUnit();
+		$inscription = $this->inscription->type?->createForPerson($this->model, $this->inscription->qr_inscription) ?: $this->model->createOrUpdateInscription($this->inscription->qr_inscription, $this->inscription->type);
 
-        return redirect($this->inscription->getInscriptionPersonLinkRoute());
+		return redirect($inscription->getInscriptionPersonLinkRoute());
     }
 
     public function registerAndFinish()

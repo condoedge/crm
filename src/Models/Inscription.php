@@ -37,14 +37,6 @@ class Inscription extends Model
 	/* SCOPES */
 
 	/* CALCULATED FIELDS */
-    public function getInscriptionPersonLinkRoute($personLinkId = null)
-    {
-        return \URL::signedRoute('inscription.person-link', [
-            'inscription_id' => $this->id,
-            'id' => $personLinkId,
-        ]);
-    }
-
 	public function getInscriptionConfirmationRoute($personId, $eventId)
     {
         return \URL::signedRoute('inscription.confirmation', [
@@ -99,11 +91,27 @@ class Inscription extends Model
         $inscription->person_id = $personId;
         $inscription->team_id = $teamId;
         $inscription->type = $inscriptionType;
-        $inscription->inscribed_by = auth()->user()->persons()->forTeams([currentTeamId()])->first()?->id; // We get the current person of the user
+        $inscription->inscribed_by = auth()->user()?->getRelatedMainPerson()?->id;
         $inscription->role_id = $roleId;
         $inscription->save();
 
         return $inscription;
     }
+
+    public function confirmUserRegistration($user)
+    {
+        $person = $this->person->getRegisteringPerson();
+
+        $role = RoleModel::getOrCreate($this->type->getRole($this));
+
+        $teamRole = $user->createTeamRole($this->team, $role->id);
+
+        $person->personTeams()->where('team_id', $this->team->id)->update(['team_role_id' => $teamRole->id]);
+        $person->user_id = $user->id;
+        $person->save();
+
+        fireRegisteredEvent($user);
+    }
+
 	/* ELEMENTS */
 }

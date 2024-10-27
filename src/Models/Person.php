@@ -6,6 +6,7 @@ use App\Models\User;
 use Condoedge\Crm\Facades\PersonModel;
 use Kompo\Auth\Models\Contracts\Searchable;
 use Kompo\Auth\Models\Model;
+use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Email\Email;
 
 abstract class Person extends Model implements Searchable
@@ -180,6 +181,29 @@ abstract class Person extends Model implements Searchable
 		}
 
 		return $person;
+	}
+
+	public function createOrGetUserByRegisteredBy($inscription, $team)
+	{
+		$user = null;
+
+		if($this->email) {
+			$user = User::where('email', $this->email)->first();
+		}
+
+		if(!$user) {
+			$user = User::create([
+				'email' => $this->email,
+				'password' => bcrypt(value: \Str::random(12)),
+			]);
+		}
+
+		if ($role = $inscription->type->getRegisteredByRole()) {
+			RoleModel::getOrCreate($role);
+			
+			$user->createTeamRole($team, $role);
+		}
+		
 	}
 
 	/* SEARCHABLE */
