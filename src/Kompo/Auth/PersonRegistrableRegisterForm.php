@@ -27,6 +27,11 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
         $user = $this->person->relatedUser;
 
+        if (!$user && ($user = User::where('email', $this->registeringEmail)->first()) ) {
+            $this->person->user_id = $user->id;
+            $this->person->save();
+        }
+
         if ($user) {
             $this->model($user);
         }
