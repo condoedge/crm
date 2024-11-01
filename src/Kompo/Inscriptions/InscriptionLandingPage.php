@@ -52,7 +52,7 @@ class InscriptionLandingPage extends ImgFormLayout
     protected function optionButton($type)
     {
         return _Rows(
-            _Html($type->registerTitle())->class('text-center !text-level1 font-semibold text-xl mb-2'),
+            _Html($type->registerTitle())->class('text-center !text-level1 font-semibold text-2xl mb-4'),
             _Html($type->registerDescription())->class('!text-level1'),
         )->button2()->class('rounded-lg !pt-3 p-6')->selfGet('manageInscriptionLink', ['type' => $type->value])->redirect();
     }
