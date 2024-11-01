@@ -26,6 +26,11 @@ class PersonRegistrableAcceptController extends Controller
             
             if (!$team->hasUserWithEmail($email)) {
                 $roleId = $inscription->type->getRole($inscription);
+
+                if(!$roleId) {
+                    abort(403, __('translate.there-is-not-role-assigned-to-your-inscription'));
+                }
+
                 RoleModel::getOrCreate($roleId);
                 
                 $teamRole = $user->createTeamRole($team, role: $roleId);
