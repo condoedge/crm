@@ -114,4 +114,8 @@ class Inscription extends Model
     }
 
 	/* ELEMENTS */
+    public function statusPill()
+    {
+        return _Pill($this->status->label())->class($this->status->color());
+    }
 }
