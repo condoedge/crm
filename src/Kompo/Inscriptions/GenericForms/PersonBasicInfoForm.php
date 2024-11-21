@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\GenderEnum;
+use Condoedge\Crm\Rules\MinAgeRule;
 use Kompo\Auth\Common\ImgFormLayout;
 
 abstract class PersonBasicInfoForm extends ImgFormLayout
@@ -59,7 +60,7 @@ abstract class PersonBasicInfoForm extends ImgFormLayout
         return [
             'first_name' => 'required',
             'last_name' => 'required',
-            'date_of_birth' => 'required|date|before:today',
+            'date_of_birth' => ['required', 'date', new MinAgeRule(5)],
         ];
     }
 }
