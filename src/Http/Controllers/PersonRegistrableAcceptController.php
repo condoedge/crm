@@ -28,7 +28,7 @@ class PersonRegistrableAcceptController extends Controller
                 $roleId = $inscription->type->getRole($inscription);
 
                 if(!$roleId) {
-                    abort(403, __('translate.there-is-not-role-assigned-to-your-inscription'));
+                    abort(403, __('error.there-is-not-role-assigned-to-your-inscription'));
                 }
 
                 RoleModel::getOrCreate($roleId);
