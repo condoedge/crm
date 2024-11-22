@@ -10,10 +10,12 @@ class InscriptionLandingPage extends ImgFormLayout
     protected $rightColumnBodyWrapperClass = '';
 
     protected $qrCode;
+    protected $teamId;
 
     public function created()
     {
         $this->qrCode = $this->prop('qr_code');
+        $this->teamId = $this->prop('team_id');
     }
 
     public function manageInscriptionLink($type)
@@ -21,11 +23,15 @@ class InscriptionLandingPage extends ImgFormLayout
         if (auth()->user()) {
             $person = auth()->user()->getRelatedMainPerson();
 
-    		return redirect(getInscriptionTypes()[$type]->registerRoute($person, $this->qrCode));
+    		return redirect(getInscriptionTypes()[$type]->registerRoute($person, [
+                'team_id' => $this->teamId,
+                'qr_code' => $this->qrCode,
+            ]));
     	} else {
     		return redirect()->route('inscription.email.step1', [
                 'qr_code' => $this->qrCode,
                 'type' => $type,
+                'team_id' => $this->teamId,
             ]);
     	}
     }

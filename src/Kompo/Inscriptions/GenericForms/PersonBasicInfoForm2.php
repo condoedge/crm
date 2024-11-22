@@ -17,10 +17,14 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
 
     public $model = PersonModel::class;
 
+    protected $teamId;
+
     public function created()
 	{
         $this->inscriptionId = $this->prop('inscription_id');
         $this->inscription = InscriptionModel::find($this->inscriptionId);
+
+        $this->teamId = $this->prop('team_id');
 	}
 
 	public function afterSave()

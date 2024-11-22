@@ -14,11 +14,13 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 
     protected $qrCode;
 	protected $type;
+	protected $teamId;
 
     public function created()
     {
         $this->qrCode = $this->prop('qr_code');
 		$this->type = $this->prop('type') ?? collect(getInscriptionTypesKeys())->first() ?? null;
+		$this->teamId = $this->prop('team_id');
     }
 
 	public function handle()
@@ -49,7 +51,10 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 
 	protected function getRedirectUrl($person)
 	{
-		return getInscriptionTypes()[$this->type]->registerRoute($person, $this->qrCode);
+		return getInscriptionTypes()[$this->type]->registerRoute($person, [
+			'team_id' => $this->teamId,
+			'qr_code' => $this->qrCode,
+		]);
 	}
 
 	public function rightColumnBody()

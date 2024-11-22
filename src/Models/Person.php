@@ -237,7 +237,7 @@ abstract class Person extends Model implements Searchable
 		$address = $this->getFirstValidAddressLabel();
 
 		return _Rows(
-            _TitleMiniStandard($this->full_name)->class('mb-2'),
+			_LabelWithIcon('profile', $this->full_name),
 			!$phone ? null : _PhoneWithIcon($phone),
 			!$this->email_identity ? null : _EmailWithIcon($this->email_identity),
             !$address ? null : _AddressWithIcon($address),

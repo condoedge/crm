@@ -16,11 +16,14 @@ abstract class PersonBasicInfoForm extends ImgFormLayout
 
     protected $inscriptionId;
     protected $inscription;
+	protected $teamId;
 
 	public function created()
 	{
         $this->inscriptionId = $this->prop('inscription_id');
         $this->inscription = InscriptionModel::find($this->inscriptionId);
+
+		$this->teamId = $this->prop('team_id');
 	}
 
 	public function rightColumnBody()

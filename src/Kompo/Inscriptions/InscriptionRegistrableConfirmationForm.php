@@ -50,7 +50,9 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function registerAndAddAnother()
     {
-		$inscription = $this->inscription->type?->createForPerson($this->model, $this->inscription->qr_inscription) ?: $this->model->createOrUpdateInscription($this->inscription->qr_inscription, $this->inscription->type);
+		$inscription = $this->inscription->type?->createForPerson($this->model, [
+            'qr_code' => $this->inscription->qr_inscription,
+        ]) ?: $this->model->createOrUpdateInscription($this->inscription->qr_inscription, $this->inscription->type);
 
 		return redirect($inscription->getInscriptionPersonLinkRoute());
     }

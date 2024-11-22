@@ -32,7 +32,7 @@ enum InscriptionTypeEnum: string
      * @param string|null $qrCode
      * @return string
      */
-    public function registerRoute($person, $qrCode)
+    public function registerRoute($person, $extra = [])
     {
         return match ($this) {
             
@@ -65,10 +65,10 @@ enum InscriptionTypeEnum: string
         };
     }
 
-    public function createForPerson($person, $qrCode)
+    public function createForPerson($person, $extra)
     {
         return match ($this) {
-            default => $person->createOrUpdateInscription($qrCode, self::class),
+            default => $person->createOrUpdateInscription($extra, self::class),
         };
     }
 
