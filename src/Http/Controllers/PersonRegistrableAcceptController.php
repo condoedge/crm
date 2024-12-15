@@ -17,7 +17,7 @@ class PersonRegistrableAcceptController extends Controller
         $team = $inscription->team;
 
         if ($inscription->person->registered_by) {
-            // Create temporal user
+            // Create temporal user for the child or the registered person
 
             $inscription->person->createOrGetUserByRegisteredBy($inscription, $team);
         }
@@ -35,8 +35,17 @@ class PersonRegistrableAcceptController extends Controller
                 
                 $teamRole = $user->createTeamRole($team, role: $roleId);
                 
-			    PersonTeam::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $team->id)->whereNull('team_role_id')
-                    ->update(['team_role_id' => $teamRole->id]);
+                // Get or create the personTeam
+                $personTeam = PersonTeam::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $team->id)->whereNull('team_role_id')->first();
+
+                if (!$personTeam) {
+                    $personTeam =  PersonTeam::createFromTeamRole($teamRole);
+                } else {
+                    $personTeam->team_role_id = $teamRole->id;
+                }
+
+                $personTeam->inscription_type = $inscription->type?->value;
+                $personTeam->save();
             }
 
             return redirect()->route('login.password', ['email' => $email]);
