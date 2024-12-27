@@ -94,7 +94,7 @@ abstract class Event extends Model
 			return asset('images/base-email-image.png');
 		}
 
-		return \Storage::disk('public')->url($coverPath);
+		return \Storage::disk($this->cover_ev['disk'] ?? 'public')->url($coverPath);
 	}
 
     public function getDisplayableQrInfo()
