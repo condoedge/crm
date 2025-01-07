@@ -19,7 +19,7 @@ class PhoneNumberRule implements ValidationRule
             $ph = new PhoneNumber($value, ['CA', 'US', 'INTERNATIONAL']);
             $ph = $ph->formatInternational();
         } catch (\Throwable $e) {
-            $fail('error.must-be-a-valid-phone-number');
+            $fail(__('error.must-be-a-valid-phone-number'));
         }
     }
 }
