@@ -12,6 +12,7 @@ class PersonEvent extends Model
 
     protected $casts = [
         'register_status' => RegisterStatusEnum::class,
+        'attendance_confirmation' => PersonEventConfirmationEnum::class,
     ];
 
     /* RELATIONS */
@@ -72,6 +73,25 @@ class PersonEvent extends Model
         return static::where('inscription_id', $this->inscription_id)->get();
     }
 
+    public function getAttendance()
+    {
+        return EventAttendance::forPersonEvent($this->id)->first();
+    }
+
+    public function isAttended()
+    {
+        return EventAttendance::forPersonEvent($this->id)
+            ->where('attendance_status', EventAttendanceStatus::ATTENDED)
+            ->exists();
+    }
+
+    public function isAbstent()
+    {
+        return EventAttendance::forPersonEvent($this->id)
+            ->where('attendance_status', EventAttendanceStatus::ABSTENT)
+            ->exists();
+    }
+
     /* ROUTES */
     public function getAcceptInscriptionUrl()
     {
@@ -93,7 +113,7 @@ class PersonEvent extends Model
     }
 
     /* ACTIONS */
-    public static function createPersonEvent($person, $event, $inscription)
+    public static function createPersonEvent($person, $event, $inscription = null)
     {
         $pr = new static();
         $pr->person_id = $person->id;
@@ -120,5 +140,30 @@ class PersonEvent extends Model
         //Override in App
     }
 
+    public function toggleAttendance()
+    {
+        $attendance = $this->getAttendance();
+        $nextAttendance = $attendance?->attendance_status?->nextCheck() ?? EventAttendanceStatus::ATTENDED;
+
+        EventAttendance::takeAttendanceFromPersonEvent($this->id, $nextAttendance);
+    }
+
     /* ELEMENTS */
+    public function attendanceConfirmationPill()
+    {
+        $status = $this->attendance_status;
+
+        if (!$status) {
+            return null;
+        }
+
+        return _Pill($status->label())->class($status->classes());
+    }
+
+    public function attendancePill()
+    {
+        $status = $this->getAttendance()?->attendance_status ?? EventAttendanceStatus::NOT_TAKEN;
+
+        return _Pill($status->label())->class($status->classes())->class('!text-base !rounded-lg !px-2 py-1');
+    }
 }
