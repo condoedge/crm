@@ -13,9 +13,9 @@ enum PersonEventConfirmationEnum: int
     public function label(): string
     {
         return match ($this) {
-            self::CONFIRMED => __('translate.confirmed'),
-            self::ABSTENT => __('translate.abstent'),
-            self::NOT_SURE => __('translate.not-sure'),
+            self::CONFIRMED => __('events.confirmed'),
+            self::ABSTENT => __('events.absent'),
+            self::NOT_SURE => __('events.not-sure'),
         };
     }
 

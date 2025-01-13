@@ -17,9 +17,9 @@ enum EventAttendanceStatus: int
     public function label(): string
     {
         return match ($this) {
-            self::ATTENDED => __('translate.present'),
-            self::ABSTENT => __('translate.abstent'),
-            self::NOT_TAKEN => __('translate.not-present'),
+            self::ATTENDED => __('events.present'),
+            self::ABSTENT => __('events.absent'),
+            self::NOT_TAKEN => __('events.pending'),
         };
     }
 
@@ -28,7 +28,7 @@ enum EventAttendanceStatus: int
         return match ($this) {
             self::ATTENDED => 'bg-positive text-white',
             self::ABSTENT => 'bg-danger text-white',
-            self::NOT_TAKEN => 'bg-greenlight text-level1',
+            self::NOT_TAKEN => 'bg-greenlight text-greendark',
         };
     }
 

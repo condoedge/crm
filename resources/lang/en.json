@@ -1,3 +1,8 @@
 {
-	"error.must-be-a-valid-phone-number": "Must be a valid phone number (XXX-XXX-XXXX)"
+	"error.must-be-a-valid-phone-number": "Must be a valid phone number (XXX-XXX-XXXX)",
+	"events.absent": "Absent",
+	"events.confirmed": "Confirmed",
+	"events.not-sure": "Not sure",
+	"events.pending": "Pending",
+	"events.present": "Present"
 }
