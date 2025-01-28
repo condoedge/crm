@@ -8,6 +8,8 @@ use Kompo\Auth\Models\Model;
 
 class InscriptionShortLink extends Model
 {
+    protected $table = 'inscriptions_short_links';
+
     use \Condoedge\Crm\Models\BelongsToEventTrait;
     use \Condoedge\Crm\Models\BelongsToPersonTrait;
     use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
@@ -22,7 +24,7 @@ class InscriptionShortLink extends Model
         $shortLink->team_id = $teamId;
         $shortLink->person_id = $personId;
         $shortLink->event_id = $eventId;
-        $shortLink->code = getRandStringForModel(static::class, 'code', 16);
+        $shortLink->code = getRandStringForModel(new static, 'code', 16);
         $shortLink->type = $type;
 
         $shortLink->save();
@@ -39,7 +41,7 @@ class InscriptionShortLink extends Model
         } 
 
         if (!$inscription) {
-            $inscription = new InscriptionModel::getClass();
+            $inscription = new (InscriptionModel::getClass());
             $inscription->type = $this->type;
             $inscription->team_id = $this->team_id;
             $inscription->person_id = $this->person_id;
@@ -47,6 +49,7 @@ class InscriptionShortLink extends Model
             $inscription->role_id = $this->role_id;
             $inscription->from_short_link_id = $this->id;
             $inscription->is_reregistration = $this->reregistration;
+            $inscription->setQrCodeIfEmpty();
         }
 
         $inscription->event_id = $this->event_id;

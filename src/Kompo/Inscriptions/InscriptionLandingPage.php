@@ -25,6 +25,7 @@ class InscriptionLandingPage extends ImgFormLayout
         $person = auth()->user()?->getRelatedMainPerson();
 
         if($person) $this->inscription?->updatePersonId($person->id);
+        $this->inscription?->updateType($type);
 
         if ($this->inscription) {
             return redirect()->to($this->inscription?->getRegistrationUrl());

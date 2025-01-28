@@ -168,6 +168,7 @@ class Inscription extends Model
         $inscription->type = $inscriptionType;
         $inscription->inscribed_by = auth()->user()?->getRelatedMainPerson()?->id;
         $inscription->role_id = $roleId;
+        $inscription->status = InscriptionStatusEnum::CREATED;
         $inscription->save();
 
         $inscription->getExistentQrOrCreateNew();
@@ -175,17 +176,53 @@ class Inscription extends Model
         return $inscription;
     }
 
+    public function replicateToReinscription()
+    {
+        $inscription = new static;
+        $inscription->person_id = $this->person_id;
+        $inscription->team_id = $this->team_id;
+        $inscription->type = $this->type;
+        $inscription->inscribed_by = $this->inscribed_by;
+        $inscription->role_id = $this->role_id;
+        $inscription->status = InscriptionStatusEnum::CREATED;
+        $inscription->is_reregistration = 1;
+        $inscription->save();
+
+        $inscription->getExistentQrOrCreateNew();
+
+        return $inscription;
+    }
+
+    public static function createReinscription($person, $teamId)
+    {
+        $inscription = $person->inscriptions()->where('team_id', $teamId)->where('status', InscriptionStatusEnum::COMPLETED_SUCCESSFULLY)->latest()->first();
+
+        return $inscription?->replicateToReinscription();
+    }
+
     public function updatePersonId($personId)
     {
         $this->person_id = $personId;
-        $this->save();
+        
+        if ($this->isDirty('person_id')) {
+            $this->save();
+        }
+    }
+
+    public function updateType($type) 
+    {
+        $this->type = $type;
+        
+        if ($this->isDirty('type')) {
+            $this->save();
+        }
     }
 
     public function getRegistrationUrl()
     {
         if (!$this->type) {
             return route('inscription.landing', [
-                'inscription_code' => $this->qr_inscription,
+                'inscription_code' => $this->getExistentQrOrCreateNew(),
             ]);
         }
 
