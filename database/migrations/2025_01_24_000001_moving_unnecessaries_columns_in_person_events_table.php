@@ -39,9 +39,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Schema::table('person_events', function (Blueprint $table) {
-        //     $table->foreignId('inscription_id')->constrained();
-        //     $table->text('family_conditions_text')->nullable();
-        // });
+        Schema::table('person_events', function (Blueprint $table) {
+            $table->foreignId('inscription_id')->constrained();
+            $table->text('family_conditions_text')->nullable();
+        });
     }
 };
