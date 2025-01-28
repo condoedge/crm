@@ -63,21 +63,6 @@ trait PersonInscriptionsRelatedTrait
         return $person;
     }
 
-    public function createOrUpdateInscription($extra, $type = null)
-    {
-        $inscription = InscriptionModel::where('inscribed_by', $this->id)->where('qr_inscription', $qrCode)->first();
-
-        if (!$inscription) {
-            $inscription = new (InscriptionModel::getClass());
-            $inscription->type = $type?->value;
-            $inscription->person_id = $this->id;
-            $inscription->setNewQrCode($extra['qr_code']);
-            $inscription->save();
-        }
-
-        return $inscription;
-    }
-
     /* SCOPES */
 
 }

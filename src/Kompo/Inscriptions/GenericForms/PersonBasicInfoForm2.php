@@ -2,7 +2,6 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 
-use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\SpokenLanguageEnum;
 use Condoedge\Crm\Rules\PhoneNumberRule;
@@ -11,6 +10,7 @@ use Kompo\Auth\Common\ImgFormLayout;
 abstract class PersonBasicInfoForm2 extends ImgFormLayout
 {
     use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\PersonFormUtilsTrait;
+    use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
 
     protected $rightColumnBodyWrapperClass = '';
     protected $withNames = true;
@@ -21,10 +21,11 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
 
     public function created()
 	{
-        $this->inscriptionId = $this->prop('inscription_id');
-        $this->inscription = InscriptionModel::find($this->inscriptionId);
-
         $this->teamId = $this->prop('team_id');
+        
+        $this->setInscriptionInfo();
+
+		$this->model($this->person);
 	}
 
 	public function afterSave()

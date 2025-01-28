@@ -203,14 +203,17 @@ abstract class Person extends Model implements Searchable
             ]);
         }
 
+        $person = $inscription->person;
+        $person->user_id = $user->id;
+        $person->save();
+
         // Get the role for the children getting first the child inscription type
         if ($role = $inscription->type->getRegisteredByRole()?->getRole($inscription)) {
             RoleModel::getOrCreate($role);
 
             $teamRole = $user->createTeamRole($team, $role);
 
-            PersonTeam::where('person_id', $this->id)->where('team_id', $team->id)->whereNull('team_role_id')
-                ->update(['team_role_id' => $teamRole->id]);
+            PersonTeam::createFromTeamRole($teamRole);
         }
 
     }

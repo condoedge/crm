@@ -3,42 +3,38 @@
 namespace Condoedge\Crm\Kompo\Auth;
 
 use App\Models\User;
-use Condoedge\Crm\Facades\InscriptionModel;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class PersonRegistrableRegisterForm extends ImgFormLayout
 {
+    use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
+
     protected $imgUrl = 'images/register-image.png';
 
     public $model = User::class;
 
-    protected $inscriptionId;
-    protected $inscription;
     protected $team;
-    protected $person;
     protected $registeringEmail;
 
     public function created()
     {
-        $this->inscriptionId = $this->prop('inscription_id');
-        $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
-        $this->person = $this->inscription->person->getRegisteringPerson();
-        $this->registeringEmail = $this->person->email_identity;
+        $this->setInscriptionInfo();
+        
+        $this->registeringEmail = $this->mainPerson->email_identity;
 
-        $user = $this->person->relatedUser;
+        $user = $this->mainPerson->relatedUser;
 
         if (!$user && ($user = User::where('email', $this->registeringEmail)->first()) ) {
-            $this->person->user_id = $user->id;
-            $this->person->save();
+            $this->mainPerson->user_id = $user->id;
+            $this->mainPerson->save();
         }
 
         if ($user) {
             $this->model($user);
         }
 
-
-        $this->model->first_name = $this->person->first_name;
-        $this->model->last_name = $this->person->last_name;
+        $this->model->first_name = $this->mainPerson->first_name;
+        $this->model->last_name = $this->mainPerson->last_name;
     }
 
     public function beforeSave()
@@ -67,7 +63,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
             _Input('inscriptions.your-invitation-email')->name('show_email', false)->readOnly()
                 ->value($this->registeringEmail)->inputClass('bg-gray-50 rounded-xl'),
 
-            // _InputRegisterNames($this->person->first_name, $this->person->last_name),
+            // _InputRegisterNames($this->mainPerson->first_name, $this->mainPerson->last_name),
             $this->model->id ? null : _InputRegisterPasswords(),
             _CheckboxTerms(),
             _FlexEnd(

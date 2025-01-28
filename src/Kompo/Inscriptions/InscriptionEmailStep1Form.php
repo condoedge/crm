@@ -2,8 +2,8 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Kompo\Inscriptions\InscriptionTypeEnum;
 use App\Models\User;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Kompo\Auth\Common\ImgFormLayout;
 use Kompo\Auth\Models\Teams\EmailRequest;
@@ -12,15 +12,16 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 {
     protected $imgUrl = 'images/base-email-image.png';
 
-    protected $qrCode;
+	protected $qrCode;
 	protected $type;
-	protected $teamId;
+	protected $inscription;
 
     public function created()
     {
-        $this->qrCode = $this->prop('qr_code');
-		$this->type = $this->prop('type') ?? collect(getInscriptionTypesKeys())->first() ?? null;
-		$this->teamId = $this->prop('team_id');
+        $this->qrCode = $this->prop('inscription_code');
+		$this->type = $this->prop('type') ? getInscriptionTypes()[$this->prop('type')] : collect(getInscriptionTypesKeys())->first() ?? null;
+
+		$this->inscription = $this->qrCode ? InscriptionModel::forQrCode($this->qrCode)->first() : null;
     }
 
 	public function handle()
@@ -29,6 +30,8 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 
 		$person = PersonModel::getOrCreatePersonFromEmail($email);
 		$redirectTo = $this->getRedirectUrl($person);
+
+		$this->inscription?->updatePersonId($person->id);
 
 		if ($user = User::where('email', $email)->first()) {
 			return redirect(route('login.password', [
@@ -43,18 +46,13 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 
             $emailRequest->sendEmailVerificationNotification();
 
-            return redirect()->to(\Url::signedRoute('check.verify.email', ['id' => $emailRequest]));
+            return redirect()->to(\URL::signedRoute('check.verify.email', ['id' => $emailRequest]));
 		}
-
-
 	}
 
 	protected function getRedirectUrl($person)
 	{
-		return getInscriptionTypes()[$this->type]->registerRoute($person, [
-			'team_id' => $this->teamId,
-			'qr_code' => $this->qrCode,
-		]);
+		return $this->inscription?->getRegistrationUrl() ?: InscriptionModel::createOrGetRegistrationUrl($person->id, null, $this->type);
 	}
 
 	public function rightColumnBody()

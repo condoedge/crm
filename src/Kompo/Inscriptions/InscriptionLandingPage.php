@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
+use Condoedge\Crm\Facades\InscriptionModel;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionLandingPage extends ImgFormLayout
@@ -10,28 +11,29 @@ class InscriptionLandingPage extends ImgFormLayout
     protected $rightColumnBodyWrapperClass = '';
 
     protected $qrCode;
-    protected $teamId;
+    protected $inscription;
 
     public function created()
     {
-        $this->qrCode = $this->prop('qr_code');
-        $this->teamId = $this->prop('team_id');
+        $this->qrCode = $this->prop('inscription_code');
+
+        $this->inscription = $this->qrCode ? InscriptionModel::forQrCode($this->qrCode)->first() : null;
     }
 
     public function manageInscriptionLink($type)
     {
-        if (auth()->user()) {
-            $person = auth()->user()->getRelatedMainPerson();
+        $person = auth()->user()?->getRelatedMainPerson();
 
-    		return redirect(getInscriptionTypes()[$type]->registerRoute($person, [
-                'team_id' => $this->teamId,
-                'qr_code' => $this->qrCode,
-            ]));
-    	} else {
+        if($person) $this->inscription?->updatePersonId($person->id);
+
+        if ($this->inscription) {
+            return redirect()->to($this->inscription?->getRegistrationUrl());
+        } else if (auth()->user()) {
+            return redirect()->to(InscriptionModel::createOrGetRegistrationUrl($person->id, null, $type));
+    	}  else {
     		return redirect()->route('inscription.email.step1', [
-                'qr_code' => $this->qrCode,
+                'inscription_code' => $this->qrCode,
                 'type' => $type,
-                'team_id' => $this->teamId,
             ]);
     	}
     }
@@ -44,7 +46,8 @@ class InscriptionLandingPage extends ImgFormLayout
             _Html('inscriptions.i-want-to-register-and-i-am')->class('mb-6 text-lg'),
 
             _Rows(
-                collect(getInscriptionTypes())->map(function($type) {
+                collect(getInscriptionTypes())->filter(fn($it) => !$this->inscription?->type || $this->inscription?->type?->value == $it->value)
+                    ->map(function($type) {
                     return $this->optionButton($type);
                 }),
             )->class('gap-6'),

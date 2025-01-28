@@ -32,6 +32,8 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
 
         $this->loadRelationsMorphMap();
 
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'kompo-auth');
+
         $this->setCommands();
         $this->setCronJobs();
     }
@@ -54,6 +56,10 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
 
         $this->app->bind('inscription-model', function () {
             return new (config('condoedge-crm.inscription-model-namespace'));
+        });
+        
+        $this->app->bind('event-model', function () {
+            return new (config('condoedge-crm.event-model-namespace'));
         });
     }
 

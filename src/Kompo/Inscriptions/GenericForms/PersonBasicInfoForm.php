@@ -11,6 +11,7 @@ use Kompo\Auth\Common\ImgFormLayout;
 abstract class PersonBasicInfoForm extends ImgFormLayout
 {
     use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\PersonFormUtilsTrait;
+	use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
 
 	public $model = PersonModel::class;
 
@@ -20,10 +21,11 @@ abstract class PersonBasicInfoForm extends ImgFormLayout
 
 	public function created()
 	{
-        $this->inscriptionId = $this->prop('inscription_id');
-        $this->inscription = InscriptionModel::find($this->inscriptionId);
-
 		$this->teamId = $this->prop('team_id');
+		
+        $this->setInscriptionInfo();
+
+		$this->model($this->person);
 	}
 
 	public function rightColumnBody()

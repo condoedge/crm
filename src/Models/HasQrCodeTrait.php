@@ -35,6 +35,17 @@ trait HasQrCodeTrait
         $this->{static::QRCODE_COLUMN_NAME} = $qrCode ?: static::getNewQrCode();
     }
 
+    public function getExistentQrOrCreateNew()
+    {
+        $this->setQrCodeIfEmpty();
+
+        if (in_array(static::QRCODE_COLUMN_NAME, array_keys($this->getDirty()))) {
+            $this->save();
+        }
+        
+        return $this->getQrCodeString();
+    }
+
     public static function getNewQrCode()
     {
         return \Str::random(static::QRCODE_LENGTH);

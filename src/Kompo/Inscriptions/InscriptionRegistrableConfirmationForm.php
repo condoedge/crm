@@ -2,7 +2,6 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Models\Crm\PersonEvent;
 use App\Models\Events\Event;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
@@ -10,10 +9,10 @@ use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 {
+    use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
+
     protected $imgUrl = 'images/base-email-image.png';
 
-    protected $inscriptionId;
-    protected $inscription;
     protected $eventId;
     protected $event;
 
@@ -21,9 +20,9 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function created()
     {
-        $this->inscriptionId = $this->prop('inscription_id');
-        $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
-
+        $this->setInscriptionInfo();
+        $this->model($this->person);
+        
         $this->eventId = $this->prop('event_id');
         $this->event = Event::findOrFail($this->eventId);
     }
@@ -50,24 +49,17 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function registerAndAddAnother()
     {
-		$inscription = $this->inscription->type?->createForPerson($this->model, [
-            'qr_code' => $this->inscription->qr_inscription,
-        ]) ?: $this->model->createOrUpdateInscription($this->inscription->qr_inscription, $this->inscription->type);
+        $this->inscription->confirmInscriptionFilled($this->event->team_id, $this->event);
+
+        $inscription = InscriptionModel::getOrCreateForMainPerson($this->personId, $this->event->team_id, InscriptionModel::getDefaultRegisteredByType());
 
 		return redirect($inscription->getInscriptionPersonLinkRoute());
     }
 
     public function registerAndFinish()
     {
-        $pe = $this->assignMemberToUnit();
+        $this->inscription->confirmInscriptionFilled($this->event->team_id, $this->event);
 
-        return redirect($pe->getInscriptionDoneRoute());
-    }
-
-    protected function assignMemberToUnit()
-    {
-        $pe = PersonEvent::createPersonEvent($this->model, $this->event, $this->inscription); 
-
-        return $pe;
+        return redirect($this->inscription->getInscriptionDoneRoute());
     }
 }

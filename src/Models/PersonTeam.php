@@ -53,10 +53,28 @@ class PersonTeam extends Model
 	{
 		$personTeam = new static;
 		$personTeam->team_role_id = $teamRole->id;
-		$personTeam->person_id = PersonModel::whereHas('relatedUser', fn($q) => $q->where('id', $teamRole->user_id))->first()->id;
+		$personTeam->person_id = PersonModel::where('user_id', $teamRole->user_id)->first()->id;
 		$personTeam->team_id = $teamRole->team_id;
 		$personTeam->from = now();
 		$personTeam->save();
+
+		return $personTeam;
+	}
+
+	public static function getOrCreateForInscription($inscription, $teamRole)
+	{
+		$personTeam = static::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $inscription->team_id)->whereNull('team_role_id')->first();
+
+		if (!$personTeam) {
+			$personTeam =  static::createFromTeamRole($teamRole);
+		} else {
+			$personTeam->team_role_id = $teamRole->id;
+		}
+
+		$personTeam->inscription_type = $inscription->type?->value;
+		$personTeam->save();
+
+		return $personTeam;
 	}
 
 	/* ELEMENTS */
