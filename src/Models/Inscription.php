@@ -70,7 +70,7 @@ class Inscription extends Model
     public function getInscriptionRoute($route, $extra = [])
     {
         return \URL::signedRoute($route, array_merge(
-            ['inscription_code' => $this->getQrCodeString()], $extra
+            ['inscription_code' => $this->getExistentQrOrCreateNew()], $extra
         ));
     }
 
@@ -246,7 +246,7 @@ class Inscription extends Model
     public function getInscriptionDoneRoute()
     {
         return \URL::signedRoute('inscription.done1', [
-            'inscription_code' => $this->getQrCodeString(),
+            'inscription_code' => $this->getExistentQrOrCreateNew(),
         ]);
     }
 
