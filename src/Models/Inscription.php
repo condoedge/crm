@@ -10,6 +10,10 @@ use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Model;
 use Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 
+/**
+ * It's used to go through the inscription process. It's one per each person and team. 
+ * In that way we have a record with all the details: status, type, role, etc.
+ */
 class Inscription extends Model
 {
     use BelongsToPersonTrait;
@@ -131,7 +135,7 @@ class Inscription extends Model
             ->first();
     }
 
-    public static function getOrCreateForMainPerson($personId, $teamId, $inscriptionType, $roleId = null, $reregistration = false)
+    public static function getOrCreateForMainPerson($personId, $teamId, $inscriptionType, $roleId = null)
     {
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
 
@@ -145,7 +149,6 @@ class Inscription extends Model
         $inscription->type = $inscriptionType->value;
         $inscription->inscribed_by = $inscriptionType->basedInInscriptionForOtherPerson() ? $personId : auth()->user()?->getRelatedMainPerson()?->id;
         $inscription->role_id = $roleId;
-        $inscription->is_reregistration = $reregistration;
         $inscription->save();
 
         return $inscription;
@@ -176,28 +179,11 @@ class Inscription extends Model
         return $inscription;
     }
 
-    public function replicateToReinscription()
+    public static function getReinscriptionType($person, $teamId)
     {
-        $inscription = new static;
-        $inscription->person_id = $this->person_id;
-        $inscription->team_id = $this->team_id;
-        $inscription->type = $this->type;
-        $inscription->inscribed_by = $this->inscribed_by;
-        $inscription->role_id = $this->role_id;
-        $inscription->status = InscriptionStatusEnum::CREATED;
-        $inscription->is_reregistration = 1;
-        $inscription->save();
+        $personTeam = $person->getLinkToTeam($teamId);
 
-        $inscription->getExistentQrOrCreateNew();
-
-        return $inscription;
-    }
-
-    public static function createReinscription($person, $teamId)
-    {
-        $inscription = $person->inscriptions()->where('team_id', $teamId)->where('status', InscriptionStatusEnum::COMPLETED_SUCCESSFULLY)->latest()->first();
-
-        return $inscription?->replicateToReinscription();
+        return $personTeam?->inscription_type ?? null;
     }
 
     public function updatePersonId($personId)

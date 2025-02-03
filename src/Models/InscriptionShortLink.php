@@ -6,6 +6,13 @@ use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Kompo\Auth\Models\Model;
 
+/**
+ * It's used to create a template for the inscription with certain parameters.
+ * It have a code that is used to generate a short link for the inscription. 
+ * When the user access to the short link, the inscription is created with the parameters from the short link.
+ * It's a good way to have a pre-filled inscription form to generate links for each team 
+ * (without creating one inscription per each user needing to send parameters throught the inscription process).
+ */
 class InscriptionShortLink extends Model
 {
     protected $table = 'inscriptions_short_links';
@@ -15,7 +22,7 @@ class InscriptionShortLink extends Model
     use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 
     protected $casts = [
-        'type' => InscriptionTypeEnum::class
+        // 'type' => InscriptionTypeEnum::class
     ];
 
     public static function createShortLink($teamId, $personId, $eventId, $type)
@@ -37,7 +44,7 @@ class InscriptionShortLink extends Model
         $inscription = null;
 
         if ($this->person_id) {
-            $inscription = InscriptionModel::getOrCreateForMainPerson($this->person_id, $this->team_id, $this->type, $this->role_id, $this->reregistration);
+            $inscription = InscriptionModel::getOrCreateForMainPerson($this->person_id, $this->team_id, $this->type, $this->role_id);
         } 
 
         if (!$inscription) {
@@ -48,7 +55,6 @@ class InscriptionShortLink extends Model
             $inscription->event_id = $this->event_id;
             $inscription->role_id = $this->role_id;
             $inscription->from_short_link_id = $this->id;
-            $inscription->is_reregistration = $this->reregistration;
             $inscription->setQrCodeIfEmpty();
         }
 

@@ -33,8 +33,6 @@ trait InscriptionFormUtilsTrait
 
         $this->inscriptionId = $this->inscription->id;
         
-        $this->inscription->setIsReregistration($this->prop('reregistration'));
-
         $this->person = $this->inscription->person;
         $this->mainPerson = $this->person?->getRegisteringPerson() ?? $this->inscription->inscribedBy;
         
