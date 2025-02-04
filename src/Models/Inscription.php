@@ -47,7 +47,7 @@ class Inscription extends Model
 
     public function parentInscription()
     {
-        $this->belongsTo(InscriptionModel::getClass(), 'related_inscription_id');
+        return $this->belongsTo(InscriptionModel::getClass(), 'related_inscription_id');
     }
 
     public function event()
@@ -111,6 +111,22 @@ class Inscription extends Model
         return $this->getInscriptionRoute('inscription.unit', [
             'group_id' => $teamId,
         ]);
+    }
+
+    public function getMainInscription()
+    {
+        return $this->parentInscription ?? $this;
+    }
+
+    public function getAllInscriptionsRelated()
+    {
+        $mainInscription = $this->getMainInscription();
+        return collect([$mainInscription, ...$mainInscription->relatedInscriptions]);
+    }
+
+    public function setValueToRelatedInscriptions($key, $value)
+    {
+        $this->getAllInscriptionsRelated()->each->setAttribute($key, $value);
     }
 
     public function isApproved()
@@ -319,11 +335,21 @@ class Inscription extends Model
         $this->save();
     }
 
-    public function confirmInscriptionFilled($teamId, $event = null)
+    public function confirmInscriptionFilled($teamId = null, $event = null)
     {
         $this->status = InscriptionStatusEnum::FILLED;
-        $this->event_id = $event?->id;
-        $this->team_id = $teamId ?? $event?->team_id;
+        if ($teamId || $event) {
+            $this->setSelectedTeam($teamId, $event);
+        } else {
+            // We're saving in the setSelectedTeam method so we just need to call it here
+            $this->save();
+        }
+    }
+
+    public function setSelectedTeam($teamId, $event = null)
+    {
+        $this->team_id = $teamId;
+        $this->event_id = $event ? $event?->id : $this->event_id;
         $this->save();
     }
 

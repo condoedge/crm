@@ -48,7 +48,7 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
                     _Input('inscriptions.last-name')->name('last_name')->default($this->model->last_name ?: auth()->user()?->getLastName()),
                 ),
                
-                $this->placeInput()->default($this->model->primaryBillingAddress ?: auth()->user()?->primaryBillingAddress),
+                $this->placeInput()->default($this->model->address ?: auth()->user()?->address),
                 _Input('inscriptions.my-phone')->name('inscribed_phone')->default($this->model->inscribed_phone ?: auth()->user()?->getPrimaryPhoneNumber()),
                 SpokenLanguageEnum::getMultiSelect()->default(array_keys(config('kompo.locales')))->class('mb-12'),
             ),

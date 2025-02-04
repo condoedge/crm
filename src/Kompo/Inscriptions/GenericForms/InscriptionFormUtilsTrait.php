@@ -10,6 +10,8 @@ trait InscriptionFormUtilsTrait
     protected $inscription;
     protected $inscriptionId;
 
+    protected $mainInscription;
+
     protected $event;
     protected $eventId;
 
@@ -43,5 +45,7 @@ trait InscriptionFormUtilsTrait
 
         $this->team = $this->inscription->team;
         $this->teamId = $this->team?->id;
+
+        $this->mainInscription = $this->inscription?->getMainInscription();
     }
 }
