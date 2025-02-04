@@ -10,6 +10,8 @@ trait InscriptionFormUtilsTrait
     protected $inscription;
     protected $inscriptionId;
 
+    protected $mainInscription;
+
     protected $event;
     protected $eventId;
 
@@ -33,8 +35,6 @@ trait InscriptionFormUtilsTrait
 
         $this->inscriptionId = $this->inscription->id;
         
-        $this->inscription->setIsReregistration($this->prop('reregistration'));
-
         $this->person = $this->inscription->person;
         $this->mainPerson = $this->person?->getRegisteringPerson() ?? $this->inscription->inscribedBy;
         
@@ -45,5 +45,7 @@ trait InscriptionFormUtilsTrait
 
         $this->team = $this->inscription->team;
         $this->teamId = $this->team?->id;
+
+        $this->mainInscription = $this->inscription?->getMainInscription();
     }
 }

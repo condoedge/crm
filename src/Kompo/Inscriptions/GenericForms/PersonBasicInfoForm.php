@@ -25,7 +25,7 @@ abstract class PersonBasicInfoForm extends ImgFormLayout
 		
         $this->setInscriptionInfo();
 
-		$this->model($this->person);
+		$this->model($this->mainPerson);
 	}
 
 	public function rightColumnBody()
