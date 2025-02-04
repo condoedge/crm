@@ -20,6 +20,8 @@ enum InscriptionStatusEnum: int
             self::FILLED => __('crm.pending'),
             self::APPROVED => __('crm.approved'),
             self::REJECTED => __('crm.rejected'),
+            self::PENDING_PAYMENT => __('crm.pending_payment'),
+            self::COMPLETED_SUCCESSFULLY => __('crm.completed_successfully'),
         };
     }
 
@@ -30,6 +32,8 @@ enum InscriptionStatusEnum: int
             self::FILLED => 'bg-warning',
             self::APPROVED => 'bg-positive',
             self::REJECTED => 'bg-danger',
+            self::PENDING_PAYMENT => 'bg-warning',
+            self::COMPLETED_SUCCESSFULLY => 'bg-positive',
         };
     }
 
