@@ -23,7 +23,7 @@ return new class extends Migration
         });
 
         Schema::table('persons', function (Blueprint $table) {
-            $table->string('family_conditions_text')->nullable();
+            // $table->string('family_conditions_text')->nullable();
             $table->tinyInteger('family_conditions')->nullable();
             $table->tinyInteger('in_support_group')->nullable();
         });
