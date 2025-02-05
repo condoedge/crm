@@ -22,24 +22,23 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     {
         $this->setInscriptionInfo();
         $this->model($this->person);
-        
-        $this->eventId = $this->prop('event_id');
-        $this->event = Event::findOrFail($this->eventId);
+
+        $this->eventId = $this->inscription->event_id;
+        $this->event = $this->inscription->event;
     }
 
     public function rightColumnBody()
     {
         return _Rows(            
             _Rows(
-                $this->mainInscription->getAllInscriptionsRelated()
+                $this->mainInscription->getAllRelatedInscriptions()
                     ->map(fn($inscription) => _Rows(
                         _Rows(
-                            _Html($inscription->person->full_name)->class('text-2xl'),
-                            _TitleModalSub($inscription->person->age_label),
+                            _Html($inscription->person?->full_name)->class('text-2xl'),
+                            _TitleModalSub($inscription->person?->age_label),
                         )->class('text-center mb-4'),
                         $this->customRegistrableInfo($inscription),
-                    ))
-                    ->toArray()
+                    )->href($inscription->getInscriptionPersonRoute()))->toArray()
             ),
 
             !$this->model->registered_by ? null : _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
@@ -54,18 +53,19 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function registerAndAddAnother()
     {
-        $inscription = InscriptionModel::getOrCreateForMainPerson($this->mainPerson->id, $this->event->team_id, $this->inscription->type);
+        $inscription = InscriptionModel::getOrCreatePendingForMainPerson($this->mainPerson->id, $this->event->team_id, $this->inscription->type);
         $inscription->related_inscription_id = $this->mainInscription->id;
-        $inscription->setSelectedTeam($this->event->team_id, $this->event);
+        $inscription->setSelectedTeam($this->event->team_id, null);
 
 		return redirect($inscription->getInscriptionPersonLinkRoute());
     }
 
     public function registerAndFinish()
     {
-        $this->mainInscription->getAllInscriptionsRelated()
-            ->each(fn($inscription) => $inscription->confirmInscriptionFilled($this->event->team_id, $this->event));
+        $this->mainInscription->getAllRelatedInscriptions()
+            ->filter(fn($inscription) => $inscription->isRegistrable())
+            ->each(fn($inscription) => $inscription->confirmInscriptionFilled());
 
-        return redirect($this->inscription->getInscriptionDoneRoute());
+        return redirect($this->mainInscription->getInscriptionDoneRoute());
     }
 }

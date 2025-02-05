@@ -19,6 +19,11 @@ class PersonLink extends Model
 		return $this->belongsTo(PersonModel::getClass(), 'person2_id');
 	}
 
+	public function linkType()
+	{
+		return $this->belongsTo(LinkType::class, 'link_type_id');
+	}
+
 	/* SCOPES */
 
 	/* CALCULATED FIELDS */

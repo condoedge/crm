@@ -12,7 +12,7 @@ Route::layout('layouts.guest')->group(function(){
 
 	Route::middleware(['signed'])->group(function(){
 
-    	Route::get('inscription/confirmation/{inscription_code}/{event_id}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
+    	Route::get('inscription/confirmation/{inscription_code}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
 
     	Route::get('create-account/{inscription_code}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
 
