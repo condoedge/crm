@@ -54,7 +54,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function registerAndAddAnother()
     {
-        $inscription = InscriptionModel::getOrCreateForMainPerson($this->personId, $this->event->team_id, $this->inscription->type);
+        $inscription = InscriptionModel::getOrCreateForMainPerson($this->mainPerson->id, $this->event->team_id, $this->inscription->type);
         $inscription->related_inscription_id = $this->mainInscription->id;
         $inscription->setSelectedTeam($this->event->team_id, $this->event);
 
