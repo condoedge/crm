@@ -144,6 +144,8 @@ class Inscription extends Model
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
         
         return static::where($inscriptionType->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id', $personId)
+            ->when($inscriptionType->basedInInscriptionForOtherPerson(), fn($q) => $q->whereNull('person_id'))
+            ->whereNull('related_inscription_id')
             ->when(!$teamId, fn($q) => $q->whereNull('team_id'))
             ->when($teamId, fn($q) => $q->where('team_id', $teamId))->where('type', $inscriptionType->value)
             ->when($roleId, fn($q) => $q->where('role_id', $roleId))
@@ -158,6 +160,13 @@ class Inscription extends Model
         if ($inscription = static::getForMainPerson($personId, $teamId, $inscriptionType, $roleId)) {
             return $inscription;
         }
+
+        return static::createForMainPerson($personId, $teamId, $inscriptionType, $roleId);
+    }
+
+    public static function createForMainPerson($personId, $teamId, $inscriptionType, $roleId = null)
+    {
+        $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
 
         $inscription = new static;
         $inscription->person_id = $inscriptionType->basedInInscriptionForOtherPerson() ? null : $personId;
