@@ -31,7 +31,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     {
         return _Rows(            
             _Rows(
-                $this->mainInscription->getAllInscriptionsRelated()
+                $this->mainInscription->getAllRelatedInscriptions()
                     ->map(fn($inscription) => _Rows(
                         _Rows(
                             _Html($inscription->person?->full_name)->class('text-2xl'),
@@ -62,10 +62,10 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function registerAndFinish()
     {
-        $this->mainInscription->getAllInscriptionsRelated()
+        $this->mainInscription->getAllRelatedInscriptions()
             ->filter(fn($inscription) => $inscription->isRegistrable())
-            ->each(fn($inscription) => $inscription->confirmInscriptionFilled($this->event->team_id, $this->event));
+            ->each(fn($inscription) => $inscription->confirmInscriptionFilled());
 
-        return redirect($this->inscription->getInscriptionDoneRoute());
+        return redirect($this->mainInscription->getInscriptionDoneRoute());
     }
 }

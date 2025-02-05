@@ -121,15 +121,25 @@ class Inscription extends Model
         return $this->parentInscription ?? $this;
     }
 
-    public function getAllInscriptionsRelated()
+    public function getAllRelatedInscriptions()
     {
         $mainInscription = $this->getMainInscription();
-        return collect([$mainInscription, ...$mainInscription->relatedInscriptions]);
+        return collect([$mainInscription, ...$mainInscription->relatedInscriptions()->with('person')->get()]);
+    }
+
+    public function getAllRelatedPersons()
+    {
+        return $this->getAllRelatedInscriptions()->map->person;
+    }
+
+    public function getAllRelatedNames()
+    {
+        return $this->getAllRelatedPersons()->map->full_name->join(', ');
     }
 
     public function setValueToRelatedInscriptions($key, $value)
     {
-        $this->getAllInscriptionsRelated()->each->setAttribute($key, $value);
+        $this->getAllRelatedInscriptions()->each->setAttribute($key, $value);
     }
 
     public function isApproved()
@@ -325,15 +335,10 @@ class Inscription extends Model
         $this->save();
     }
 
-    public function confirmInscriptionFilled($teamId = null, $event = null)
+    public function confirmInscriptionFilled()
     {
         $this->status = InscriptionStatusEnum::FILLED;
-        if ($teamId || $event) {
-            $this->setSelectedTeam($teamId, $event);
-        } else {
-            // We're saving in the setSelectedTeam method so we just need to call it here
-            $this->save();
-        }
+        $this->save();
     }
 
     public function setSelectedTeam($teamId, $event = null)
