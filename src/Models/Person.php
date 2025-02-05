@@ -72,6 +72,11 @@ abstract class Person extends Model implements Searchable
         return $this->hasMany(DiciplinaryAction::class);
     }
 
+    public function inscriptions()
+    {
+        return $this->hasMany(Inscription::class);
+    }
+
     /* SCOPES */
     public function scopeActive($query, $teamId = null)
     {
@@ -226,6 +231,7 @@ abstract class Person extends Model implements Searchable
             PersonTeam::createFromTeamRole($teamRole);
         }
 
+        PersonEvent::createPersonEvent($person, $inscription->event);
     }
 
     /* SEARCHABLE */
@@ -247,16 +253,42 @@ abstract class Person extends Model implements Searchable
     }
 
     /* ELEMENTS */
-    public function nameAndContactLabelsEl()
+    /**
+     * @param string[] $infoToShow The info to show in the labels. Possible options
+     * are 'address', 'phone', 'email', 'team'
+     */
+    public function nameAndContactLabelsEl($infoToShow = ['address', 'phone', 'email'])
     {
-        $phone = $this->getFirstValidPhoneLabel();
-        $address = $this->getFirstValidAddressLabel();
+        $phone = in_array('phone', $infoToShow) ? $this->getFirstValidPhoneLabel() : null;
+        $address = in_array('address', $infoToShow) ? $this->getFirstValidAddressLabel() : null;
+        $email = in_array('email', $infoToShow) ? $this->email_identity : null;
+        $team = in_array('team', $infoToShow) ? $this->getLastTeam() : null;
 
         return _Rows(
             _LabelWithIcon('profile', $this->full_name),
+            !$team ? null : _Flex(
+                _LabelWithIcon('profile', 
+                    _Html($team['team']->getTeamsHierarchyLabel(true))->class('text-xs text-gray-600'),
+                )->class('items-center !mb-0'),
+                $team['pending'] ? _Pill('translate.pending')->class('bg-warning text-white !p-1') : null,
+            )->class('gap-2'),
             !$phone ? null : _PhoneWithIcon($phone),
-            !$this->email_identity ? null : _EmailWithIcon($this->email_identity),
+            !$email ? null : _EmailWithIcon($email),
             !$address ? null : _AddressWithIcon($address),
         )->class('mb-3');
+    }
+
+    public function getLastTeam()
+    {
+        $lastInscription = $this->inscriptions()->whereNotNull('team_id')->latest()->first();
+
+        $lastPersonTeam = $this->personTeams()->active()->latest()->first();
+
+        $entity = $lastInscription?->created_at > $lastPersonTeam?->created_at ? $lastInscription : $lastPersonTeam;
+
+        return [
+            'team' => $entity->team,
+            'pending' => $entity instanceof Inscription ? true : false,
+        ];
     }
 }

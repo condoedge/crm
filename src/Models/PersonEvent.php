@@ -45,12 +45,11 @@ class PersonEvent extends Model
     /* ROUTES */
 
     /* ACTIONS */
-    public static function createPersonEvent($person, $event, $inscription = null)
+    public static function createPersonEvent($person, $event)
     {
         $pr = new static();
         $pr->person_id = $person->id;
         $pr->event_id = $event->id;
-        $pr->inscription_id = $inscription?->id;
         $pr->save();
 
         return $pr;
