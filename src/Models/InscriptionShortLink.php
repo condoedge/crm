@@ -42,9 +42,10 @@ class InscriptionShortLink extends Model
     public function createInscription()
     {
         $inscription = null;
+        $mainInscription = InscriptionModel::getOrCreatePendingForMainPerson($this->person->getRegisteringPerson()->id, $this->team_id, $this->type, $this->role_id, true);
 
         if ($this->person_id) {
-            $inscription = InscriptionModel::getOrCreatePendingForMainPerson($this->person_id, $this->team_id, $this->type, $this->role_id, true);
+            $inscription = InscriptionModel::getOrCreatePendingForMainPerson($this->person->getRegisteringPerson()->id, $this->team_id, $this->type, $this->role_id, false);
         } 
 
         if (!$inscription) {
@@ -52,12 +53,13 @@ class InscriptionShortLink extends Model
             $inscription->type = $this->type;
             $inscription->team_id = $this->team_id;
             $inscription->person_id = $this->person_id;
-            $inscription->event_id = $this->event_id;
+            $inscription->inscribed_by = $this->person->getRegisteringPerson()->id;
             $inscription->role_id = $this->role_id;
             $inscription->from_short_link_id = $this->id;
             $inscription->setQrCodeIfEmpty();
         }
 
+        $inscription->related_inscription_id = $mainInscription?->id;
         $inscription->event_id = $this->event_id;
         $inscription->save();
 
