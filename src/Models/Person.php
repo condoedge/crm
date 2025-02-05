@@ -286,6 +286,10 @@ abstract class Person extends Model implements Searchable
 
         $entity = $lastInscription?->created_at > $lastPersonTeam?->created_at ? $lastInscription : $lastPersonTeam;
 
+        if(!$entity) {
+            return null;
+        }
+
         return [
             'team' => $entity->team,
             'pending' => $entity instanceof Inscription ? true : false,
