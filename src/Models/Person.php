@@ -191,6 +191,11 @@ abstract class Person extends Model implements Searchable
         return \Str::slug($this->full_name) . '@user.coolecto.com';
     }
 
+    public function getLinkToTeam($teamId)
+    {
+        return $this->personTeams()->active()->where('team_id', $teamId)->first();
+    }
+
     public function createOrGetUserByRegisteredBy($inscription, $team)
     {
         $user = User::where('email', $this->email ?: $this->constructFakeEmail())->first();

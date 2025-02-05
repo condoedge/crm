@@ -78,9 +78,19 @@ class Inscription extends Model
         ));
     }
 
-	public function getInscriptionConfirmationRoute($eventId)
+	public function getInscriptionConfirmationRoute()
     {
-        return $this->getInscriptionRoute('inscription.confirmation', ['event_id' => $eventId]);
+        return $this->getInscriptionRoute('inscription.confirmation');
+    }
+
+    public function getInscriptionPersonRoute()
+    {
+        return $this->getRegistrationUrl();
+    }
+
+    public function isMainInscription()
+    {
+        return !$this->related_inscription_id;
     }
 
 	public function getPerformRegistrationUrl()
@@ -104,13 +114,6 @@ class Inscription extends Model
         }
 
         return $this->getInscriptionRoute('inscription.team');
-    }
-
-    public function getInscriptionUnitRoute($teamId)
-    {
-        return $this->getInscriptionRoute('inscription.unit', [
-            'group_id' => $teamId,
-        ]);
     }
 
     public function getMainInscription()
@@ -137,27 +140,30 @@ class Inscription extends Model
 	/* ACTIONS */
 
     /**
+     * This only works to get void inscriptions to be filled. Just used in the inscription process it's not created
+     * to get it from other context like person profile. We need to avoid void inscriptions or creating new ones when there are voids.
      * @param InscriptionTypeEnum $inscriptionType
+     * @param bool $getMain Used in landing join page to get the main inscription or when we send the inscription to the person by email. It should be false when you want to get a new sibling inscription
      */
-    public static function getForMainPerson($personId, $teamId, $inscriptionType, $roleId = null, $justLastYear = true)
+    public static function getPendingForMainPerson($personId, $teamId, $inscriptionType, $roleId = null, $getMain = null)
     {
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
         
-        return static::where($inscriptionType->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id', $personId)
-            ->when($inscriptionType->basedInInscriptionForOtherPerson(), fn($q) => $q->whereNull('person_id'))
-            ->whereNull('related_inscription_id')
-            ->when(!$teamId, fn($q) => $q->whereNull('team_id'))
-            ->when($teamId, fn($q) => $q->where('team_id', $teamId))->where('type', $inscriptionType->value)
+        return static::where($inscriptionType?->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id', $personId)
+            ->when($inscriptionType?->basedInInscriptionForOtherPerson() && !$getMain, fn($q) => $q->whereNull('person_id'))
+            ->when($teamId, fn($q) => $q->where('team_id', $teamId))
+            ->when($inscriptionType, fn($q) => $q->where('type', $inscriptionType->value))
             ->when($roleId, fn($q) => $q->where('role_id', $roleId))
-            ->when($justLastYear, fn($q) => $q->whereRaw('YEAR(created_at) = YEAR(CURDATE())'))
+            ->where('status', '<=', InscriptionStatusEnum::FILLED)
+            ->when($getMain, fn($q) => $q->whereNull('related_inscription_id'))
             ->first();
     }
 
-    public static function getOrCreateForMainPerson($personId, $teamId, $inscriptionType, $roleId = null)
+    public static function getOrCreatePendingForMainPerson($personId, $teamId, $inscriptionType, $roleId = null, $getMain = null)
     {
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
 
-        if ($inscription = static::getForMainPerson($personId, $teamId, $inscriptionType, $roleId)) {
+        if ($inscription = static::getPendingForMainPerson($personId, $teamId, $inscriptionType, $roleId, $getMain)) {
             return $inscription;
         }
 
@@ -175,31 +181,6 @@ class Inscription extends Model
         $inscription->inscribed_by = $inscriptionType->basedInInscriptionForOtherPerson() ? $personId : auth()->user()?->getRelatedMainPerson()?->id;
         $inscription->role_id = $roleId;
         $inscription->save();
-
-        return $inscription;
-    }
-
-    public static function getForPerson($personId, $teamId, $inscriptionType)
-    {
-        return static::where('person_id', $personId)->where('team_id', $teamId)->where('type', $inscriptionType)->first();
-    }
-
-    public static function getOrCreateForPerson($personId, $teamId, $inscriptionType, $roleId = null)
-    {
-        if ($inscription = static::getForPerson($personId, $teamId, $inscriptionType)) {
-            return $inscription;
-        }
-
-        $inscription = new static;
-        $inscription->person_id = $personId;
-        $inscription->team_id = $teamId;
-        $inscription->type = $inscriptionType;
-        $inscription->inscribed_by = auth()->user()?->getRelatedMainPerson()?->id;
-        $inscription->role_id = $roleId;
-        $inscription->status = InscriptionStatusEnum::CREATED;
-        $inscription->save();
-
-        $inscription->getExistentQrOrCreateNew();
 
         return $inscription;
     }
@@ -249,7 +230,7 @@ class Inscription extends Model
 
     public function createOrGetRegistrationUrl($personId, $teamId, $type)
     {
-        $inscription = static::getOrCreateForMainPerson($personId, $teamId, $type);
+        $inscription = static::getOrCreatePendingForMainPerson($personId, $teamId, $type, null, true);
 
         return $inscription->getRegistrationUrl();
     }

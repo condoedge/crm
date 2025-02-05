@@ -44,7 +44,7 @@ class InscriptionShortLink extends Model
         $inscription = null;
 
         if ($this->person_id) {
-            $inscription = InscriptionModel::getOrCreateForMainPerson($this->person_id, $this->team_id, $this->type, $this->role_id);
+            $inscription = InscriptionModel::getOrCreatePendingForMainPerson($this->person_id, $this->team_id, $this->type, $this->role_id, true);
         } 
 
         if (!$inscription) {
