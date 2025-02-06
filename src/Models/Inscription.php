@@ -307,7 +307,7 @@ class Inscription extends Model
 
             $teamRole = $user->createTeamRole($this->team, $role->id);
     
-            if (!$this->inscribed_by) PersonEvent::createPersonEvent($this, $this->event_id, $this);
+            if (!$this->inscribed_by) PersonEvent::createPersonEvent($this, $this->getEventToAttend());
             PersonTeam::getOrCreateForInscription($this, $teamRole);
             $person->user_id = $user->id;
             $person->save();
@@ -324,6 +324,11 @@ class Inscription extends Model
         }
 
         fireRegisteredEvent($user);
+    }
+
+    public function getEventToAttend()
+    {
+        return $this->event;
     }
 
     public function confirmChildRegistration()

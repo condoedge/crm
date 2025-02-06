@@ -231,7 +231,7 @@ abstract class Person extends Model implements Searchable
             PersonTeam::createFromTeamRole($teamRole);
         }
 
-        PersonEvent::createPersonEvent($person, $inscription->event);
+        PersonEvent::createPersonEvent($person, $inscription->getEventToAttend());
     }
 
     /* SEARCHABLE */

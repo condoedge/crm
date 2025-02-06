@@ -47,6 +47,10 @@ class PersonEvent extends Model
     /* ACTIONS */
     public static function createPersonEvent($person, $event)
     {
+        if (static::where('person_id', $person->id)->where('event_id', $event->id)->exists()) {
+            return null;
+        }
+
         $pr = new static();
         $pr->person_id = $person->id;
         $pr->event_id = $event->id;
