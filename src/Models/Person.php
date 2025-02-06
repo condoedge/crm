@@ -267,7 +267,7 @@ abstract class Person extends Model implements Searchable
         return _Rows(
             _LabelWithIcon('profile', $this->full_name),
             !$team ? null : _Flex(
-                _LabelWithIcon('profile', 
+                _LabelWithIcon('pet', 
                     _Html($team['team']->getTeamsHierarchyLabel(true))->class('text-xs text-gray-600'),
                 )->class('items-center !mb-0'),
                 $team['pending'] ? _Pill('translate.pending')->class('bg-warning text-white !p-1') : null,
