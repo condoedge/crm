@@ -44,4 +44,9 @@ enum InscriptionStatusEnum: int
             default => false,
         };
     }
+
+    public static function getInsideStatuses()
+    {
+        return [self::APPROVED, self::PENDING_PAYMENT, self::COMPLETED_SUCCESSFULLY];
+    }
 }

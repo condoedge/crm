@@ -45,16 +45,23 @@ class PersonEvent extends Model
     /* ROUTES */
 
     /* ACTIONS */
-    public static function createPersonEvent($person, $event)
+    public static function createPersonEvent($person, $event, $status = null)
     {
-        if (static::where('person_id', $person->id)->where('event_id', $event->id)->exists()) {
-            return null;
+        $pr = static::where('person_id', $person->id)->where('event_id', $event->id)->first();
+
+        if (!$pr) {
+            $pr = new static();
+            $pr->person_id = $person->id;
+            $pr->event_id = $event->id;    
         }
 
-        $pr = new static();
-        $pr->person_id = $person->id;
-        $pr->event_id = $event->id;
-        $pr->save();
+        if ($status) {
+            $pr->register_status = $status->value;
+        }
+
+        if ($pr->isDirty()) {
+            $pr->save();
+        }
 
         return $pr;
     }
