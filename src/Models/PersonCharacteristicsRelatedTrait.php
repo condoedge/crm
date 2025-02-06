@@ -9,7 +9,7 @@ trait PersonCharacteristicsRelatedTrait
     /* CALCULATED FIELDS */
     public function getAgeLabelAttribute()
     {
-        return getAgeFromDob($this->date_of_birth);
+        return getAgeFromDob($this->date_of_birth) .' '.__('general-years');
     }
 
     public function getGenderLabelAttribute()
