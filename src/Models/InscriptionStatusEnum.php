@@ -40,7 +40,9 @@ enum InscriptionStatusEnum: int
     public function accepted()
     {
         return match($this) {
+            self::PENDING_PAYMENT => true,
             self::APPROVED => true,
+            self::COMPLETED_SUCCESSFULLY => true,
             default => false,
         };
     }

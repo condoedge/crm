@@ -1,6 +1,10 @@
 <?php
 
 
+function getDynamicallyModal() {
+    return getAppClass(App\Kompo\Common\Modal::class, Kompo\Auth\Common\Modal::class);
+}
+
 function getInscriptionTypes()
 {
     return collect(config('condoedge-crm.inscription-types'))->mapWithKeys(fn($e) => [$e->value => $e]);

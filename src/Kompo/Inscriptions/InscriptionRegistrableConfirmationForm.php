@@ -41,7 +41,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
                     )->href($inscription->getInscriptionPersonRoute()))->toArray()
             ),
 
-            !$this->model->registered_by ? null : _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
+            !$this->inscription->type->basedInInscriptionForOtherPerson() ? null : _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
             _Button('inscriptions.register-and-complete')->selfPost('registerAndFinish')->redirect(),
         )->class('p-8');
     }

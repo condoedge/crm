@@ -7,47 +7,25 @@ use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionLandingPage extends ImgFormLayout
 {
+    use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
+
     protected $imgUrl = 'images/base-email-image.png';
     protected $rightColumnBodyWrapperClass = '';
 
-    protected $qrCode;
-    protected $inscription;
-
     public function created()
     {
-        $this->qrCode = $this->prop('inscription_code');
-
-        $this->inscription = $this->qrCode ? InscriptionModel::forQrCode($this->qrCode)->first() : null;
-    }
-
-    public function manageInscriptionLink($type)
-    {
-        $person = auth()->user()?->getRelatedMainPerson();
-
-        if($person) $this->inscription?->updatePersonId($person->id);
-        $this->inscription?->updateType($type);
-
-        if ($this->inscription) {
-            return redirect()->to($this->inscription?->getRegistrationUrl());
-        } else if (auth()->user()) {
-            return redirect()->to(InscriptionModel::createOrGetRegistrationUrl($person->id, null, $type));
-    	}  else {
-    		return redirect()->route('inscription.email.step1', [
-                'inscription_code' => $this->qrCode,
-                'type' => $type,
-            ]);
-    	}
+        $this->setInscriptionInfo();
     }
 
 	public function rightColumnBody()
 	{
 		return _Rows(
 			_LogoOnly()->class('self-center')->style('margin-bottom:60px;'),
-            _RegistrableFromQrCodeTitle($this->qrCode),
-            _Html('inscriptions.i-want-to-register-and-i-am')->class('mb-6 text-lg text-center'),
+            _RegistrableFromQrCodeTitle($this->inscriptionCode),
+            _Html('inscriptions.i-want-to-register-and-i-am')->class('mb-6 text-lg'),
 
             _Rows(
-                collect(getInscriptionTypes())->filter(fn($it) => !$this->inscription?->type || $this->inscription?->type?->value == $it->value)
+                collect(getInscriptionTypes())->filter(fn($it) => (!$this->inscription?->type || $this->inscription?->type?->value == $it->value) && !$it->isTrial())
                     ->map(function($type) {
                     return $this->optionButton($type);
                 }),
@@ -62,8 +40,18 @@ class InscriptionLandingPage extends ImgFormLayout
     protected function optionButton($type)
     {
         return _Rows(
-            _Html($type->registerTitle())->class('text-center !text-greendark font-semibold text-2xl mb-4'),
-            _Html($type->registerDescription())->class('!text-greendark'),
-        )->button2()->class('rounded-lg !pt-3 p-6')->selfGet('manageInscriptionLink', ['type' => $type->value])->redirect();
+            _Html($type->registerTitle())->class('text-center !text-level1 font-semibold text-2xl mb-4'),
+            _Html($type->registerDescription())->class('!text-level1'),
+        )->button2()->class('rounded-lg !pt-3 p-6')
+            ->when(!$type->allowTrial(), fn($el) => $el->selfGet('manageInscriptionLink', ['type' => $type->value])->redirect())
+            ->when($type->allowTrial(), fn($el) => $el->selfGet('selectRegularOrTrialModal', ['type' => $type->value])->inModal());
+    }
+
+    public function selectRegularOrTrialModal($type)
+    {
+        return new SelectRegularOrTrialInscriptionModal(null, [
+            'inscription_code' => $this->inscriptionCode,
+            'base_type' => $type,
+        ]);
     }
 }

@@ -9,4 +9,6 @@ return [
     'inscription-model-namespace' => getAppClass(App\Models\Inscriptions\Inscription::class, Condoedge\Crm\Models\Inscription::class),
 
     'inscription-types' => InscriptionTypeEnum::cases(),
+
+    'manage-payment-from-inscription' => true,
 ];
