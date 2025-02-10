@@ -15,6 +15,12 @@ class PersonTeam extends Model
 	protected $fillable = [
 		'team_role_id',
 	];
+
+	protected $casts = [
+		'status' => PersonTeamStatusEnum::class,
+		'from' => 'datetime',
+        'to' => 'datetime',
+	];
 	
 	/* RELATIONS */
 	public function teamRole()
@@ -25,7 +31,10 @@ class PersonTeam extends Model
 	/* SCOPES */
 	public function scopeActive($query)
 	{
-		return $query->whereNull('to');
+		return $query->where(fn($q) => $q
+			->where('to', '>', now())
+			->orWhereNull('to')
+		);
 	}
 
 	/* CALCULATED FIELDS */
@@ -49,13 +58,23 @@ class PersonTeam extends Model
 		$this->delete();
 	}
 
-	public static function createFromTeamRole($teamRole)
+	public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null)
 	{
+		if ($personTeam = static::where('team_role_id', $teamRole->id)->first()) {
+			$personTeam->status = $status ?? $personTeam->status;
+			$personTeam->to = $expirationDate;
+			$personTeam->save();
+
+			return $personTeam;
+		}
+
 		$personTeam = new static;
+		$personTeam->status = $status ?? PersonTeamStatusEnum::ACTIVE;
 		$personTeam->team_role_id = $teamRole->id;
 		$personTeam->person_id = PersonModel::where('user_id', $teamRole->user_id)->first()->id;
 		$personTeam->team_id = $teamRole->team_id;
 		$personTeam->from = now();
+		$personTeam->to = $expirationDate;
 		$personTeam->save();
 
 		return $personTeam;
@@ -71,6 +90,8 @@ class PersonTeam extends Model
 			$personTeam->team_role_id = $teamRole->id;
 		}
 
+		$personTeam->status = $inscription->hasPendingPayment() ? PersonTeamStatusEnum::PENDING_PAYMENT : PersonTeamStatusEnum::ACTIVE;
+		$personTeam->to = $inscription->getExpirationDate();
 		$personTeam->inscription_type = $inscription->type?->value;
 		$personTeam->save();
 

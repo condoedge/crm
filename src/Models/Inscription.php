@@ -286,7 +286,12 @@ class Inscription extends Model
     }
     public function validToComplete()
     {
-        return (!$this->type->requiresPayment() || $this->isPayed()) && $this->status->accepted();
+        return $this->canConsiderAsPaidAtInscriptionLevel() && $this->status->accepted();
+    }
+
+    public function canConsiderAsPaidAtInscriptionLevel()
+    {
+        return (!$this->hasPendingPayment() || !static::managePaymentFromInscription());
     }
 
     public function confirmUserRegistration($user)
@@ -307,13 +312,17 @@ class Inscription extends Model
 
             $teamRole = $user->createTeamRole($this->team, $role->id);
     
-            if (!$this->inscribed_by) PersonEvent::createPersonEvent($this, $this->getEventToAttend());
+            if (!$this->inscribed_by) { 
+                PersonEvent::createPersonEvent($this->person, $this->getEventToAttend());
+                // $teamRole->terminated_at = $this->getExpirationDate();
+                // $teamRole->save();
+            }
+
             PersonTeam::getOrCreateForInscription($this, $teamRole);
             $person->user_id = $user->id;
             $person->save();
 
-            $this->status = (!$this->type->requiresPayment() || $this->isPayed()) ? InscriptionStatusEnum::COMPLETED_SUCCESSFULLY : InscriptionStatusEnum::PENDING_PAYMENT;
-            $this->save();
+            $this->setConfirmedStatus();
         }
 
         if ($this->inscribed_by) {
@@ -324,6 +333,22 @@ class Inscription extends Model
         }
 
         fireRegisteredEvent($user);
+    }
+
+    public function setConfirmedStatus()
+    {
+        $this->status = !$this->canConsiderAsPaidAtInscriptionLevel() ? InscriptionStatusEnum::PENDING_PAYMENT : InscriptionStatusEnum::COMPLETED_SUCCESSFULLY;
+        $this->save();
+    }
+
+    public static function managePaymentFromInscription()
+    {
+        return config('condoedge-crm.manage-payment-from-inscription', true);
+    }
+
+    public function getExpirationDate()
+    {
+        return $this->type->expirationDate($this);
     }
 
     public function getEventToAttend()
@@ -337,8 +362,12 @@ class Inscription extends Model
             $this->person->createOrGetUserByRegisteredBy($this, $this->team);
         }
 
-        $this->status = (!$this->type->requiresPayment() || $this->isPayed()) ? InscriptionStatusEnum::COMPLETED_SUCCESSFULLY : InscriptionStatusEnum::PENDING_PAYMENT;
-        $this->save();
+        $this->setConfirmedStatus();
+    }
+
+    public function hasPendingPayment()
+    {
+        return !$this->type->requiresPayment() || $this->isPayed();
     }
 
     public function confirmInscriptionFilled()

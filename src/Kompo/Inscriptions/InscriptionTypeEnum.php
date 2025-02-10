@@ -78,9 +78,47 @@ enum InscriptionTypeEnum: string
             default => false
         };
     }
+
+    public function allowTrial()
+    {
+        return (boolean) $this->regularToTrial();
+    }
+
+    public function isTrial()
+    {
+        return (boolean) $this->trialToRegular();
+    }
+
+    public function regularToTrial()
+    {
+        return match ($this) {
+            default => null,
+        };
+    }
+
+    public function trialToRegular()
+    {
+        return match ($this) {
+            default => null,
+        };
+    }
+
+    public function hasEmailVerification()
+    {
+        return match ($this) {
+            default => true,
+        };
+    }
     
     public static function defaultPersonEvent()
     {
 
+    }
+
+    public function expirationDate($inscription)
+    {
+        return match ($this) {
+            default => null,
+        };
     }
 }

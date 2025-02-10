@@ -213,7 +213,7 @@ abstract class Person extends Model implements Searchable
         if (!$user) {
             $user = User::create([
                 'name' => $this->full_name,
-                'email' => $this->constructFakeEmail(), // TODO we could do the email nullable
+                'email' => $this->email ?: $this->constructFakeEmail(), // TODO we could do the email nullable
                 'password' => bcrypt(value: \Str::random(12)),
             ]);
         }
@@ -227,8 +227,9 @@ abstract class Person extends Model implements Searchable
             RoleModel::getOrCreate($role);
 
             $teamRole = $user->createTeamRole($team, $role);
+            // $teamRole->terminated_at = $inscription->getExpirationDate();
 
-            PersonTeam::createFromTeamRole($teamRole);
+            PersonTeam::createFromTeamRole($teamRole, $inscription->hasPendingPayment() ? PersonTeamStatusEnum::PENDING_PAYMENT : PersonTeamStatusEnum::ACTIVE, $inscription->getExpirationDate());
         }
 
         PersonEvent::createPersonEvent($person, $inscription->getEventToAttend());

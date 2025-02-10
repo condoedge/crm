@@ -38,7 +38,9 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 				'email' => $email,
 				'redirect_to' => $redirectTo,
 			]));
-		} else {
+		} elseif (!$this->type->hasEmailVerification()){
+			return redirect()->to($redirectTo);
+		}  else {
 
 			$emailRequest = EmailRequest::getOrCreateEmailRequest($email);
 
