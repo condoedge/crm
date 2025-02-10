@@ -9,7 +9,7 @@ class SelectRegularOrTrialInscriptionModal extends Modal
 {
     use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
 
-    protected $_Title = 'translate.inscriptions.select-regular-or-trial';
+    protected $_Title = 'inscriptions.select-regular-or-oneday';
 
     public $class = 'overflow-y-auto mini-scroll max-w-xl bg-level1 rounded-lg';
 
@@ -25,7 +25,7 @@ class SelectRegularOrTrialInscriptionModal extends Modal
     public function header()
     {
         return [
-            _ModalTitle('translate.inscriptions.select-regular-or-trial')?->class('!text-white !text-xl sm:!text-2xl'),
+            _ModalTitle('inscriptions.select-regular-or-oneday')?->class('!text-white !text-xl sm:!text-2xl'),
         ];
     }
 
@@ -33,12 +33,12 @@ class SelectRegularOrTrialInscriptionModal extends Modal
     {
         return _Flex(
             _Rows(
-                _Html('translate.regular-inscription')->class('text-center !text-level1 font-semibold text-2xl mb-4'),
-                _Html('translate.regular-inscription-desc')->class('!text-level1'),
+                _Html('inscriptions.regular-inscription')->class('text-center !text-level1 font-semibold text-2xl mb-4'),
+                _Html('inscriptions.regular-inscription-desc')->class('!text-level1'),
             )->button2()->class('rounded-lg !pt-3 p-6 flex-1')->selfGet('manageInscriptionLink', ['type' => $this->baseType->value])->redirect(),
             _Rows(
-                _Html('translate.trial-inscription')->class('text-center !text-level1 font-semibold text-2xl mb-4'),
-                _Html('translate.trial-inscription-desc')->class('!text-level1'),
+                _Html('inscriptions.oneday-inscription')->class('text-center !text-level1 font-semibold text-2xl mb-4'),
+                _Html('inscriptions.oneday-inscription-desc')->class('!text-level1'),
             )->button2()->class('rounded-lg !pt-3 p-6 flex-1')->selfGet('manageInscriptionLink', ['type' => $this->baseType->regularToTrial()->value])->redirect(),
         )->class('gap-3 w-full');
     }

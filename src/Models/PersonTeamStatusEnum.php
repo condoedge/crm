@@ -12,8 +12,8 @@ enum PersonTeamStatusEnum: int
     public function label(): string
     {
         return match ($this) {
-            self::PENDING_PAYMENT => __('translate.crm.pending-payment'),
-            self::ACTIVE => __('translate.crm.completally-active'),
+            self::PENDING_PAYMENT => __('crm.pending-payment'),
+            self::ACTIVE => __('crm.active'),
         };
     }
 }
