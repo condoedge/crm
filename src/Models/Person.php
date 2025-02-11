@@ -271,7 +271,7 @@ abstract class Person extends Model implements Searchable
                 _LabelWithIcon('pet', 
                     _Html($team['team']->getTeamsHierarchyLabel(true))->class('text-xs'),
                 )->class('items-center !mb-0'),
-                $team['pending'] ? _Pill('crm.pending')->class('bg-warning text-white !p-1') : null,
+                $team['pending'] ? _Pill('crm.pending')->class('bg-warning text-white !py-1 !px-3') : null,
             )->class('gap-2'),
             !$phone ? null : _PhoneWithIcon($phone),
             !$email ? null : _EmailWithIcon($email),
