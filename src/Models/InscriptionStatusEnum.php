@@ -6,6 +6,7 @@ enum InscriptionStatusEnum: int
 {
     use \Kompo\Auth\Models\Traits\EnumKompo;
 
+    case CANCELED = 0;
     case CREATED = 1;
     case FILLED = 2;
     case APPROVED = 5;
@@ -16,6 +17,7 @@ enum InscriptionStatusEnum: int
     public function label(): string
     {
         return match ($this) {
+            self::CANCELED => __('translate.crm.canceled'),
             self::CREATED => __('crm.invited'),
             self::FILLED => __('crm.pending'),
             self::APPROVED => __('crm.approved'),
@@ -28,6 +30,7 @@ enum InscriptionStatusEnum: int
     public function color(): string
     {
         return match ($this) {
+            self::CANCELED => 'bg-danger',
             self::CREATED => 'bg-info',
             self::FILLED => 'bg-warning',
             self::APPROVED => 'bg-positive',

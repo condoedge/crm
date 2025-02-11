@@ -38,10 +38,10 @@ class PersonTeam extends Model
 	}
 
 	/* CALCULATED FIELDS */
-	public function getStatusAttribute()
-	{
-		return $this->to?->isPast()? TeamRoleStatusEnum::FINISHED : TeamRoleStatusEnum::IN_PROGRESS;
-	}
+	// public function getStatusAttribute()
+	// {
+	// 	return $this->to?->isPast()? TeamRoleStatusEnum::FINISHED : TeamRoleStatusEnum::IN_PROGRESS;
+	// }
 
 	/* ACTIONS */
 	public function terminate()
@@ -50,6 +50,16 @@ class PersonTeam extends Model
 		$this->save();
 
 		$this->teamRole?->terminate();
+	}
+
+	public function moveToAnotherUnit($teamId)
+	{
+		$this->team_id = $teamId;
+		$this->save();
+
+		$teamRole = $this->teamRole;
+		$teamRole->team_id = $teamId;
+		$teamRole->save();
 	}
 
 	public function deleteAsignation()
@@ -101,6 +111,6 @@ class PersonTeam extends Model
 	/* ELEMENTS */
 	public function getStatusPillElement()
 	{
-		return _Pill($this->status->label())->class($this->status->color());
+		return _Pill($this->status->label())->class($this->status->color())->class('text-white');
 	}
 }

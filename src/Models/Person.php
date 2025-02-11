@@ -198,7 +198,7 @@ abstract class Person extends Model implements Searchable
 
     public function constructFakeEmail()
     {
-        return \Str::slug($this->full_name) . '@user.coolecto.com';
+        return \Str::slug($this->full_name) . $this->id . '@user.coolecto.com';
     }
 
     public function getLinkToTeam($teamId)

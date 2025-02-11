@@ -75,6 +75,11 @@ abstract class Event extends Model
     	return $this->inscriptions()->countsInTotal();
     }
 
+	public function confirmedInscriptions()
+	{
+		return $this->inscriptions()->confirmed();
+	}
+
     public function awaitingInscriptions()
     {
     	return $this->inscriptions()->awaitingApproval();

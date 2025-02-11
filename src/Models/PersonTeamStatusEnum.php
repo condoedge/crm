@@ -16,4 +16,12 @@ enum PersonTeamStatusEnum: int
             self::ACTIVE => __('crm.active'),
         };
     }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::PENDING_PAYMENT => 'bg-warning',
+            self::ACTIVE => 'bg-info',
+        };
+    }
 }

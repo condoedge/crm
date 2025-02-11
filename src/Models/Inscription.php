@@ -64,13 +64,24 @@ class Inscription extends Model
     public function scopeCountsInTotal($query)
     {
         return $query->whereIn('status', [
+            InscriptionStatusEnum::APPROVED,
             InscriptionStatusEnum::COMPLETED_SUCCESSFULLY, 
             InscriptionStatusEnum::FILLED,
             InscriptionStatusEnum::PENDING_PAYMENT
         ]);
     }
 
+    public function scopeConfirmed($query)
+    {
+        return $query->whereIn('status', InscriptionStatusEnum::getInsideStatuses());
+    }
+
 	/* CALCULATED FIELDS */
+    public function getActiveRelatedPersonTeam()
+    {
+        return PersonTeam::where('team_id', $this->team_id)->where('person_id', $this->person_id)->active()->first();
+    }
+
     public function getInscriptionRoute($route, $extra = [])
     {
         return \URL::signedRoute($route, array_merge(
@@ -280,6 +291,14 @@ class Inscription extends Model
         $this->save();
     }
 
+    public function cancelInscription()
+    {
+        $this->status = InscriptionStatusEnum::CANCELED;
+        $this->save();
+
+        $this->getActiveRelatedPersonTeam()?->terminate();
+    }
+
     public function isPayed()
     {
         return true;
@@ -383,9 +402,23 @@ class Inscription extends Model
         $this->save();
     }
 
+    public function moveToAnotherTeamAndEvent($teamId, $eventId)
+    {
+        $this->getActiveRelatedPersonTeam()?->moveToAnotherUnit($teamId);
+        
+        $this->event_id = $eventId;
+        $this->team_id = $teamId;
+        $this->save();
+    }
+
 	/* ELEMENTS */
+    public function visualStatusPill()
+    {
+        return $this->type->statusPill($this);
+    }
+
     public function statusPill()
     {
-        return _Pill($this->status->label())->class($this->status->color());
+        return _Pill($this->status->label())->class($this->status->color())->class('text-white');
     }
 }

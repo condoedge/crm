@@ -114,6 +114,22 @@ enum InscriptionTypeEnum: string
     {
 
     }
+    
+    public function statusPill($inscription)
+    {
+        return match ($this) {
+            default => $this->defaultStatusPill($inscription),
+        };
+    }
+
+    protected function defaultStatusPill($inscription)
+    {
+        if ($personTeam = $inscription->getActiveRelatedPersonTeam()) {
+            return $personTeam->getStatusPillElement();
+        }
+
+        return $inscription->statusPill();
+    }
 
     public function expirationDate($inscription)
     {
