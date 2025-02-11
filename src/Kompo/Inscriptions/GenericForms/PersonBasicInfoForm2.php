@@ -49,7 +49,7 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
                 ),
                
                 $this->placeInput()->class('place-input-without-visual')->default($this->model->address ?: auth()->user()?->address),
-                _Input('inscriptions.my-phone')->name('inscribed_phone')->default($this->model->inscribed_phone ?: auth()->user()?->getPrimaryPhoneNumber()),
+                _PhoneInput('inscriptions.my-phone')->name('inscribed_phone')->default($this->model->inscribed_phone ?: auth()->user()?->getPrimaryPhoneNumber()),
                 SpokenLanguageEnum::getMultiSelect()->default(array_keys(config('kompo.locales')))->class('mb-12'),
             ),
 			_SubmitButtonBig2('inscriptions.continue')->redirect()->class('mb-12'),
