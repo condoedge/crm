@@ -11,3 +11,14 @@ use Condoedge\Crm\Models\GenderEnum;
     return $this->asPill()
         ->class($gender->bgColor2() . ' '. $gender->textColor2());
 });
+
+function _PhoneInput($label = 'crm.phone')
+{
+    return _ValidatedInput($label)
+        ->type('tel')
+        ->formatModels([
+            '^(\d{3})(\d{3})(.*)' => '$1-$2-$3',
+        ])
+        ->allow('^\d{0,10}$')
+        ->validate('^\d{3}(?:[-\s]?\d{3})(?:[-\s]?\d{4})$');
+}
