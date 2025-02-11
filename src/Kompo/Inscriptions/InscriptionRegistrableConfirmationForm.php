@@ -66,6 +66,6 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
             ->filter(fn($inscription) => $inscription->isRegistrable())
             ->each(fn($inscription) => $inscription->confirmInscriptionFilled());
 
-        return redirect($this->mainInscription->getInscriptionDoneRoute());
+        return redirect($this->mainInscription->getConsentPageRoute());
     }
 }
