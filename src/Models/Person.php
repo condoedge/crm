@@ -269,7 +269,7 @@ abstract class Person extends Model implements Searchable
             _LabelWithIcon('profile', $this->full_name),
             !$team ? null : _Flex(
                 _LabelWithIcon('pet', 
-                    _Html($team['team']->getTeamsHierarchyLabel(true))->class('text-xs'),
+                    _Html($team['team']->getCompleteTeamsLabel())->class('text-xs'),
                 )->class('items-center !mb-0'),
                 $team['pending'] ? _Pill('crm.pending')->class('bg-warning text-white !py-1 !px-3') : null,
             )->class('gap-2'),
