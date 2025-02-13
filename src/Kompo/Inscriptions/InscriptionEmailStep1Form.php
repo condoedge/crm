@@ -63,7 +63,7 @@ class InscriptionEmailStep1Form extends ImgFormLayout
             _TitleMain('inscriptions.your-information')->class('absolute self-center')->style('top:4rem;'),
 
 			!$this->type->askForLegalAgeTerms() ? null 
-				: _Checkbox('translate.inscriptions.legal-age-terms')->name('legal_age_terms', false)->class('mb-6'),
+				: _Checkbox('inscriptions.legal-age-terms')->name('legal_age_terms', false)->class('mb-6'),
 
 			_Input('inscriptions.my-email')->name('email'),
             _SubmitButtonBig2('inscriptions.verify-my-email')->redirect(),

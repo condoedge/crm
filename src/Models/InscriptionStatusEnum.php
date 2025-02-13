@@ -17,7 +17,7 @@ enum InscriptionStatusEnum: int
     public function label(): string
     {
         return match ($this) {
-            self::CANCELED => __('translate.crm.canceled'),
+            self::CANCELED => __('crm.canceled'),
             self::CREATED => __('crm.invited'),
             self::FILLED => __('crm.pending'),
             self::APPROVED => __('crm.approved'),
@@ -32,8 +32,8 @@ enum InscriptionStatusEnum: int
         return match ($this) {
             self::CANCELED => 'bg-danger',
             self::CREATED => 'bg-info',
-            self::FILLED => 'bg-warning',
-            self::APPROVED => 'bg-positive',
+            self::FILLED => 'bg-infodark',
+            self::APPROVED => 'bg-greenmain',
             self::REJECTED => 'bg-danger',
             self::PENDING_PAYMENT => 'bg-warning',
             self::COMPLETED_SUCCESSFULLY => 'bg-positive',
