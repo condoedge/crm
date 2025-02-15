@@ -3,6 +3,7 @@
 namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 
 use Condoedge\Crm\Facades\InscriptionModel;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 trait InscriptionFormUtilsTrait 
 {
@@ -47,6 +48,10 @@ trait InscriptionFormUtilsTrait
         $this->teamId = $this->team?->id;
 
         $this->mainInscription = $this->inscription?->getMainInscription();
+
+        if ($this->inscription?->status?->accepted()) {
+            throw new HttpException(422, __('translate.you-are-already-registered-and-accepted'));
+        } 
     }
 
     public function manageInscriptionLink($type)
