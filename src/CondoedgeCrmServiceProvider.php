@@ -32,7 +32,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
 
         $this->loadRelationsMorphMap();
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'kompo-auth');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'kompo-crm');
 
         $this->setCommands();
         $this->setCronJobs();
