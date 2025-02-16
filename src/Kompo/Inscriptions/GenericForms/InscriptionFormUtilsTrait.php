@@ -50,7 +50,7 @@ trait InscriptionFormUtilsTrait
         $this->mainInscription = $this->inscription?->getMainInscription();
 
         if ($this->inscription?->status?->accepted()) {
-            throw new HttpException(422, __('translate.you-are-already-registered-and-accepted'));
+            throw new HttpException(422, __('error.you-are-already-registered-and-accepted'));
         } 
     }
 

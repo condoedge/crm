@@ -71,7 +71,7 @@ class PersonTeamsWithRolesTable extends Table
                 ($personTeam->teamRole && !$personTeam->teamRole->terminated_at || !$personTeam->to) 
                     ? _Link('permissions.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                     : null,
-            ),
+            )->class('text-right'),
         );
     }
 

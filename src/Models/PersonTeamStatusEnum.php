@@ -21,7 +21,7 @@ enum PersonTeamStatusEnum: int
     {
         return match ($this) {
             self::PENDING_PAYMENT => 'bg-warning',
-            self::ACTIVE => 'bg-info',
+            self::ACTIVE => 'bg-positive',
         };
     }
 }
