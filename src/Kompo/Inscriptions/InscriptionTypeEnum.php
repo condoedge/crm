@@ -137,4 +137,11 @@ enum InscriptionTypeEnum: string
             default => null,
         };
     }
+
+    public function askForLegalAgeTerms()
+    {
+        return match($this) {
+            default => false,
+        };
+    }
 }

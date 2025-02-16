@@ -28,7 +28,7 @@ class PersonInscriptionConfirmationMail extends Mailable
     public function build()
     {
         return $this->subject(__('mail.congratulations-your-registration-is-approved'))
-            ->markdown('kompo-auth::emails.inscription-confirmation-mail')
+            ->markdown('kompo-crm::emails.inscription-confirmation-mail')
             ->with([
                 'acceptInscriptionUrl' => $this->inscription->getAcceptInscriptionUrl(),
             ]);

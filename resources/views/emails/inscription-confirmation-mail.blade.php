@@ -1,7 +1,7 @@
 @component('mail::message')
 
-<p>Vous avez ete accepte. Veuillez payer:</p>
+<p>{{!! __('translate.inscriptions.confirmation-email-message-1')}}</p>
 
-<p>{!! makeMailButton('Create account and pay', $acceptInscriptionUrl) !!}</p>
+<p>{!! makeMailButton(__('translate.confirm-inscription'), $acceptInscriptionUrl) !!}</p>
 
 @endcomponent
