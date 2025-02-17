@@ -103,6 +103,7 @@ class PersonTeam extends Model
 		$personTeam->status = $inscription->hasPendingPayment() ? PersonTeamStatusEnum::PENDING_PAYMENT : PersonTeamStatusEnum::ACTIVE;
 		$personTeam->to = $inscription->getExpirationDate();
 		$personTeam->inscription_type = $inscription->type?->value;
+		$personTeam->last_inscription_id = $inscription->id;
 		$personTeam->save();
 
 		return $personTeam;
