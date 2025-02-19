@@ -72,9 +72,11 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 
 	public function rules()
 	{
-		return [
-			'email' => 'required|email',
-			'legal_age_terms' => 'required|accepted',
-		];
+		return array_merge(
+			[
+				'email' => 'required|email',
+			],
+			$this->type->askForLegalAgeTerms() ? ['legal_age_terms' => 'required'] : []
+		);
 	}
 }

@@ -3,7 +3,8 @@
 namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\InscriptionModel;
-use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Storage;
 use Kompo\Auth\Models\Model;
 
 /**
@@ -24,6 +25,21 @@ class InscriptionShortLink extends Model
     protected $casts = [
         // 'type' => InscriptionTypeEnum::class
     ];
+
+    public static function getOrCreateShortLink($teamId, $personId, $eventId, $type)
+    {
+        $shortLink = static::where('team_id', $teamId)
+            ->where('person_id', $personId)
+            ->where('event_id', $eventId)
+            ->where('type', $type)
+            ->first();
+
+        if (!$shortLink) {
+            $shortLink = static::createShortLink($teamId, $personId, $eventId, $type);
+        }
+
+        return $shortLink;
+    }
 
     public static function createShortLink($teamId, $personId, $eventId, $type)
     {
@@ -72,6 +88,21 @@ class InscriptionShortLink extends Model
         return route('inscription-generation-page', [
             'link_code' => $this->code,
         ]);
+    }
+
+    public function getQr($size = 200)
+    {
+        $path = 'qr-codes/short-link-'.$this->id.'.png';
+        $disk = config('kompo.default_storage_disk.image');
+
+        if (!Storage::disk($disk)->exists($path)) {
+            $qrCode = QrCode::format('png')->size($size)->generate($this->getInscriptionUrl());
+
+            Storage::disk($disk)->put($path, $qrCode);
+            Storage::disk($disk)->setVisibility($path, 'public');
+        }
+
+        return Storage::disk($disk)->url($path);
     }
 
     // SCOPES

@@ -76,6 +76,11 @@ class Inscription extends Model
         return $query->whereIn('status', InscriptionStatusEnum::getInsideStatuses());
     }
 
+    public function scopeForScoutYear($query, $year)
+    {
+        return $query->whereHas('event', fn($q) => $q->where('scout_year', $year));
+    }
+
 	/* CALCULATED FIELDS */
     public function getActiveRelatedPersonTeam()
     {
@@ -159,6 +164,14 @@ class Inscription extends Model
     }
 
 	/* ACTIONS */
+
+    public static function getForCurrentYearQuery($personId, $inscriptionType)
+    {
+        return static::where('person_id', $personId)
+            ->where('type', $inscriptionType->value)
+            ->forScoutYear(now()->year)
+            ->latest();
+    }
 
     /**
      * This only works to get void inscriptions to be filled. Just used in the inscription process it's not created
