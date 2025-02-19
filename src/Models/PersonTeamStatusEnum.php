@@ -15,7 +15,7 @@ enum PersonTeamStatusEnum: int
         return match ($this) {
             self::PENDING_PAYMENT => __('crm.pending-payment'),
             self::ACTIVE => __('crm.active'),
-            self::PROBATION => __('translate.crm.probation'),
+            self::PROBATION => __('crm.probation'),
         };
     }
 
