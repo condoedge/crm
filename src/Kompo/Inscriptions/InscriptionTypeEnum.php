@@ -2,6 +2,8 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
+use Condoedge\Crm\Models\PersonTeamStatusEnum;
+
 enum InscriptionTypeEnum: string
 {
     /**
@@ -142,6 +144,13 @@ enum InscriptionTypeEnum: string
     {
         return match($this) {
             default => false,
+        };
+    }
+
+    public function getSpecificPersonTeamStatus($inscription)
+    {
+        return match($this) {
+            default => $inscription->hasPendingPayment() ? PersonTeamStatusEnum::PENDING_PAYMENT : PersonTeamStatusEnum::ACTIVE,
         };
     }
 }
