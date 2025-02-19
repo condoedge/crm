@@ -32,7 +32,7 @@ enum InscriptionStatusEnum: int
         return match ($this) {
             self::CANCELED => 'bg-danger',
             self::CREATED => 'bg-info',
-            self::FILLED => 'bg-infodark',
+            self::FILLED => 'bg-warning',
             self::APPROVED => 'bg-greenmain',
             self::REJECTED => 'bg-danger',
             self::PENDING_PAYMENT => 'bg-warning',

@@ -74,7 +74,7 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 	{
 		return [
 			'email' => 'required|email',
-			'legal_age_terms' => 'accepted',
+			'legal_age_terms' => 'required|accepted',
 		];
 	}
 }
