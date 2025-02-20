@@ -171,7 +171,7 @@ abstract class Person extends Model implements Searchable
 
     public static function getOptionsForTeamWithFullName($teamId)
     {
-        return static::active($teamId)->addFullName()->pluck('person_full_name', 'id');
+        return static::forTeams([$teamId])->addFullName()->pluck('person_full_name', 'id');
     }
 
     public function getRegisteringPerson()
