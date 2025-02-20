@@ -12,7 +12,13 @@ class PersonRegistrableAcceptController extends Controller
     {
         $inscription = InscriptionModel::findOrFail($id);
 
-        if (!$inscription->status->accepted() || $inscription->status->completed()) return;
+        if (!$inscription->status->accepted() || $inscription->status->completed()) {
+            if (auth()->user()) {
+                return redirect()->to(route('dashboard'));
+            }
+
+            return redirect()->to(route('login.password', ['email' => $inscription->person->email_identity]));
+        }
 
         $email = $inscription->person->getRegisteringPersonEmail();
 
