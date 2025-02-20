@@ -289,7 +289,7 @@ class Inscription extends Model
 
     public function getRelatedRegistrations()
     {
-        if (!$this->type->basedInInscriptionForOtherPerson()) return collect();
+        if (!$this->type?->basedInInscriptionForOtherPerson()) return collect();
 
         return static::where('inscribed_by', $this->inscribed_by)->get();
     }

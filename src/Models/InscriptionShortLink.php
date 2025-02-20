@@ -70,7 +70,7 @@ class InscriptionShortLink extends Model
             $inscription->type = $this->type;
             $inscription->team_id = $this->team_id;
             $inscription->person_id = $this->person_id;
-            $inscription->inscribed_by = $this->type->basedInInscriptionForOtherPerson() ? $this->person?->getRegisteringPerson()?->id : null;
+            $inscription->inscribed_by = $this->type?->basedInInscriptionForOtherPerson() ? $this->person?->getRegisteringPerson()?->id : null;
             $inscription->role_id = $this->role_id;
             $inscription->from_short_link_id = $this->id;
             $inscription->setQrCodeIfEmpty();
