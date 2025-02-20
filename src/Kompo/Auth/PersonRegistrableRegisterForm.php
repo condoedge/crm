@@ -18,7 +18,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     protected function isAStepNotValidAtThisPoint()
     {
-        return $this->inscription->status->completed();
+        return false;
     }
 
     public function created()

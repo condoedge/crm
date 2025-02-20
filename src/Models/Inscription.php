@@ -328,6 +328,8 @@ class Inscription extends Model
 
     public function confirmUserRegistration($user)
     {
+        if ($this->status->completed()) return;
+
         $person = $this->person->getRegisteringPerson();
 
         $person->user_id = $user->id;
