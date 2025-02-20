@@ -68,11 +68,13 @@ class PersonTeam extends Model
 		$this->delete();
 	}
 
-	public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null)
+	public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null, $inscription = null)
 	{
 		if ($personTeam = static::where('team_role_id', $teamRole->id)->first()) {
 			$personTeam->status = $status ?? $personTeam->status;
 			$personTeam->to = $expirationDate;
+			$personTeam->last_inscription_id = $inscription?->id ?? $personTeam->last_inscription_id;
+			$personTeam->inscription_type = $inscription?->type?->value ?? $personTeam->inscription_type;
 			$personTeam->save();
 
 			return $personTeam;
@@ -85,6 +87,8 @@ class PersonTeam extends Model
 		$personTeam->team_id = $teamRole->team_id;
 		$personTeam->from = now();
 		$personTeam->to = $expirationDate;
+		$personTeam->inscription_type = $inscription?->type?->value;
+		$personTeam->last_inscription_id = $inscription?->id;
 		$personTeam->save();
 
 		return $personTeam;
