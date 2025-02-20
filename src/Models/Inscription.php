@@ -347,8 +347,8 @@ class Inscription extends Model
 
             $teamRole = $user->createTeamRole($this->team, $role->id);
     
-            if (!$this->type->basedInInscriptionForOtherPerson()) { 
-                PersonEvent::createPersonEvent($this->person, $this->getEventToAttend());
+            if (!$this->type->basedInInscriptionForOtherPerson() && ($event = $this->getEventToAttend())) { 
+                PersonEvent::createPersonEvent($this->person, $event);
                 // $teamRole->terminated_at = $this->getExpirationDate();
                 // $teamRole->save();
             }
