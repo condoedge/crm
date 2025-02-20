@@ -226,11 +226,12 @@ class Inscription extends Model
         return $personTeam?->inscription_type ?? null;
     }
 
-    public function updatePersonId($personId)
+    public function updateRegisteringPersonId($personId)
     {
-        $this->person_id = $personId;
+        $column = $this->type->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id';
+        $this->setAttribute($column, $personId);
         
-        if ($this->isDirty('person_id')) {
+        if ($this->isDirty($column)) {
             $this->save();
         }
     }
@@ -254,7 +255,7 @@ class Inscription extends Model
 
         if (!$this->person_id && !$this->inscribed_by) {
             return route('inscription.email.step1', [
-                'inscription_code' => $this->qrCode,
+                'inscription_code' => $this->getExistentQrOrCreateNew(),
                 'type' => $this->type
             ]);
         }

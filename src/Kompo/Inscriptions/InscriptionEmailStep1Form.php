@@ -29,9 +29,9 @@ class InscriptionEmailStep1Form extends ImgFormLayout
 		$email = request('email');
 
 		$person = PersonModel::getOrCreatePersonFromEmail($email);
-		$redirectTo = $this->getRedirectUrl($person);
+		$this->inscription?->updateRegisteringPersonId($person->id);
 
-		$this->inscription?->updatePersonId($person->id);
+		$redirectTo = $this->getRedirectUrl($person);
 
 		if ($user = User::where('email', $email)->first()) {
 			return redirect(route('login.password', [

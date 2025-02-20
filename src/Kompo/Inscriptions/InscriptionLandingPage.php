@@ -2,7 +2,6 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use Condoedge\Crm\Facades\InscriptionModel;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionLandingPage extends ImgFormLayout

@@ -63,7 +63,7 @@ trait InscriptionFormUtilsTrait
     {
         $person = auth()->user()?->getRelatedMainPerson();
 
-        if($person) $this->inscription?->updatePersonId($person->id);
+        if($person) $this->inscription?->updateRegisteringPersonId($person->id);
         $this->inscription?->updateType($type);
 
         if ($this->inscription) {
