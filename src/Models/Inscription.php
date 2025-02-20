@@ -212,7 +212,7 @@ class Inscription extends Model
         $inscription->person_id = $inscriptionType->basedInInscriptionForOtherPerson() ? null : $personId;
         $inscription->team_id = $teamId;
         $inscription->type = $inscriptionType->value;
-        $inscription->inscribed_by = $inscriptionType->basedInInscriptionForOtherPerson() ? $personId : auth()->user()?->getRelatedMainPerson()?->id;
+        $inscription->inscribed_by = $inscriptionType->basedInInscriptionForOtherPerson() ? $personId : null;
         $inscription->role_id = $roleId;
         $inscription->save();
 
@@ -289,7 +289,7 @@ class Inscription extends Model
 
     public function getRelatedRegistrations()
     {
-        if (!$this->inscribed_by) return collect();
+        if (!$this->type->basedInInscriptionForOtherPerson()) return collect();
 
         return static::where('inscribed_by', $this->inscribed_by)->get();
     }
@@ -342,12 +342,12 @@ class Inscription extends Model
             abort(403, __('error.there-is-not-role-assigned-to-your-inscription'));
         }
 
-        if ($this->inscribed_by || $this->validToComplete()) {
+        if ($this->type->basedInInscriptionForOtherPerson() || $this->validToComplete()) {
             $role = RoleModel::getOrCreate($this->type->getRole($this));
 
             $teamRole = $user->createTeamRole($this->team, $role->id);
     
-            if (!$this->inscribed_by) { 
+            if (!$this->type->basedInInscriptionForOtherPerson()) { 
                 PersonEvent::createPersonEvent($this->person, $this->getEventToAttend());
                 // $teamRole->terminated_at = $this->getExpirationDate();
                 // $teamRole->save();
@@ -360,7 +360,7 @@ class Inscription extends Model
             $this->setConfirmedStatus();
         }
 
-        if ($this->inscribed_by) {
+        if ($this->type->basedInInscriptionForOtherPerson()) {
             $inscriptions = collect([$this])->merge($this->relatedInscriptions);
             // Create temporal user for the child or the registered person
 
