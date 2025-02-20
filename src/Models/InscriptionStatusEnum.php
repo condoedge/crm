@@ -50,6 +50,14 @@ enum InscriptionStatusEnum: int
         };
     }
 
+    public static function completed()
+    {
+        return match ($this) {
+            self::COMPLETED_SUCCESSFULLY => true,
+            default => false,
+        };
+    }
+
     public static function getInsideStatuses()
     {
         return [self::APPROVED, self::PENDING_PAYMENT, self::COMPLETED_SUCCESSFULLY];

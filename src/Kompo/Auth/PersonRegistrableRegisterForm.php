@@ -16,6 +16,11 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     protected $team;
     protected $registeringEmail;
 
+    protected function isAStepNotValidAtThisPoint()
+    {
+        return $this->inscription->status->completed();
+    }
+
     public function created()
     {
         $this->setInscriptionInfo();

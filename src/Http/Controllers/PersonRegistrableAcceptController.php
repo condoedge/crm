@@ -12,7 +12,7 @@ class PersonRegistrableAcceptController extends Controller
     {
         $inscription = InscriptionModel::findOrFail($id);
 
-        if (!$inscription->status->accepted()) return;
+        if (!$inscription->status->accepted() || $inscription->status->completed()) return;
 
         $email = $inscription->person->getRegisteringPersonEmail();
 

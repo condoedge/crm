@@ -49,9 +49,14 @@ trait InscriptionFormUtilsTrait
 
         $this->mainInscription = $this->inscription?->getMainInscription();
 
-        if ($this->inscription?->status?->accepted()) {
+        if ($this->isAStepNotValidAtThisPoint()) {
             throw new HttpException(422, __('error.you-are-already-registered-and-accepted'));
         } 
+    }
+
+    protected function isAStepNotValidAtThisPoint()
+    {
+        return $this->inscription?->status?->accepted();
     }
 
     public function manageInscriptionLink($type)
