@@ -130,7 +130,7 @@ abstract class Person extends Model implements Searchable
 
     public function getRelatedLinksOfPersonLinks()
     {
-        return $this->getAllPersonLinks()->flatMap(fn($pl) => $pl->person->getAllPersonLinks())->unique(fn($q) => $q->person2_id)->filter(fn($q) => $q->person1_id != $this->id && $q->linkType?->child_can_access_siblings == 1);
+        return $this->getAllPersonLinks()->flatMap(fn($pl) => $pl->person->getAllPersonLinks())->unique(fn($q) => $q->person2_id)->filter(fn($q) => in_array($this->id, [$q->person1_id, $q->person2_id]) && $q->linkType?->child_can_access_siblings == 1);
     }
 
     public function getFullNameAttribute()
