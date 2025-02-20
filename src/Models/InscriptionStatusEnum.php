@@ -50,7 +50,7 @@ enum InscriptionStatusEnum: int
         };
     }
 
-    public static function completed()
+    public function completed()
     {
         return match ($this) {
             self::COMPLETED_SUCCESSFULLY => true,
