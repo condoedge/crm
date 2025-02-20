@@ -20,7 +20,7 @@ class PersonRegistrableAcceptController extends Controller
             
             $inscription->confirmUserRegistration($user);
 
-            return redirect()->route('login.password', ['email' => $email]);
+            return redirect()->to('login.password', ['email' => $email]);
 
         } else {
             return redirect()->to($inscription->getPerformRegistrationUrl());
