@@ -18,7 +18,7 @@ class PersonRegistrableAcceptController extends Controller
             throw new \Exception('Inscription is not accepted');
         }
 
-        if (!$inscription->status->completed()) {
+        if (!$inscription->status->completed() && $user) {
             $inscription->confirmUserRegistration($user);
         }
 
