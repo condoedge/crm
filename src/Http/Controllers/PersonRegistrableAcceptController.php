@@ -11,23 +11,21 @@ class PersonRegistrableAcceptController extends Controller
     public function __invoke($id)
     {
         $inscription = InscriptionModel::findOrFail($id);
+        $email = $inscription->person->getRegisteringPersonEmail();
+        $user = User::where('email', $email)->first();
 
-        if (!$inscription->status->accepted() || $inscription->status->completed()) {
-            if (auth()->user()) {
-                return redirect()->to(route('dashboard'));
-            }
-
-            return redirect()->to(route('login.password', ['email' => $inscription->person->email_identity]));
+        if (!$inscription->status->accepted()) {
+            throw new \Exception('Inscription is not accepted');
         }
 
-        $email = $inscription->person->getRegisteringPersonEmail();
-
-        if ($user = User::where('email', $email)->first()) {
-            
+        if (!$inscription->status->completed()) {
             $inscription->confirmUserRegistration($user);
+        }
 
-            return redirect()->to(route('login.password', ['email' => $email]));
+        if ($user) {
+            auth()->login($user);
 
+            return redirect()->to(route('dashboard'));
         } else {
             return redirect()->to($inscription->getPerformRegistrationUrl());
         }
