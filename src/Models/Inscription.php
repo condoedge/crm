@@ -78,7 +78,7 @@ class Inscription extends Model
 
     public function scopeForScoutYear($query, $year)
     {
-        return $query->whereHas('event', fn($q) => $q->where('scout_year', $year));
+        return $query->whereHas('event', fn($q) => $q->whereHas('mainTemplate', fn($q) => $q->where('scout_year', $year)));
     }
 
 	/* CALCULATED FIELDS */
@@ -368,6 +368,18 @@ class Inscription extends Model
         }
 
         fireRegisteredEvent($user);
+    }
+
+    public function markAsPaid()
+    {
+        if (!$this->canConsiderAsPaidAtInscriptionLevel()) {
+            $personTeams = PersonTeam::where('last_inscription_id', $this->id)->get();
+
+            $personTeams->each->markAsPaid();
+        }
+
+        $this->status = InscriptionStatusEnum::COMPLETED_SUCCESSFULLY;
+        $this->save();
     }
 
     public function setConfirmedStatus()
