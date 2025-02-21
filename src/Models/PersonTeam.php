@@ -99,7 +99,7 @@ class PersonTeam extends Model
 		$personTeam = static::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $inscription->team_id)->whereNull('team_role_id')->first();
 
 		if (!$personTeam) {
-			$personTeam =  static::createFromTeamRole($teamRole);
+			$personTeam =  static::createFromTeamRole($teamRole, expirationDate: $inscription->getExpirationDate(), inscription: $inscription);
 		} else {
 			$personTeam->team_role_id = $teamRole->id;
 		}
