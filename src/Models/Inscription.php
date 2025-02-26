@@ -353,7 +353,7 @@ class Inscription extends Model
                 // $teamRole->save();
             }
 
-            PersonTeam::getOrCreateForInscription($this, $teamRole);
+            PersonTeam::getOrCreateForAdultInscription($this, $teamRole);
             $person->user_id = $user->id;
             $person->save();
 

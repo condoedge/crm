@@ -153,4 +153,18 @@ enum InscriptionTypeEnum: string
             default => $inscription->hasPendingPayment() ? PersonTeamStatusEnum::PENDING_PAYMENT : PersonTeamStatusEnum::ACTIVE,
         };
     }
+
+    public function getAdultPersonTeamType()
+    {
+        return match($this) {
+            default => null,
+        };
+    }
+
+    public function getChildPersonTeamType()
+    {
+        return match($this) {
+            default => null,
+        };
+    }
 }

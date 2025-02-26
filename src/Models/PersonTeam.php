@@ -68,11 +68,12 @@ class PersonTeam extends Model
 		$this->delete();
 	}
 
-	public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null, $inscription = null)
+	public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null, $inscription = null, $personTeamType = null)
 	{
 		if ($personTeam = static::where('team_role_id', $teamRole->id)->first()) {
 			$personTeam->status = $status ?? $personTeam->status;
 			$personTeam->to = $expirationDate;
+			$personTeam->role_type = $personTeamType ?? $personTeam->role_type;
 			$personTeam->last_inscription_id = $inscription?->id ?? $personTeam->last_inscription_id;
 			$personTeam->inscription_type = $inscription?->type?->value ?? $personTeam->inscription_type;
 			$personTeam->save();
@@ -87,6 +88,7 @@ class PersonTeam extends Model
 		$personTeam->team_id = $teamRole->team_id;
 		$personTeam->from = now();
 		$personTeam->to = $expirationDate;
+		$personTeam->role_type = $personTeamType ?? $teamRole->role->type;
 		$personTeam->inscription_type = $inscription?->type?->value;
 		$personTeam->last_inscription_id = $inscription?->id;
 		$personTeam->save();
@@ -94,7 +96,7 @@ class PersonTeam extends Model
 		return $personTeam;
 	}
 
-	public static function getOrCreateForInscription($inscription, $teamRole)
+	public static function getOrCreateForAdultInscription($inscription, $teamRole)
 	{
 		$personTeam = static::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $inscription->team_id)->whereNull('team_role_id')->first();
 
@@ -104,6 +106,7 @@ class PersonTeam extends Model
 			$personTeam->team_role_id = $teamRole->id;
 		}
 
+		$personTeam->role_type = $inscription->type->getAdultPersonTeamType();
 		$personTeam->status = $inscription->type->getSpecificPersonTeamStatus($inscription);
 		$personTeam->to = $inscription->getExpirationDate();
 		$personTeam->inscription_type = $inscription->type?->value;

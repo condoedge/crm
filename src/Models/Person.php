@@ -229,7 +229,7 @@ abstract class Person extends Model implements Searchable
             $teamRole = $user->createTeamRole($team, $role);
             // $teamRole->terminated_at = $inscription->getExpirationDate();
 
-            PersonTeam::createFromTeamRole($teamRole, $inscription->type->getSpecificPersonTeamStatus($inscription), $inscription->getExpirationDate(), $inscription);
+            PersonTeam::createFromTeamRole($teamRole, $inscription->type->getSpecificPersonTeamStatus($inscription), $inscription->getExpirationDate(), $inscription, $inscription->type->getChildPersonTeamType());
         }
 
         PersonEvent::createPersonEvent($person, $inscription->getEventToAttend());
