@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
+use App\Models\Teams\Team;
 use App\Models\User;
 use Condoedge\Crm\Facades\PersonModel;
 use Kompo\Auth\Facades\RoleModel;
@@ -171,7 +172,9 @@ abstract class Person extends Model implements Searchable
 
     public static function getOptionsForTeamWithFullName($teamId)
     {
-        return static::forTeams([$teamId])->addFullName()->pluck('person_full_name', 'id');
+        $team = Team::findOrFail($teamId);
+
+        return static::forTeams($team->getAllChildrenRawSolution())->addFullName()->pluck('person_full_name', 'id');
     }
 
     public function getRegisteringPerson()
