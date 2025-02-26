@@ -19,9 +19,11 @@ class InscriptionEmailStep1Form extends ImgFormLayout
     public function created()
     {
         $this->qrCode = $this->prop('inscription_code');
-		$this->type = $this->prop('type') ? getInscriptionTypes()[$this->prop('type')] : collect(getInscriptionTypesKeys())->first() ?? null;
 
 		$this->inscription = $this->qrCode ? InscriptionModel::forQrCode($this->qrCode)->first() : null;
+
+		$typeId = $inscription?->type ?? $this->prop('type') ??  collect(getInscriptionTypesKeys())->first();
+		$this->type = getInscriptionTypes()[$typeId] ?? null;
     }
 
 	public function handle()

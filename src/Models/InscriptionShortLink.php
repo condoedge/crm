@@ -3,6 +3,7 @@
 namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\InscriptionModel;
+use Condoedge\Crm\Facades\InscriptionTypeEnumGlobal;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 use Kompo\Auth\Models\Model;
@@ -22,9 +23,12 @@ class InscriptionShortLink extends Model
     use \Condoedge\Crm\Models\BelongsToPersonTrait;
     use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 
-    protected $casts = [
-        // 'type' => InscriptionTypeEnum::class
-    ];
+    public function getCasts()
+    {
+        $casts = parent::getCasts();
+        $casts['type'] = InscriptionTypeEnumGlobal::getEnumClass();
+        return $casts;
+    }
 
     public static function getOrCreateShortLink($teamId, $personId, $eventId, $type)
     {

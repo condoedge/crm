@@ -61,6 +61,10 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
         $this->app->bind('event-model', function () {
             return new (config('condoedge-crm.event-model-namespace'));
         });
+
+        $this->app->bind('inscription-type-enum', function () {
+            return config('condoedge-crm.inscription-type-enum');
+        });
     }
 
     protected function loadHelpers()
