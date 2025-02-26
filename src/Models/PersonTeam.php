@@ -88,7 +88,7 @@ class PersonTeam extends Model
 		$personTeam->team_id = $teamRole->team_id;
 		$personTeam->from = now();
 		$personTeam->to = $expirationDate;
-		$personTeam->role_type = $personTeamType ?? $teamRole->role->type;
+		$personTeam->role_type = $personTeamType ?? $teamRole->role_type;
 		$personTeam->inscription_type = $inscription?->type?->value;
 		$personTeam->last_inscription_id = $inscription?->id;
 		$personTeam->save();
