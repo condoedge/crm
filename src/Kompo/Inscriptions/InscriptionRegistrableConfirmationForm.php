@@ -2,18 +2,17 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-use App\Models\Crm\PersonEvent;
 use App\Models\Events\Event;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
-use Condoedge\Crm\Models\Inscription;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 {
+    use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
+
     protected $imgUrl = 'images/base-email-image.png';
 
-    protected $inscriptionId;
-    protected $inscription;
     protected $eventId;
     protected $event;
 
@@ -21,51 +20,52 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 
     public function created()
     {
-        $this->inscriptionId = $this->prop('inscription_id');
-        $this->inscription = Inscription::findOrFail($this->inscriptionId);
+        $this->setInscriptionInfo();
+        $this->model($this->person);
 
-        $this->eventId = $this->prop('event_id');
-        $this->event = Event::findOrFail($this->eventId);
+        $this->eventId = $this->inscription->event_id;
+        $this->event = $this->inscription->event;
     }
 
     public function rightColumnBody()
     {
-        return _Rows(
+        return _Rows(            
             _Rows(
-                _Html($this->model->full_name)->class('text-2xl'),
-                _TitleModalSub($this->model->age_label),
-            )->class('text-center mb-4'),
-            
-            $this->customRegistrableInfo(),
+                $this->mainInscription->getAllRelatedInscriptions()
+                    ->map(fn($inscription) => _Rows(
+                        _Rows(
+                            _Html($inscription->person?->full_name)->class('text-2xl'),
+                            _TitleModalSub($inscription->person?->age_label),
+                        )->class('text-center mb-4'),
+                        $this->customRegistrableInfo($inscription),
+                    )->href($inscription->getInscriptionPersonRoute()))->toArray()
+            ),
 
-            _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
+            !$this->inscription->type->basedInInscriptionForOtherPerson() ? null : _Link2Outlined('inscriptions.register-and-add-another-child')->selfPost('registerAndAddAnother')->redirect()->class('mb-4'),
             _Button('inscriptions.register-and-complete')->selfPost('registerAndFinish')->redirect(),
         )->class('p-8');
     }
 
-    protected function customRegistrableInfo()
+    protected function customRegistrableInfo($inscription)
     {
         //Override
     }
 
     public function registerAndAddAnother()
     {
-        $this->assignMemberToUnit();
+        $inscription = InscriptionModel::getOrCreatePendingForMainPerson($this->mainPerson->id, $this->event->team_id, $this->inscription->type);
+        $inscription->related_inscription_id = $this->mainInscription->id;
+        $inscription->setSelectedTeam($this->event->team_id, null);
 
-        return redirect($this->inscription->getInscriptionPersonLinkRoute());
+		return redirect($inscription->getInscriptionPersonLinkRoute());
     }
 
     public function registerAndFinish()
     {
-        $pe = $this->assignMemberToUnit();
+        $this->mainInscription->getAllRelatedInscriptions()
+            ->filter(fn($inscription) => $inscription->isRegistrable())
+            ->each(fn($inscription) => $inscription->confirmInscriptionFilled());
 
-        return redirect($pe->getInscriptionDoneRoute());
-    }
-
-    protected function assignMemberToUnit()
-    {
-        $pe = PersonEvent::createPersonEvent($this->model, $this->event, $this->inscription); 
-
-        return $pe;
+        return redirect($this->mainInscription->getConsentPageRoute());
     }
 }

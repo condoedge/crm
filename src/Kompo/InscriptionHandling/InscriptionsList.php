@@ -2,13 +2,11 @@
 
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
-use App\Models\Crm\PersonEvent;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Kompo\Auth\Common\WhiteTable;
 
-class PersonEventsList extends WhiteTable
+class InscriptionsList extends WhiteTable
 {
-
-
     protected $eventId;
 
     public function created()
@@ -18,7 +16,7 @@ class PersonEventsList extends WhiteTable
 
     protected function queryForEvent()
     {
-        return PersonEvent::forEvent($this->eventId);
+        return InscriptionModel::where('event_id', $this->eventId);
     }
 
     public function query()
@@ -32,7 +30,7 @@ class PersonEventsList extends WhiteTable
             _FlexBetween(
                 _TitleMain('inscriptions.registrations'),
                 _FlexEnd4(
-                    _CardIconStat('tick-circle', 'inscriptions.nb-registered', _Html($this->queryForEvent()->countInTotal()->count()))->class('bg-level1 text-white'),
+                    _CardIconStat('tick-circle', 'inscriptions.nb-registered', _Html($this->queryForEvent()->countsInTotal()->count()))->class('bg-level1 text-white'),
                     _CardIconStat('tick-circle', 'inscriptions.pending', _Html($this->queryForEvent()->awaitingApproval()->count()))->class('bg-level2 text-white'),
                 ),
             )->class('mb-4'),
@@ -51,9 +49,9 @@ class PersonEventsList extends WhiteTable
         ];
     }
 
-    public function render($pr)
+    public function render($inscription)
     {
-        $person = $pr->person;
+        $person = $inscription->person;
 
         return _TableRow(
             _Rows(
@@ -61,16 +59,16 @@ class PersonEventsList extends WhiteTable
                 _Html($person->age_label),
             ),
             _Pill($person->gender_label),
-            _Html($pr->getRelatedTargetTeam()->team_name),
-            _HtmlDate($pr->created_at),
-            _Pill($pr->ie_status_label),
-        )->selfUpdate('getPersonEventAnswerForm', [
-            'id' => $pr->id,
+            _Html($inscription->team->team_name),
+            _HtmlDate($inscription->created_at),
+            _Pill($inscription->status->label()),
+        )->selfUpdate('getInscriptionAnswerForm', [
+            'id' => $inscription->id,
         ])->inModal();
     }
 
-    public function getPersonEventAnswerForm($id)
+    public function getInscriptionAnswerForm($id)
     {
-        return new PersonEventAnswerForm($id);
+        return new InscriptionAnswerForm($id);
     }
 }

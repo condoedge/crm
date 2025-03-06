@@ -2,9 +2,8 @@
 
 namespace Condoedge\Crm\Mail;
 
-use Condoedge\Crm\Models\PersonEvent;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
@@ -12,13 +11,13 @@ class PersonInscriptionConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $personEventId;
-    protected $personEvent;
+    protected $inscriptionId;
+    protected $inscription;
 
-    public function __construct($personEventId)
+    public function __construct($inscriptionId)
     {
-        $this->personEventId = $personEventId;
-        $this->personEvent = PersonEvent::findOrFail($this->personEventId);
+        $this->inscriptionId = $inscriptionId;
+        $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
     }
 
     /**
@@ -29,9 +28,9 @@ class PersonInscriptionConfirmationMail extends Mailable
     public function build()
     {
         return $this->subject(__('mail.congratulations-your-registration-is-approved'))
-            ->markdown('emails.inscription-confirmation-mail')
+            ->markdown('kompo-crm::emails.inscription-confirmation-mail')
             ->with([
-                'acceptInscriptionUrl' => $this->personEvent->getAcceptInscriptionUrl(),
+                'acceptInscriptionUrl' => $this->inscription->getAcceptInscriptionUrl(),
             ]);
     }
 }

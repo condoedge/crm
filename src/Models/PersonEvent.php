@@ -6,116 +6,89 @@ use Kompo\Auth\Models\Model;
 
 class PersonEvent extends Model
 {
-	use \Condoedge\Crm\Models\BelongsToPersonTrait;
-	use \Condoedge\Crm\Models\BelongsToEventTrait;
+    use \Condoedge\Crm\Models\BelongsToPersonTrait;
+    use \Condoedge\Crm\Models\BelongsToEventTrait;
 
-	protected $casts = [
-		'register_status' => RegisterStatusEnum::class,
-	];
+    protected $casts = [
+        'attendance_confirmation' => PersonEventConfirmationEnum::class,
+    ];
 
-	/* RELATIONS */
+    /* RELATIONS */
 
-	/* SCOPES */
-	public function scopeCountInTotal($query)
-	{
-		$query->whereIn('register_status', [
-			RegisterStatusEnum::RS_ACCEPTED,
-			RegisterStatusEnum::RS_PAID,
-		]);
-	}
+    /* SCOPES */
 
-	public function scopeAwaitingApproval($query)
-	{
-		$query->whereIn('register_status', [
-			RegisterStatusEnum::RS_REQUESTED,
-		]);
-	}
+    /* CALCULATED FIELDS */
+    public function getRelatedTargetTeam()
+    {
+        return $this->event->team;
+    }
 
-	/* CALCULATED FIELDS */
-	public function getIeStatusLabelAttribute()
-	{
-		return $this->register_status->label();
-	}
+    public function getAttendance()
+    {
+        return EventAttendance::forPersonEvent($this->id)->first();
+    }
 
-	public function getRegisteringPerson()
-	{
-		return $this->person->registeredBy ?: $this->person;
-	}
+    public function isAttended()
+    {
+        return EventAttendance::forPersonEvent($this->id)
+            ->where('attendance_status', EventAttendanceStatus::ATTENDED)
+            ->exists();
+    }
 
-	public function getRegisteringPersonEmail()
-	{
-		return $this->getRegisteringPerson()->email_identity;
-	}
+    public function isAbstent()
+    {
+        return EventAttendance::forPersonEvent($this->id)
+            ->where('attendance_status', EventAttendanceStatus::ABSTENT)
+            ->exists();
+    }
 
-	public function getRelatedTargetTeam()
-	{
-		return $this->event->team;
-	}
+    /* ROUTES */
 
-	public function getFirstRegisteredPerson()
-	{
-		return $this->getRelatedRegistrations()->first();
-	}
+    /* ACTIONS */
+    public static function createPersonEvent($person, $event, $status = null)
+    {
+        $pr = static::where('person_id', $person->id)->where('event_id', $event->id)->first();
 
-	public function getNextRegisteredPerson()
-	{
-		return $this->getRelatedRegistrations()->where('id', '>', $this->id)->first();
-	}
+        if (!$pr) {
+            $pr = new static();
+            $pr->person_id = $person->id;
+            $pr->event_id = $event->id;    
+        }
 
-	public function getRelatedRegistrations()
-	{
-		return static::where('inscription_id', $this->inscription_id)->get();
-	}
+        if ($status) {
+            $pr->register_status = $status->value;
+        }
 
-	/* ROUTES */
-	public function getAcceptInscriptionUrl()
-	{
-		return \URL::signedRoute('person-registrable.accept', [
-            'id' => $this->id,
-        ]);
-	}
+        if ($pr->isDirty()) {
+            $pr->save();
+        }
 
-	public function getPerformRegistrationUrl()
-	{
-		return \URL::signedRoute('person-registrable.register', [
-            'pr_id' => $this->id,
-        ]);
-	}
+        return $pr;
+    }
+    public function toggleAttendance()
+    {
+        $attendance = $this->getAttendance();
+        $nextAttendance = $attendance?->attendance_status?->nextCheck() ?? EventAttendanceStatus::ATTENDED;
 
-	public function getInscriptionDoneRoute()
-	{
-        return \URL::signedRoute('inscription.done1', [
-            'id' => $this->id,
-        ]);
-	}
+        EventAttendance::takeAttendanceFromPersonEvent($this->id, $nextAttendance);
+    }
 
-	/* ACTIONS */
-	public static function createPersonEvent($person, $event, $inscription)
-	{
-		$pr = new static();
-		$pr->person_id = $person->id;
-		$pr->event_id = $event->id;
-		$pr->inscription_id = $inscription->id;
-		$pr->save();
+    /* ELEMENTS */
+    public function attendanceConfirmationPill()
+    {
+        $status = $this->attendance_status;
 
-		return $pr;
-	}
+        if (!$status) {
+            return null;
+        }
 
-	public function approveAndSend()
-	{
-		$this->register_status = RegisterStatusEnum::RS_ACCEPTED;
-		$this->save();
+        return _Pill($status->label())->class($status->classes());
+    }
 
-		$this->approveAndSendCustomCode();
+    public function attendancePill()
+    {
+        $status = $this->getAttendance()?->attendance_status ?? EventAttendanceStatus::NOT_TAKEN;
 
-		// \Mail::to($this->getRegisteringPersonEmail())
-        //     ->send(new \Condoedge\Crm\Mail\PersonInscriptionConfirmationMail($this->id));
-	}
-
-	protected function approveAndSendCustomCode()
-	{
-		//Override in App
-	}
-
-	/* ELEMENTS */
+        return _Pill($status->label())->class($status->classes())->class('!text-base !rounded-lg !px-2 py-1');
+    }
 }

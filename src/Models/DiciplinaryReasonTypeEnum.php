@@ -15,11 +15,11 @@ enum DiciplinaryReasonTypeEnum: int
     public function label()
     {
         return match ($this) {
-            self::ABUSIVE => 'translate.abusive',
-            self::HARASSMENT => 'translate.harassment',
-            self::DISCRIMINATION => 'translate.discrimination',
-            self::VIOLENCE => 'translate.violence',
-            self::OTHER => 'translate.other',
+            self::ABUSIVE => 'disciplinary.abusive',
+            self::HARASSMENT => 'disciplinary.harassment',
+            self::DISCRIMINATION => 'disciplinary.discrimination',
+            self::VIOLENCE => 'disciplinary.violence',
+            self::OTHER => 'disciplinary.other',
         };
     }
 }

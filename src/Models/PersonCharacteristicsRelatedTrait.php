@@ -9,7 +9,7 @@ trait PersonCharacteristicsRelatedTrait
     /* CALCULATED FIELDS */
     public function getAgeLabelAttribute()
     {
-        return getAgeFromDob($this->date_of_birth);
+        return getAgeFromDob($this->date_of_birth) .' '.__('general-years');
     }
 
     public function getGenderLabelAttribute()
@@ -48,6 +48,10 @@ trait PersonCharacteristicsRelatedTrait
 
     public function genderLabelPill()
     {
+        if (!$this->gender) {
+            return _Pill(__('crm.unknown'))->class('bg-gray-300 text-gray-800');
+        }
+
         return _Pill($this->gender_label)->class($this->gender->bgColor2() . ' ' . $this->gender->textColor2());
     }
 }

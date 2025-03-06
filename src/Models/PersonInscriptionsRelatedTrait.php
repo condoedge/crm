@@ -3,6 +3,7 @@
 namespace Condoedge\Crm\Models;
 
 use App\Models\Crm\Person;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 
 trait PersonInscriptionsRelatedTrait
@@ -19,29 +20,9 @@ trait PersonInscriptionsRelatedTrait
     }
 
     /* CALCULATED FIELDS */
-    public function getInscriptionPersonRoute($qrCode = null)
-    {
-        return \URL::signedRoute('inscription.person', [
-            'id' => $this->id,
-            'qr_code' => $qrCode,
-        ]);
-    }
-
-    public function getInscriptionTeamRoute($inscription = null)
-    {
-        if ($inscription && ($registrable = registrableFromQrCode($inscription->qr_inscription))) {
-            return $inscription->getInscriptionConfirmationRoute($this->id, $registrable->getRegistrableId());
-        }
-
-        return \URL::signedRoute('inscription.team', [
-            'inscription_id' => $inscription->id,
-            'id' => $this->id,
-        ]);
-    }
-
     public static function getSameInscriptionPersons($inscriptionId)
     {
-        return Person::where('inscription_id', $inscriptionId)->get();
+        return PersonModel::where('inscription_id', $inscriptionId)->get();
     }
 
     public function getPreviousInscriptionPerson($inscriptionId)
@@ -57,10 +38,10 @@ trait PersonInscriptionsRelatedTrait
     /* ACTIONS */
     public static function getOrCreatePersonFromEmail($email)
     {
-        $person = Person::where('email_identity', $email)->latest()->first();
+        $person = PersonModel::where('email_identity', $email)->latest()->first();
 
         if (!$person) {
-            $person = Person::createPersonFromEmail($email);
+            $person = PersonModel::createPersonFromEmail($email);
         }
 
         return $person;
@@ -68,7 +49,7 @@ trait PersonInscriptionsRelatedTrait
 
     public static function createPersonFromEmail($email)
     {
-        $person = Person::newPersonFromEmail($email);
+        $person = PersonModel::newPersonFromEmail($email);
         $person->save();
 
         return $person;
@@ -80,20 +61,6 @@ trait PersonInscriptionsRelatedTrait
         $person->email_identity = $email;
 
         return $person;
-    }
-
-    public function createOrUpdateInscription($qrCode)
-    {
-        $inscription = Inscription::where('inscribed_by', $this->id)->where('qr_inscription', $qrCode)->first();
-
-        if (!$inscription) {
-            $inscription = new Inscription();
-            $inscription->inscribed_by = $this->id;
-            $inscription->setNewQrCode($qrCode);
-            $inscription->save();
-        }
-
-        return $inscription;
     }
 
     /* SCOPES */

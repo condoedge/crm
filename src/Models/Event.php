@@ -2,6 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
+use Condoedge\Crm\Facades\InscriptionModel;
 use Kompo\Auth\Models\Model;
 
 abstract class Event extends Model
@@ -54,15 +55,36 @@ abstract class Event extends Model
 		return $this->hasMany(PersonEvent::class);
 	}
 
-    public function countedPersonEvents()
+    // public function countedPersonEvents()
+    // {
+    // 	return $this->personEvents()->countInTotal();
+    // }
+
+    // public function awaitingPersonEvents()
+    // {
+    // 	return $this->personEvents()->awaitingApproval();
+    // }
+
+	public function inscriptions()
     {
-    	return $this->personEvents()->countInTotal();
+        return $this->hasMany(InscriptionModel::getClass());
     }
 
-    public function awaitingPersonEvents()
+	public function countedInscriptions()
     {
-    	return $this->personEvents()->awaitingApproval();
+    	return $this->inscriptions()->countsInTotal();
     }
+
+	public function confirmedInscriptions()
+	{
+		return $this->inscriptions()->confirmed();
+	}
+
+    public function awaitingInscriptions()
+    {
+    	return $this->inscriptions()->awaitingApproval();
+    }
+
 
     /* SCOPES */
     public function scopeForRegistrationSystem($query)
@@ -94,13 +116,14 @@ abstract class Event extends Model
 			return asset('images/base-email-image.png');
 		}
 
-		return \Storage::disk('public')->url($coverPath);
+		return \Storage::disk($this->cover_ev['disk'] ?? 'public')->url($coverPath);
 	}
 
     public function getDisplayableQrInfo()
     {
         return route('inscription.landing', ['qr_code' => $this->getQrCodeString()]);
     }
+	
 
 	/* ACTIONS */
 

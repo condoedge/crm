@@ -2,33 +2,44 @@
 
 namespace Condoedge\Crm\Kompo\Auth;
 
-use App\Models\Roles\ParentRole;
 use App\Models\User;
-use Condoedge\Crm\Models\PersonEvent;
 use Kompo\Auth\Common\ImgFormLayout;
 
 class PersonRegistrableRegisterForm extends ImgFormLayout
 {
+    use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
+
     protected $imgUrl = 'images/register-image.png';
 
     public $model = User::class;
 
-    protected $prId;
-    protected $personEvent;
     protected $team;
-    protected $person;
     protected $registeringEmail;
+
+    protected function isAStepNotValidAtThisPoint()
+    {
+        return false;
+    }
 
     public function created()
     {
-        $this->prId = $this->prop('pr_id');
-        $this->personEvent = PersonEvent::findOrFail($this->prId);
-        $this->team = $this->personEvent->getRelatedTargetTeam();
-        $this->person = $this->personEvent->getRegisteringPerson();
-        $this->registeringEmail = $this->personEvent->getRegisteringPersonEmail();
+        $this->setInscriptionInfo();
+        
+        $this->registeringEmail = $this->mainPerson->email_identity;
 
-        $this->model->first_name = $this->person->first_name;
-        $this->model->last_name = $this->person->last_name;
+        $user = $this->mainPerson->relatedUser;
+
+        if (!$user && ($user = User::where('email', $this->registeringEmail)->first()) ) {
+            $this->mainPerson->user_id = $user->id;
+            $this->mainPerson->save();
+        }
+
+        if ($user) {
+            $this->model($user);
+        }
+
+        $this->model->first_name = $this->mainPerson->first_name;
+        $this->model->last_name = $this->mainPerson->last_name;
     }
 
     public function beforeSave()
@@ -41,12 +52,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function afterSave()
     {
-        $this->model->createTeamRole($this->team, ParentRole::ROLE_KEY);
-
-        $this->person->user_id = $this->model->id;
-        $this->person->save();
-
-        fireRegisteredEvent($this->model);
+        $this->inscription->confirmUserRegistration($this->model);
 
         auth()->guard()->login($this->model);
     }
@@ -62,8 +68,8 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
             _Input('inscriptions.your-invitation-email')->name('show_email', false)->readOnly()
                 ->value($this->registeringEmail)->inputClass('bg-gray-50 rounded-xl'),
 
-            // _InputRegisterNames($this->person->first_name, $this->person->last_name),
-            _InputRegisterPasswords(),
+            // _InputRegisterNames($this->mainPerson->first_name, $this->mainPerson->last_name),
+            $this->model->id ? null : _InputRegisterPasswords(),
             _CheckboxTerms(),
             _FlexEnd(
                 _SubmitButton('inscriptions.accept-invitation')
@@ -73,6 +79,12 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function rules()
     {
+        if ($this->model->id) {
+            return [
+                'terms' => ['required', 'accepted'],
+            ];
+        }
+
         return [
             'password' => passwordRules(),
             'terms' => ['required', 'accepted'],

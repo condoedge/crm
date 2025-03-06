@@ -4,8 +4,7 @@ namespace Condoedge\Crm\Kompo\PersonTeams;
 
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\PersonTeam;
-use Kompo\Auth\Models\Teams\TeamRole;
-use Kompo\Table;
+use Kompo\Auth\Common\Table;
 
 class PersonTeamsWithRolesTable extends Table
 {
@@ -24,29 +23,34 @@ class PersonTeamsWithRolesTable extends Table
     public function top()
     {
         return _FlexEnd(
-            _Dropdown('translate.actions')->button()
+            _Toggle('permissions.show-inactive')->name('show_all', false)->filter()
+                ->class('[&>.vlFormLabel]:w-max !mb-0'),
+            _Dropdown('permissions.actions')->button()
                 ->submenu(
-                    _Link('translate.assign-role')->class('py-1 px-3')->selfGet('getAssignRoleModal')->inModal(),
+                    _Link('permissions.assign-role')->class('py-1 px-3')->selfGet('getAssignRoleModal')->inModal(),
                 ),
-        )->class('mb-3');
+        )->class('mb-3 gap-6 items-center');
     }
 
     public function query()
     {
-        return $this->person->personTeams()->with([
-            'team', 
-            'teamRole' => fn($q) => $q->withoutGlobalScopes(),
-            'teamRole.roleRelation',
-        ]);
+        return $this->person->personTeams()
+            ->when(!request('show_all'), fn($q) => $q->active())
+            ->orderByDesc('from')
+            ->with([
+                'team', 
+                'teamRole' => fn($q) => $q->withoutGlobalScopes(), // Here is only visual and we need to get the terminated roles so we remove the global scope
+                'teamRole.roleRelation',
+            ]);
     }
 
     public function headers()
     {
         return [
-            _Th('translate.role'),
-            _Th('translate.team'),
-            _Th('translate.date'),
-            _Th('translate.status'),
+            _Th('permissions.role'),
+            _Th('permissions.team'),
+            _Th('permissions.date'),
+            _Th('permissions.status'),
             _Th()->class('w-8'),
         ];
     }
@@ -63,11 +67,11 @@ class PersonTeamsWithRolesTable extends Table
             _Html(),
 
             _TripleDotsDropdown(
-                _Link('translate.delete')->class('py-1 px-3')->selfPost('deleteAsignation', ['team_role_id' => $personTeam->id])->refresh(),
+                _DeleteLink('permissions.delete')->class('py-1 px-3 text-danger')->selfDelete('deleteAsignation', ['team_role_id' => $personTeam->id])->browse(),
                 ($personTeam->teamRole && !$personTeam->teamRole->terminated_at || !$personTeam->to) 
-                    ? _Link('translate.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->refresh()
+                    ? _Link('permissions.terminate')->class('py-1 px-3')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                     : null,
-            ),
+            )->class('text-right'),
         );
     }
 
@@ -87,7 +91,7 @@ class PersonTeamsWithRolesTable extends Table
     {
         if (!$this->person->relatedUser) {
             // Here we could open a modal to set a new personTeam without teamRole
-            return _CardWhiteP4(_Html('translate.user-not-linked'));
+            return _CardWhiteP4(_Html('permissions.user-not-linked'));
         }
 
         return new (config('kompo-auth.assign-role-modal-namespace'))([

@@ -3,8 +3,8 @@
 namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\PersonModel;
-use Condoedge\Crm\Models\Person;
 
+//! WE ARE USING HasOnePersonTrait now
 trait HasManyPersonsTrait
 {
 	/* RELATIONS */
@@ -23,7 +23,6 @@ trait HasManyPersonsTrait
 	/* CALCULATED FIELDS */
     public function getRelatedMainPerson()
     {
-        //Todo review logic here
         $person = $this->latestPersons()->first();
 
         if (!$person) {
@@ -35,7 +34,7 @@ trait HasManyPersonsTrait
 
     public function createPersonFromUser()
     {
-        $person = Person::newPersonFromEmail($this->email);
+        $person = PersonModel::newPersonFromEmail($this->email);
         $person->user_id = $this->id;
         $person->first_name = $this->first_name;
         $person->last_name = $this->last_name;

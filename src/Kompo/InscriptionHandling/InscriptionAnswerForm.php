@@ -2,17 +2,15 @@
 
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
-use App\Models\Crm\PersonEvent;
-use App\Models\Events\Event;
+use Condoedge\Crm\Facades\InscriptionModel;
 use Kompo\Auth\Common\ModalScroll;
 
-class PersonEventAnswerForm extends ModalScroll
+class InscriptionAnswerForm extends ModalScroll
 {
-    public $model = PersonEvent::class;
+    use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
 
-    protected $person;
-    protected $event;
-    protected $team;
+    public $model = InscriptionModel::class;
+
     protected $otherEventsOptions;
 
     protected $_Title = 'inscriptions.approve-registration-for';
@@ -20,16 +18,9 @@ class PersonEventAnswerForm extends ModalScroll
 
     public function created()
     {
-        $this->person = $this->model->person;
-        $this->event = $this->model->event;
-        $this->team = $this->event?->team;
+        $this->setInscriptionInfo();
 
-        $this->otherEventsOptions = !$this->team->isUnitLevel() ? collect() : 
-            Event::ofTypeYearlyRegistration()->has('openPeriods')
-                ->forTeam($this->team->parentTeam->teams()->pluck('id'))
-                ->with('team')->get()->unique(fn($e) => $e->team_id)->mapWithKeys(fn($event) => [
-                    $event->id => $event->getTeamName(),
-                ]);
+        $this->otherEventsOptions = collect();
     }
 
     public function handle()
@@ -42,7 +33,7 @@ class PersonEventAnswerForm extends ModalScroll
 
     public function approvePersonToEvent()
     {        
-        $this->model->approveAndSend();
+        $this->model->acceptInscription();
 
         return redirect()->route('person-events.list', [
             'event_id' => $this->model->event_id,
