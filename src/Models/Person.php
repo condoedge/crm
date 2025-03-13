@@ -277,9 +277,14 @@ abstract class Person extends Model implements Searchable
                 $team['pending'] ? _Pill('crm.pending')->class('bg-warning text-white !py-1 !px-3') : null,
             )->class('gap-2'),
             !$phone ? null : _PhoneWithIcon($phone),
-            !$email ? null : _EmailWithIcon($email),
+            !$email ? null : $this->emailContactEl($email),
             !$address ? null : _AddressWithIcon($address),
         )->class('mb-3');
+    }
+
+    protected function emailContactEl($email) //Override in project
+    {
+        return _EmailWithIcon($email);
     }
 
     public function getLastTeam()
