@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 enum RegisterStatusEnum: int
 {
-    use \Kompo\Auth\Models\Traits\EnumKompo;
+    use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case RS_REQUESTED = 1;
     case RS_ACCEPTED = 5;

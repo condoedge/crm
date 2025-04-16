@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 enum GenderEnum: int
 {
-    use \Kompo\Auth\Models\Traits\EnumKompo;
+    use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case FEMALE = 1;
     case MALE = 2;

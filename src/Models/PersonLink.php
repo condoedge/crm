@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\Person;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 class PersonLink extends Model
 {

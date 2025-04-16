@@ -8,7 +8,7 @@ use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\GenderEnum;
 use Condoedge\Crm\Rules\MinAgeBySchoolYear;
 use Condoedge\Crm\Rules\MinAgeRule;
-use Kompo\Auth\Common\ImgFormLayout;
+use Condoedge\Utils\Kompo\Common\ImgFormLayout;
 
 abstract class PersonBasicInfoForm extends ImgFormLayout
 {

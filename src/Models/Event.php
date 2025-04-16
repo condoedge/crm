@@ -3,13 +3,13 @@
 namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\InscriptionModel;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 abstract class Event extends Model
 {
 	use \Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 	use \Condoedge\Crm\Models\BelongsToEventTrait;
-	use \Kompo\Auth\Models\Files\MorphManyFilesTrait;
+	use \Condoedge\Utils\Models\Files\MorphManyFilesTrait;
 
 	use \Condoedge\Crm\Models\HasQrCodeTrait;
 	public const QRCODE_LENGTH = 8;

@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 enum InscriptionStatusEnum: int
 {
-    use \Kompo\Auth\Models\Traits\EnumKompo;
+    use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case CANCELED = 0;
     case CREATED = 1;

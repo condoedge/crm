@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 enum ScheduleFrequencyEnum: int
 {
-    use \Kompo\Auth\Models\Traits\EnumKompo;
+    use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case SINGLE = 1;
     case CUSTOM = 5;

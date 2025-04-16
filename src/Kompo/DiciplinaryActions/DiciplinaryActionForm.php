@@ -6,8 +6,7 @@ use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\DiciplinaryAction;
 use Condoedge\Crm\Models\DiciplinaryActionTypeEnum;
 use Condoedge\Crm\Models\DiciplinaryReasonTypeEnum;
-use Condoedge\Crm\Models\Person;
-use Kompo\Auth\Common\Modal;
+use Condoedge\Utils\Kompo\Common\Modal;
 
 class DiciplinaryActionForm extends Modal
 {

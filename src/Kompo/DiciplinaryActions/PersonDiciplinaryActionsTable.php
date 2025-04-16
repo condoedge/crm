@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Kompo\DiciplinaryActions;
 
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\DiciplinaryAction;
-use Kompo\Auth\Common\WhiteTable;
+use Condoedge\Utils\Kompo\Common\WhiteTable;
 
 class PersonDiciplinaryActionsTable extends WhiteTable
 {

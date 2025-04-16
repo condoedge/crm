@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 enum RegistrationTypeEnum: int
 {
-    use \Kompo\Auth\Models\Traits\EnumKompo;
+    use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case PREREGISTRATION = 1;
     case REGISTRATION = 2;

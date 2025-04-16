@@ -3,7 +3,7 @@
 namespace Condoedge\Crm\Kompo\Events;
 
 use Condoedge\Crm\Models\EventRegistrationPeriod;
-use Kompo\Auth\Common\Table;
+use Condoedge\Utils\Kompo\Common\Table;
 
 class EventRegistrationPeriodsTable extends Table
 {

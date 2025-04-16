@@ -3,7 +3,7 @@
 namespace Condoedge\Crm\Kompo\Auth;
 
 use App\Models\User;
-use Kompo\Auth\Common\ImgFormLayout;
+use Condoedge\Utils\Kompo\Common\ImgFormLayout;
 
 class PersonRegistrableRegisterForm extends ImgFormLayout
 {

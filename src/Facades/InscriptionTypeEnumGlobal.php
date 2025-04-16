@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Facades;
 
-use Kompo\Auth\Facades\FacadeEnum;
+use Condoedge\Utils\Facades\FacadeEnum;
 
 /**
  * @mixin \Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum

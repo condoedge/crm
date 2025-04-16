@@ -5,7 +5,7 @@ namespace Condoedge\Crm\Kompo\Inscriptions;
 use App\Models\Events\Event;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
-use Kompo\Auth\Common\ImgFormLayout;
+use Condoedge\Utils\Kompo\Common\ImgFormLayout;
 
 class InscriptionRegistrableConfirmationForm extends ImgFormLayout
 {

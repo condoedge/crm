@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 class EventRegistrationPeriod extends Model
 {

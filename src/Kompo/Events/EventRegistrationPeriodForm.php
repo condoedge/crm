@@ -5,9 +5,9 @@ namespace Condoedge\Crm\Kompo\Events;
 use App\Models\Events\Event;
 use Condoedge\Crm\Models\EventRegistrationPeriod;
 use Condoedge\Crm\Models\RegistrationTypeEnum;
-use Kompo\Auth\Common\ModalScroll;
+use Condoedge\Utils\Kompo\Common\Modal;
 
-class EventRegistrationPeriodForm extends ModalScroll
+class EventRegistrationPeriodForm extends Modal
 {
     public $model = EventRegistrationPeriod::class;
 

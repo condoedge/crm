@@ -6,7 +6,7 @@ use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\InscriptionTypeEnumGlobal;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 /**
  * It's used to create a template for the inscription with certain parameters.

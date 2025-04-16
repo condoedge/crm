@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 enum DiciplinaryReasonTypeEnum: int
 {
-    use \Kompo\Auth\Models\Traits\EnumKompo;
+    use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case ABUSIVE = 1;
     case HARASSMENT = 2;

@@ -3,7 +3,7 @@
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
 use Condoedge\Crm\Facades\InscriptionModel;
-use Kompo\Auth\Common\WhiteTable;
+use Condoedge\Utils\Kompo\Common\WhiteTable;
 
 class InscriptionsList extends WhiteTable
 {

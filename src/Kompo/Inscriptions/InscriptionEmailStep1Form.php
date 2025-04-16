@@ -5,7 +5,7 @@ namespace Condoedge\Crm\Kompo\Inscriptions;
 use App\Models\User;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
-use Kompo\Auth\Common\ImgFormLayout;
+use Condoedge\Utils\Kompo\Common\ImgFormLayout;
 use Kompo\Auth\Models\Teams\EmailRequest;
 
 class InscriptionEmailStep1Form extends ImgFormLayout

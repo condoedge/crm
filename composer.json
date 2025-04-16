@@ -11,7 +11,8 @@
     "require": {
         "php": "^7.3|^8.0",
         "laravel/framework": ">=5.6.0",
-        "kompo/auth": ">=0.4"
+        "kompo/auth": ">=0.4",
+        "condoedge/utils": "^0.0.6"
     },
     "extra": {
         "laravel": {

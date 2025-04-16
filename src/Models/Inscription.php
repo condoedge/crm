@@ -7,7 +7,7 @@ use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Kompo\Auth\Facades\RoleModel;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 use Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 
 /**

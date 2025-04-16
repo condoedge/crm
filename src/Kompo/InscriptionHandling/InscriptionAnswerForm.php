@@ -3,9 +3,9 @@
 namespace Condoedge\Crm\Kompo\InscriptionHandling;
 
 use Condoedge\Crm\Facades\InscriptionModel;
-use Kompo\Auth\Common\ModalScroll;
+use Condoedge\Utils\Kompo\Common\Modal;
 
-class InscriptionAnswerForm extends ModalScroll
+class InscriptionAnswerForm extends Modal
 {
     use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
 

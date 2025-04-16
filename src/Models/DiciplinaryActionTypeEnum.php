@@ -4,7 +4,7 @@ namespace Condoedge\Crm\Models;
 
 enum DiciplinaryActionTypeEnum: int
 {
-    use \Kompo\Auth\Models\Traits\EnumKompo;
+    use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case BLOCK = 1;
     case BAN = 2;

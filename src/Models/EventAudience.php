@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Models;
 
-use Kompo\Auth\Models\ModelBase;
+use Condoedge\Utils\Models\ModelBase;
 
 class EventAudience extends ModelBase //No need for softdeletes here
 {

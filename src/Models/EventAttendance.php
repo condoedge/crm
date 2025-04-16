@@ -3,7 +3,7 @@
 namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\PersonModel;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 class EventAttendance extends Model
 {

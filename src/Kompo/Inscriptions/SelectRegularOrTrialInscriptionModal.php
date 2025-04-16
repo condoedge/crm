@@ -2,8 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\Inscriptions;
 
-// Trick to get the project modal if it exists, otherwise get the kompo modal
-class_alias(getDynamicallyModal(), 'Condoedge\Crm\Kompo\Inscriptions\Modal');
+use Condoedge\Utils\Kompo\Common\Modal;
 
 class SelectRegularOrTrialInscriptionModal extends Modal
 {
