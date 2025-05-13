@@ -110,6 +110,12 @@ class PersonTeam extends Model
 		return $personTeam;
 	}
 
+	// We're using HasSecurity plugin that handles deleting event to manage security restrictions.
+	public function deletable()
+    {
+        return true;
+    }
+
 	public function delete()
 	{
 		$this->teamRole?->delete();

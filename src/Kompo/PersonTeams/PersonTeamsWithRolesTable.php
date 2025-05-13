@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Kompo\PersonTeams;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\PersonTeam;
 use Condoedge\Utils\Kompo\Common\Table;
+use Kompo\Auth\Models\Teams\PermissionTypeEnum;
 
 class PersonTeamsWithRolesTable extends Table
 {
@@ -28,7 +29,7 @@ class PersonTeamsWithRolesTable extends Table
             _Dropdown('permissions.actions')->button()
                 ->submenu(
                     _Link('permissions.assign-role')->class('py-1 px-3')->selfGet('getAssignRoleModal')->inModal(),
-                ),
+                )->checkAuth('TeamRole', null, PermissionTypeEnum::WRITE),
         )->class('mb-3 gap-6 items-center');
     }
 
@@ -71,7 +72,7 @@ class PersonTeamsWithRolesTable extends Table
                 ($personTeam->teamRole && !$personTeam->teamRole->terminated_at || !$personTeam->to) 
                     ? _DropdownLink('permissions.terminate')->class('py-1 px-3 justify-end rounded-md')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                     : null,
-            )->class('text-right'),
+            )->class('text-right')->checkAuth('TeamRole', $personTeam->team_id, PermissionTypeEnum::WRITE),
         );
     }
 
