@@ -62,12 +62,6 @@ class PersonTeam extends Model
 		$teamRole->save();
 	}
 
-	public function deleteAsignation()
-	{
-		$this->teamRole?->deleteAsignation();
-		$this->delete();
-	}
-
 	public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null, $inscription = null, $personTeamType = null)
 	{
 		if ($personTeam = static::where('team_role_id', $teamRole->id)->first()) {
@@ -114,6 +108,13 @@ class PersonTeam extends Model
 		$personTeam->save();
 
 		return $personTeam;
+	}
+
+	public function delete()
+	{
+		$this->teamRole?->delete();
+
+		return parent::delete();
 	}
 
 	/* ELEMENTS */
