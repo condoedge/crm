@@ -28,6 +28,11 @@ class PersonTeam extends Model
 		return $this->belongsTo(TeamRole::class);
 	}
 
+	public function teamRoleIncludingDeleted()
+	{
+		return $this->teamRole()->withTrashed()->withoutGlobalScopes();
+	}
+
 	/* SCOPES */
 	public function scopeActive($query)
 	{

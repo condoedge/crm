@@ -56,20 +56,21 @@ class PersonTeamsWithRolesTable extends Table
         ];
     }
 
-    public function render($personTeam) {
+    public function render($personTeam) 
+    {
         return _TableRow(
-            _Html($personTeam->teamRole?->roleRelation?->name ?: '-')->class('font-semibold'),
+            _Html($personTeam->teamRoleIncludingDeleted?->roleRelation?->name ?: '-')->class('font-semibold'),
             $personTeam->team->getFullInfoTableElement(),
             _Rows(
                 _Html($personTeam->from->format('d/m/Y')),
                 _Html($personTeam->to?->format('d/m/Y'))->class('text-gray-400'),
             ),
-            $personTeam->teamRole?->statusPill() ?? $personTeam->getStatusPillElement(),
+            $personTeam->teamRoleIncludingDeleted?->statusPill() ?? $personTeam->getStatusPillElement(),
             _Html(),
 
             _TripleDotsDropdown(
                 _DeleteLink('permissions.delete')->class('py-1 px-3 text-danger rounded-md')->byKey($personTeam),
-                ($personTeam->teamRole && !$personTeam->teamRole->terminated_at || !$personTeam->to) 
+                ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to) 
                     ? _DropdownLink('permissions.terminate')->class('py-1 px-3 justify-end rounded-md')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                     : null,
             )->class('text-right')->checkAuth('TeamRole', $personTeam->team_id, PermissionTypeEnum::WRITE),
