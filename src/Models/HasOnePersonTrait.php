@@ -32,7 +32,7 @@ trait HasOnePersonTrait
         $person->user_id = $this->id;
         $person->first_name = $this->first_name;
         $person->last_name = $this->last_name;
-        $person->save();
+        $person->systemSave();
 
         return $person;
     }

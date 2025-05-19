@@ -25,6 +25,10 @@ abstract class Person extends Model implements Searchable
         'spoken_languages' => 'array',
     ];
 
+    protected $sensibleColumns = [
+        'date_of_birth',
+    ];
+
     protected $table = 'persons';
 
     public function save(array $options = [])
@@ -83,8 +87,8 @@ abstract class Person extends Model implements Searchable
     {
         return $query->whereHas(
             'personTeams',
-            fn ($q) => $q->whereNull('to')
-            ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
+            fn($q) => $q->whereNull('to')
+                ->when($teamId, fn($q) => $q->where('team_id', $teamId))
         );
     }
 
@@ -105,19 +109,19 @@ abstract class Person extends Model implements Searchable
 
     public function scopeHasActiveTeam($query)
     {
-        return $query->whereHas('personTeams', fn ($q) => $q->active());
+        return $query->whereHas('personTeams', fn($q) => $q->active());
     }
 
     public function scopeOnlyInThisTeam($query, $teamId = null)
     {
-        return $query->whereHas('personTeams', fn ($q) => $q->where('team_id', $teamId ?? currentTeamId()));
+        return $query->whereHas('personTeams', fn($q) => $q->where('team_id', $teamId ?? currentTeamId()));
     }
 
     public function scopeSearchByEmail($query, $email)
     {
         return $query->where(
-            fn ($q) => $q->where('email_identity', $email)
-            ->orWhereHas('emails', fn ($q) => $q->where('address_em', $email))
+            fn($q) => $q->where('email_identity', $email)
+                ->orWhereHas('emails', fn($q) => $q->where('address_em', $email))
         );
     }
 
@@ -126,7 +130,7 @@ abstract class Person extends Model implements Searchable
     {
         return $this->person1Links()->with('person2')->get()->concat(
             $this->person2Links()->with('person1')->get()
-        )->map(fn ($pl) => $pl->setOtherAsPerson($this->id));
+        )->map(fn($pl) => $pl->setOtherAsPerson($this->id));
     }
 
     public function getRelatedLinksOfPersonLinks()
@@ -241,8 +245,8 @@ abstract class Person extends Model implements Searchable
     /* SEARCHABLE */
     public function scopeSearch($query, $search)
     {
-        $query->whereRaw("CONCAT(first_name,' ',last_name) LIKE ?", [ wildcardSpace($search)])
-            ->orWhereRaw("CONCAT(last_name,' ',first_name) LIKE ?", [ wildcardSpace($search)]);
+        $query->whereRaw("CONCAT(first_name,' ',last_name) LIKE ?", [wildcardSpace($search)])
+            ->orWhereRaw("CONCAT(last_name,' ',first_name) LIKE ?", [wildcardSpace($search)]);
     }
 
     public function searchElement($result, $search)
@@ -271,7 +275,8 @@ abstract class Person extends Model implements Searchable
         return _Rows(
             _LabelWithIcon('profile', $this->full_name),
             !$team ? null : _Flex(
-                _LabelWithIcon('pet', 
+                _LabelWithIcon(
+                    'pet',
                     _Html($team['team']->getCompleteTeamsLabel())->class('text-xs'),
                 )->class('items-center !mb-0'),
                 $team['pending'] ? _Pill('crm.pending')->class('bg-warning text-white !py-1 !px-3') : null,
@@ -280,6 +285,11 @@ abstract class Person extends Model implements Searchable
             !$email ? null : $this->emailContactEl($email),
             !$address ? null : _AddressWithIcon($address),
         )->class('mb-3');
+    }
+
+    public function securityRelatedTeamIds()
+    {
+        return $this->personTeams()->active()->pluck('team_id')->unique();
     }
 
     protected function emailContactEl($email) //Override in project
@@ -295,7 +305,7 @@ abstract class Person extends Model implements Searchable
 
         $entity = $lastInscription?->created_at > $lastPersonTeam?->created_at ? $lastInscription : $lastPersonTeam;
 
-        if(!$entity) {
+        if (!$entity) {
             return null;
         }
 
