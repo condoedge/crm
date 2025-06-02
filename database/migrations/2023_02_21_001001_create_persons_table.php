@@ -4,15 +4,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('persons', function (Blueprint $table) {
-            
+
             addMetaData($table);
             $table->foreignId('user_id')->nullable()->constrained();
             $table->foreignId('registered_by')->nullable()->constrained('persons');
@@ -41,7 +40,7 @@ return new class extends Migration
         });
 
         Schema::create('person_links', function (Blueprint $table) {
-            
+
             addMetaData($table);
 
             $table->foreignId('person1_id')->nullable()->constrained('persons');

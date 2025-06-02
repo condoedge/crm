@@ -3,7 +3,6 @@
 namespace Condoedge\Crm\Models;
 
 use App\Models\Crm\Person;
-use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 
 trait PersonInscriptionsRelatedTrait

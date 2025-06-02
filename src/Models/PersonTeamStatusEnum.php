@@ -5,11 +5,11 @@ namespace Condoedge\Crm\Models;
 enum PersonTeamStatusEnum: int
 {
     use \Kompo\Models\Traits\EnumKompo;
-    
+
     case PENDING_PAYMENT = 1;
     case ACTIVE = 2;
     case PROBATION = 3;
-    
+
     public function label(): string
     {
         return match ($this) {

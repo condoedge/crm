@@ -31,7 +31,7 @@ class SyncDiciplinaryActionsCommand extends Command
         $startedDiciplinaryActions->each(function ($diciplinaryAction) {
             $diciplinaryAction->action_type->startedAction($diciplinaryAction);
         });
-        
+
         $finishedDiciplinaryActions = DiciplinaryAction::whereRaw('DATE(action_to) = CURDATE()')->selectRaw('person_id, action_type')->get();
 
         $finishedDiciplinaryActions->each(function ($diciplinaryAction) {

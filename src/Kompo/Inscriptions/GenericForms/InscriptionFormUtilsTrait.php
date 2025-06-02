@@ -5,7 +5,7 @@ namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-trait InscriptionFormUtilsTrait 
+trait InscriptionFormUtilsTrait
 {
     protected $inscriptionCode;
     protected $inscription;
@@ -30,15 +30,15 @@ trait InscriptionFormUtilsTrait
 
         if ($this->inscriptionId) {
             $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
-        } else if ($this->inscriptionCode) {
+        } elseif ($this->inscriptionCode) {
             $this->inscription = InscriptionModel::forQrCode($this->inscriptionCode)->first();
         }
 
         $this->inscriptionId = $this->inscription?->id;
-        
+
         $this->person = $this->inscription?->person;
         $this->mainPerson = $this->person?->getRegisteringPerson() ?? $this->inscription?->inscribedBy;
-        
+
         $this->personId = $this->person?->id;
 
         $this->event = $this->inscription?->event;
@@ -51,7 +51,7 @@ trait InscriptionFormUtilsTrait
 
         if ($this->isAStepNotValidAtThisPoint()) {
             throw new HttpException(422, __('error.you-are-already-registered-and-accepted'));
-        } 
+        }
     }
 
     protected function isAStepNotValidAtThisPoint()
@@ -63,18 +63,20 @@ trait InscriptionFormUtilsTrait
     {
         $person = auth()->user()?->getRelatedMainPerson();
 
-        if($person) $this->inscription?->updateRegisteringPersonId($person->id);
+        if ($person) {
+            $this->inscription?->updateRegisteringPersonId($person->id);
+        }
         $this->inscription?->updateType($type);
 
         if ($this->inscription) {
             return redirect()->to($this->inscription?->getRegistrationUrl());
-        } else if (auth()->user()) {
+        } elseif (auth()->user()) {
             return redirect()->to(InscriptionModel::createOrGetRegistrationUrl($person->id, null, $type));
-    	}  else {
-    		return redirect()->route('inscription.email.step1', [
+        } else {
+            return redirect()->route('inscription.email.step1', [
                 'inscription_code' => $this->inscriptionCode,
                 'type' => $type,
             ]);
-    	}
+        }
     }
 }

@@ -7,7 +7,7 @@ use Condoedge\Crm\Facades\PersonModel;
 //! WE ARE USING HasOnePersonTrait now
 trait HasManyPersonsTrait
 {
-	/* RELATIONS */
+    /* RELATIONS */
     public function persons()
     {
         return $this->hasMany(PersonModel::getClass());
@@ -20,7 +20,7 @@ trait HasManyPersonsTrait
 
     /* SCOPES */
 
-	/* CALCULATED FIELDS */
+    /* CALCULATED FIELDS */
     public function getRelatedMainPerson()
     {
         $person = $this->latestPersons()->first();
@@ -43,7 +43,7 @@ trait HasManyPersonsTrait
         return $person;
     }
 
-	/* ACTIONS */
+    /* ACTIONS */
 
-	/* ELEMENTS */
+    /* ELEMENTS */
 }

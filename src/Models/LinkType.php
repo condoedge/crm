@@ -6,13 +6,13 @@ use Condoedge\Utils\Models\Model;
 
 class LinkType extends Model
 {
-	/* RELATIONS */
+    /* RELATIONS */
 
-	/* SCOPES */
+    /* SCOPES */
 
-	/* CALCULATED FIELDS */
+    /* CALCULATED FIELDS */
 
-	/* ACTIONS */
+    /* ACTIONS */
 
-	/* ELEMENTS */
+    /* ELEMENTS */
 }

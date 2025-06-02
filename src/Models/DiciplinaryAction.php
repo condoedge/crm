@@ -20,8 +20,8 @@ class DiciplinaryAction extends Model
     public function scopeActive($query)
     {
         return $query->where(
-            fn($q) => $q->whereDate('action_from', '<=', now())
-                ->where(fn($q) => $q->whereDate('action_to', '>', now())
+            fn ($q) => $q->whereDate('action_from', '<=', now())
+                ->where(fn ($q) => $q->whereDate('action_to', '>', now())
                     ->orWhereNull('action_to'))
         );
     }
@@ -36,7 +36,7 @@ class DiciplinaryAction extends Model
         return $query->where('action_type', DiciplinaryActionTypeEnum::BAN);
     }
 
-    // ELEMENTS 
+    // ELEMENTS
     public function actionTypePill()
     {
         $diciplinaryActionType = $this->action_type;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Condoedge\Crm\Http\Controllers;
 
 use Condoedge\Crm\Models\InscriptionShortLink;

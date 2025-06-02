@@ -12,8 +12,7 @@ enum SpokenLanguageEnum: string
 
     public function label()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::EN => __('inscriptions.english'),
             static::FR => __('inscriptions.french'),
             static::ES => __('inscriptions.spanish'),

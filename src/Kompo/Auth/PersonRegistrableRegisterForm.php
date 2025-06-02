@@ -24,12 +24,12 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
     public function created()
     {
         $this->setInscriptionInfo();
-        
+
         $this->registeringEmail = $this->mainPerson->email_identity;
 
         $user = $this->mainPerson->relatedUser;
 
-        if (!$user && ($user = User::where('email', $this->registeringEmail)->first()) ) {
+        if (!$user && ($user = User::where('email', $this->registeringEmail)->first())) {
             $this->mainPerson->user_id = $user->id;
             $this->mainPerson->save();
         }

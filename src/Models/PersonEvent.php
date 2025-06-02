@@ -52,7 +52,7 @@ class PersonEvent extends Model
         if (!$pr) {
             $pr = new static();
             $pr->person_id = $person->id;
-            $pr->event_id = $event->id;    
+            $pr->event_id = $event->id;
         }
 
         if ($status) {

@@ -5,7 +5,7 @@ namespace Condoedge\Crm\Models;
 enum PersonEventConfirmationEnum: int
 {
     use \Kompo\Models\Traits\EnumKompo;
-    
+
     case CONFIRMED = 1;
     case ABSTENT = 2;
     case NOT_SURE = 3;

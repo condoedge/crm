@@ -6,7 +6,7 @@ use Condoedge\Crm\Facades\PersonModel;
 
 trait BelongsToPersonTrait
 {
-	/* RELATIONS */
+    /* RELATIONS */
     public function person()
     {
         return $this->belongsTo(PersonModel::getClass());
@@ -18,13 +18,13 @@ trait BelongsToPersonTrait
         scopeWhereBelongsTo($query, 'person_id', $idOrIds);
     }
 
-	/* CALCULATED FIELDS */
+    /* CALCULATED FIELDS */
     public function getPersonLabelAttribute()
     {
         return $this->person?->full_name;
     }
 
-	/* ACTIONS */
+    /* ACTIONS */
 
-	/* ELEMENTS */
+    /* ELEMENTS */
 }

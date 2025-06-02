@@ -34,7 +34,6 @@ class InscriptionsList extends WhiteTable
                     _CardIconStat('tick-circle', 'inscriptions.pending', _Html($this->queryForEvent()->awaitingApproval()->count()))->class('bg-level2 text-white'),
                 ),
             )->class('mb-4'),
-
         );
     }
 

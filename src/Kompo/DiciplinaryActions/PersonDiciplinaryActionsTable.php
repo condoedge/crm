@@ -39,7 +39,7 @@ class PersonDiciplinaryActionsTable extends WhiteTable
             _Th('disciplinary.added-by'),
             _Th('disciplinary.action-type'),
             _Th('')->class('w-8'),
-        ];  
+        ];
     }
 
     public function render($diciplinaryAction)
@@ -53,7 +53,6 @@ class PersonDiciplinaryActionsTable extends WhiteTable
             _Html($diciplinaryAction->action_reason_description),
             _Html($diciplinaryAction->addedBy->name),
             $diciplinaryAction->actionTypePill(),
-
             _TripleDotsDropdown(
                 _Link('disciplinary.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
                 _Link('disciplinary.finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh(),

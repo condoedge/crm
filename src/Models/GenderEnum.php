@@ -12,8 +12,7 @@ enum GenderEnum: int
 
     public function label()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::FEMALE => __('inscriptions.female'),
             static::MALE => __('inscriptions.male'),
             static::OTHER => __('inscriptions.other'),
@@ -24,8 +23,7 @@ enum GenderEnum: int
     {
         $age = getAgeFromDob($dateOfBirth);
 
-        return match ($this)
-        {
+        return match ($this) {
             static::FEMALE => $age < 18 ? __('crm.girl') : __('crm.woman'),
             static::MALE => $age < 18 ? __('crm.boy') : __('crm.man'),
             static::OTHER => __('inscriptions.other'),
@@ -34,8 +32,7 @@ enum GenderEnum: int
 
     public function letter()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::FEMALE => __('crm.female-letter'),
             static::MALE => __('crm.male-letter'),
             static::OTHER => __('crm.other-letter'),
@@ -45,8 +42,7 @@ enum GenderEnum: int
     // DESIGN 1
     public function bgColor()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::FEMALE => 'bg-pinklight',
             static::MALE => 'bg-infolight',
             static::OTHER => 'bg-graylight',
@@ -55,8 +51,7 @@ enum GenderEnum: int
 
     public function textColor()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::FEMALE => 'text-pinkdark',
             static::MALE => 'text-infodark',
             static::OTHER => 'text-graydark',
@@ -66,8 +61,7 @@ enum GenderEnum: int
     // DESIGN 2
     public function bgColor2()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::FEMALE => 'bg-pink',
             static::MALE => 'bg-info',
             static::OTHER => 'bg-gray-700',
@@ -76,8 +70,7 @@ enum GenderEnum: int
 
     public function textColor2()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::FEMALE => 'text-white',
             static::MALE => 'text-white',
             static::OTHER => 'text-white',

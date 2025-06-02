@@ -11,8 +11,7 @@ enum RegistrationTypeEnum: int
 
     public function label()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::PREREGISTRATION => __('events-preregistrations'),
             static::REGISTRATION => __('events-registrations'),
         };

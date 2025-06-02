@@ -13,8 +13,7 @@ enum RegisterStatusEnum: int
 
     public function label()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::RS_REQUESTED => __('inscriptions.requested'),
             static::RS_ACCEPTED => __('inscriptions.approved'),
             static::RS_REJECTED => __('inscriptions.rejected'),

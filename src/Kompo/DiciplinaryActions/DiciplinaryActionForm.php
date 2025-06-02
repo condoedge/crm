@@ -28,11 +28,11 @@ class DiciplinaryActionForm extends Modal
 
     public function afterSave()
     {
-        if($this->model->action_from->isToday()) {
+        if ($this->model->action_from->isToday()) {
             $this->model->action_type->startedAction($this->model);
         }
 
-        if($this->model->action_to?->isToday() || $this->model->action_to?->isPast()) {
+        if ($this->model->action_to?->isToday() || $this->model->action_to?->isPast()) {
             $this->model->action_type->finishedAction($this->model);
         }
     }
@@ -47,18 +47,14 @@ class DiciplinaryActionForm extends Modal
             _Date('disciplinary.effective-from')->name('action_from')
                 ->default(now()->format('Y-m-d')),
             _Date('disciplinary.effective-to')->name('action_to'),
-
             _Select('disciplinary.action')->name('action_type')
-                ->when($this->specificAction, fn($select) => $select->class('hidden')->default($this->specificAction->value))
+                ->when($this->specificAction, fn ($select) => $select->class('hidden')->default($this->specificAction->value))
                 ->options(DiciplinaryActionTypeEnum::optionsWithLabels()),
-
             _Select('disciplinary.added-by')->name('added_by')
                 ->default(auth()->id())
                 ->options([auth()->id() => auth()->user()->name]),
-
             _Select('disciplinary.reason')->name('action_reason_type')->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
             _Textarea('disciplinary.reason-description')->name('action_reason_description'),
-
             _SubmitButton('generic.save'),
         );
     }

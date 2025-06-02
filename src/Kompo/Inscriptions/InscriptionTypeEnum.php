@@ -8,55 +8,61 @@ enum InscriptionTypeEnum: string
 {
     /**
      * Get the title for the inscription type
+     *
      * @return string
      */
     public function registerTitle()
     {
         return match ($this) {
-            
+
         };
     }
 
     /**
      * Get the description for the inscription type
+     *
      * @return string
      */
     public function registerDescription()
     {
         return match ($this) {
-            
+
         };
     }
 
     /**
      *  Get the route for the inscription type
+     *
      * @param \Condoedge\Crm\Models\Person; $person
      * @param string|null $qrCode
+     *
      * @return string
      */
     public function registerRoute($inscription, $extra = [])
     {
         return match ($this) {
-            
+
         };
     }
 
     /**
      * Get the role id for the inscription type
+     *
      * @param \Condoedge\Crm\Models\Inscription $inscription
+     *
      * @return string
      */
     public function getRole($inscription)
     {
         return match ($this) {
-            
+
         };
     }
 
     public function getRegisteredByRole()
     {
         return match ($this) {
-            
+
         };
     }
 
@@ -72,7 +78,7 @@ enum InscriptionTypeEnum: string
         return match ($this) {
             default => false,
         };
-    } 
+    }
 
     public function requiresPayment()
     {
@@ -83,12 +89,12 @@ enum InscriptionTypeEnum: string
 
     public function allowTrial()
     {
-        return (boolean) $this->regularToTrial();
+        return (bool) $this->regularToTrial();
     }
 
     public function isTrial()
     {
-        return (boolean) $this->trialToRegular();
+        return (bool) $this->trialToRegular();
     }
 
     public function regularToTrial()
@@ -111,12 +117,12 @@ enum InscriptionTypeEnum: string
             default => true,
         };
     }
-    
+
     public static function defaultPersonEvent()
     {
 
     }
-    
+
     public function statusPill($inscription)
     {
         return match ($this) {

@@ -6,12 +6,12 @@ use Condoedge\Crm\Facades\EventModel;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
-use Kompo\Auth\Facades\RoleModel;
 use Condoedge\Utils\Models\Model;
+use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 
 /**
- * It's used to go through the inscription process. It's one per each person and team. 
+ * It's used to go through the inscription process. It's one per each person and team.
  * In that way we have a record with all the details: status, type, role, etc.
  */
 class Inscription extends Model
@@ -19,9 +19,9 @@ class Inscription extends Model
     use BelongsToPersonTrait;
     use BelongsToTeamTrait;
 
-	use \Condoedge\Crm\Models\HasQrCodeTrait;
-	public const QRCODE_LENGTH = 8;
-	public const QRCODE_COLUMN_NAME = 'qr_inscription'; //To link same inscription members together
+    use \Condoedge\Crm\Models\HasQrCodeTrait;
+    public const QRCODE_LENGTH = 8;
+    public const QRCODE_COLUMN_NAME = 'qr_inscription'; //To link same inscription members together
 
 
     protected $casts = [
@@ -29,7 +29,7 @@ class Inscription extends Model
         'type' => InscriptionTypeEnum::class,
     ];
 
-	/* RELATIONS */
+    /* RELATIONS */
     public function role()
     {
         return $this->belongsTo(RoleModel::getClass());
@@ -55,7 +55,7 @@ class Inscription extends Model
         return $this->belongsTo(EventModel::getClass());
     }
 
-	/* SCOPES */
+    /* SCOPES */
     public function scopeAwaitingApproval($query)
     {
         return $query->where('status', InscriptionStatusEnum::FILLED);
@@ -65,7 +65,7 @@ class Inscription extends Model
     {
         return $query->whereIn('status', [
             InscriptionStatusEnum::APPROVED,
-            InscriptionStatusEnum::COMPLETED_SUCCESSFULLY, 
+            InscriptionStatusEnum::COMPLETED_SUCCESSFULLY,
             InscriptionStatusEnum::FILLED,
             InscriptionStatusEnum::PENDING_PAYMENT
         ]);
@@ -78,10 +78,10 @@ class Inscription extends Model
 
     public function scopeForScoutYear($query, $year)
     {
-        return $query->whereHas('event', fn($q) => $q->whereHas('mainTemplate', fn($q) => $q->where('scout_year', $year)));
+        return $query->whereHas('event', fn ($q) => $q->whereHas('mainTemplate', fn ($q) => $q->where('scout_year', $year)));
     }
 
-	/* CALCULATED FIELDS */
+    /* CALCULATED FIELDS */
     public function getActiveRelatedPersonTeam()
     {
         return PersonTeam::where('team_id', $this->team_id)->where('person_id', $this->person_id)->active()->first();
@@ -90,11 +90,12 @@ class Inscription extends Model
     public function getInscriptionRoute($route, $extra = [])
     {
         return \URL::signedRoute($route, array_merge(
-            ['inscription_code' => $this->getExistentQrOrCreateNew()], $extra
+            ['inscription_code' => $this->getExistentQrOrCreateNew()],
+            $extra
         ));
     }
 
-	public function getInscriptionConfirmationRoute()
+    public function getInscriptionConfirmationRoute()
     {
         return $this->getInscriptionRoute('inscription.confirmation');
     }
@@ -109,17 +110,17 @@ class Inscription extends Model
         return !$this->related_inscription_id;
     }
 
-	public function getPerformRegistrationUrl()
-	{
+    public function getPerformRegistrationUrl()
+    {
         return $this->getInscriptionRoute('person-registrable.register');
-	}
+    }
 
     public function getAcceptInscriptionUrl()
-	{
-		return \URL::signedRoute('person-registrable.accept', [
+    {
+        return \URL::signedRoute('person-registrable.accept', [
             'id' => $this->id,
         ]);
-	}
+    }
 
     public function getInscriptionTeamRoute()
     {
@@ -163,7 +164,7 @@ class Inscription extends Model
         return $this->status == InscriptionStatusEnum::APPROVED;
     }
 
-	/* ACTIONS */
+    /* ACTIONS */
 
     public static function getForCurrentYearQuery($personId, $inscriptionType)
     {
@@ -176,20 +177,21 @@ class Inscription extends Model
     /**
      * This only works to get void inscriptions to be filled. Just used in the inscription process it's not created
      * to get it from other context like person profile. We need to avoid void inscriptions or creating new ones when there are voids.
+     *
      * @param InscriptionTypeEnum $inscriptionType
      * @param bool $getMain Used in landing join page to get the main inscription or when we send the inscription to the person by email. It should be false when you want to get a new sibling inscription
      */
     public static function getPendingForMainPerson($personId, $teamId, $inscriptionType, $roleId = null, $getMain = null)
     {
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
-        
+
         return static::where($inscriptionType?->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id', $personId)
-            ->when($inscriptionType?->basedInInscriptionForOtherPerson() && !$getMain, fn($q) => $q->whereNull('person_id'))
-            ->when($teamId, fn($q) => $q->where('team_id', $teamId))
-            ->when($inscriptionType, fn($q) => $q->where('type', $inscriptionType->value))
-            ->when($roleId, fn($q) => $q->where('role_id', $roleId))
+            ->when($inscriptionType?->basedInInscriptionForOtherPerson() && !$getMain, fn ($q) => $q->whereNull('person_id'))
+            ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
+            ->when($inscriptionType, fn ($q) => $q->where('type', $inscriptionType->value))
+            ->when($roleId, fn ($q) => $q->where('role_id', $roleId))
             ->where('status', '<=', InscriptionStatusEnum::FILLED)
-            ->when($getMain, fn($q) => $q->whereNull('related_inscription_id'))
+            ->when($getMain, fn ($q) => $q->whereNull('related_inscription_id'))
             ->first();
     }
 
@@ -208,7 +210,7 @@ class Inscription extends Model
     {
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
 
-        $inscription = new static;
+        $inscription = new static();
         $inscription->person_id = $inscriptionType->basedInInscriptionForOtherPerson() ? null : $personId;
         $inscription->team_id = $teamId;
         $inscription->type = $inscriptionType->value;
@@ -230,16 +232,16 @@ class Inscription extends Model
     {
         $column = $this->type->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id';
         $this->setAttribute($column, $personId);
-        
+
         if ($this->isDirty($column)) {
             $this->save();
         }
     }
 
-    public function updateType($type) 
+    public function updateType($type)
     {
         $this->type = $type;
-        
+
         if ($this->isDirty('type')) {
             $this->save();
         }
@@ -289,7 +291,9 @@ class Inscription extends Model
 
     public function getRelatedRegistrations()
     {
-        if (!$this->type?->basedInInscriptionForOtherPerson()) return collect();
+        if (!$this->type?->basedInInscriptionForOtherPerson()) {
+            return collect();
+        }
 
         return static::where('inscribed_by', $this->inscribed_by)->get();
     }
@@ -329,7 +333,9 @@ class Inscription extends Model
 
     public function confirmUserRegistration($user)
     {
-        if ($this->status->completed()) return;
+        if ($this->status->completed()) {
+            return;
+        }
 
         $person = $this->person->getRegisteringPerson();
 
@@ -338,7 +344,7 @@ class Inscription extends Model
 
         $roleId = $this->type->getRole($this);
 
-        if(!$roleId) {
+        if (!$roleId) {
             abort(403, __('error.there-is-not-role-assigned-to-your-inscription'));
         }
 
@@ -346,8 +352,8 @@ class Inscription extends Model
             $role = RoleModel::getOrCreate($this->type->getRole($this));
 
             $teamRole = $user->createTeamRole($this->team, $role->id);
-    
-            if (!$this->type->basedInInscriptionForOtherPerson() && ($event = $this->getEventToAttend())) { 
+
+            if (!$this->type->basedInInscriptionForOtherPerson() && ($event = $this->getEventToAttend())) {
                 PersonEvent::createPersonEvent($this->person, $event);
                 // $teamRole->terminated_at = $this->getExpirationDate();
                 // $teamRole->save();
@@ -433,13 +439,13 @@ class Inscription extends Model
     public function moveToAnotherTeamAndEvent($teamId, $eventId)
     {
         $this->getActiveRelatedPersonTeam()?->moveToAnotherUnit($teamId);
-        
+
         $this->event_id = $eventId;
         $this->team_id = $teamId;
         $this->save();
     }
 
-	/* ELEMENTS */
+    /* ELEMENTS */
     public function visualStatusPill()
     {
         return $this->type->statusPill($this);

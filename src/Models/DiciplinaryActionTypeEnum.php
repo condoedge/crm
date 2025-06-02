@@ -38,7 +38,7 @@ enum DiciplinaryActionTypeEnum: int
         if ($this->checkIfHasOthersAction($diciplinaryAction)) {
             return;
         }
-        
+
         $user = $diciplinaryAction->person->relatedUser;
 
         return match($this) {

@@ -13,8 +13,6 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
 
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
     public function boot()
     {
@@ -40,8 +38,6 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
     public function register()
     {
@@ -57,7 +53,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
         $this->app->bind('inscription-model', function () {
             return new (config('condoedge-crm.inscription-model-namespace'));
         });
-        
+
         $this->app->bind('event-model', function () {
             return new (config('condoedge-crm.event-model-namespace'));
         });
@@ -71,7 +67,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
     {
         $helpersDir = __DIR__.'/Helpers';
 
-        $autoloadedHelpers = collect(\File::allFiles($helpersDir))->map(fn($file) => $file->getRealPath());
+        $autoloadedHelpers = collect(\File::allFiles($helpersDir))->map(fn ($file) => $file->getRealPath());
 
         $packageHelpers = [
         ];
@@ -97,7 +93,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
     protected function loadConfig()
     {
         $dirs = [
-            'condoedge-crm' => __DIR__.'/../config/condoedge-crm.php',            
+            'condoedge-crm' => __DIR__.'/../config/condoedge-crm.php',
         ];
 
         foreach ($dirs as $key => $path) {
@@ -120,7 +116,7 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
         $schedule->command('crm:sync-diciplinary-actions-command')->daily();
         $schedule->command('crm:sync-team-roles-command')->daily();
     }
-    
+
     /**
      * Loads a relations morph map.
      */

@@ -6,7 +6,7 @@ use Condoedge\Crm\Facades\PersonModel;
 
 trait HasOnePersonTrait
 {
-	/* RELATIONS */
+    /* RELATIONS */
     public function person()
     {
         return $this->hasOne(PersonModel::getClass());
@@ -14,7 +14,7 @@ trait HasOnePersonTrait
 
     /* SCOPES */
 
-	/* CALCULATED FIELDS */
+    /* CALCULATED FIELDS */
     public function getRelatedMainPerson()
     {
         $person = $this->person;
@@ -37,7 +37,7 @@ trait HasOnePersonTrait
         return $person;
     }
 
-	/* ACTIONS */
+    /* ACTIONS */
 
-	/* ELEMENTS */
+    /* ELEMENTS */
 }

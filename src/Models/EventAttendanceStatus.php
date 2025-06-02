@@ -5,7 +5,7 @@ namespace Condoedge\Crm\Models;
 enum EventAttendanceStatus: int
 {
     use \Kompo\Models\Traits\EnumKompo;
-    
+
     case ATTENDED = 1;
     case ABSTENT = 2;
 
@@ -13,7 +13,7 @@ enum EventAttendanceStatus: int
      * WE DON'T SAVE IT. THIS TYPE IS USED TO DELETE THE ATTENDANCE RECORD AND SHOW THE DEFAULT PILL
      */
     case NOT_TAKEN = 3;
-    
+
     public function label(): string
     {
         return match ($this) {

@@ -8,7 +8,7 @@ use Condoedge\Utils\Kompo\Common\Table;
 
 class PersonTeamsWithRolesTable extends Table
 {
-    const ID = 'person-roles-table';
+    public const ID = 'person-roles-table';
     public $id = self::ID;
 
     public $personId;
@@ -35,11 +35,11 @@ class PersonTeamsWithRolesTable extends Table
     public function query()
     {
         return $this->person->personTeams()
-            ->when(!request('show_all'), fn($q) => $q->active())
+            ->when(!request('show_all'), fn ($q) => $q->active())
             ->orderByDesc('from')
             ->with([
-                'team', 
-                'teamRole' => fn($q) => $q->withoutGlobalScopes(), // Here is only visual and we need to get the terminated roles so we remove the global scope
+                'team',
+                'teamRole' => fn ($q) => $q->withoutGlobalScopes(), // Here is only visual and we need to get the terminated roles so we remove the global scope
                 'teamRole.roleRelation',
             ]);
     }
@@ -55,7 +55,7 @@ class PersonTeamsWithRolesTable extends Table
         ];
     }
 
-    public function render($personTeam) 
+    public function render($personTeam)
     {
         return _TableRow(
             _Html($personTeam->teamRoleIncludingDeleted?->roleRelation?->name ?: '-')->class('font-semibold'),
@@ -66,10 +66,9 @@ class PersonTeamsWithRolesTable extends Table
             ),
             $personTeam->teamRoleIncludingDeleted?->statusPill() ?? $personTeam->getStatusPillElement(),
             _Html(),
-
             _TripleDotsDropdown(
                 _DeleteLink('permissions.delete')->class('py-1 px-3 text-danger rounded-md')->byKey($personTeam),
-                ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to) 
+                ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to)
                     ? _DropdownLink('permissions.terminate')->class('py-1 px-3 justify-end rounded-md')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                     : null,
             )->class('text-right')->checkAuthWrite('TeamRole', $personTeam->team_id),

@@ -5,10 +5,10 @@ namespace Condoedge\Crm\Models;
 use App\Models\Teams\Team;
 use App\Models\User;
 use Condoedge\Crm\Facades\PersonModel;
-use Kompo\Auth\Facades\RoleModel;
-use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\ContactInfo\Email\Email;
+use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\Model;
+use Kompo\Auth\Facades\RoleModel;
 
 abstract class Person extends Model implements Searchable
 {
@@ -83,8 +83,8 @@ abstract class Person extends Model implements Searchable
     {
         return $query->whereHas(
             'personTeams',
-            fn($q) => $q->whereNull('to')
-                ->when($teamId, fn($q) => $q->where('team_id', $teamId))
+            fn ($q) => $q->whereNull('to')
+                ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
         );
     }
 
@@ -105,19 +105,19 @@ abstract class Person extends Model implements Searchable
 
     public function scopeHasActiveTeam($query)
     {
-        return $query->whereHas('personTeams', fn($q) => $q->active());
+        return $query->whereHas('personTeams', fn ($q) => $q->active());
     }
 
     public function scopeOnlyInThisTeam($query, $teamId = null)
     {
-        return $query->whereHas('personTeams', fn($q) => $q->where('team_id', $teamId ?? currentTeamId()));
+        return $query->whereHas('personTeams', fn ($q) => $q->where('team_id', $teamId ?? currentTeamId()));
     }
 
     public function scopeSearchByEmail($query, $email)
     {
         return $query->where(
-            fn($q) => $q->where('email_identity', $email)
-                ->orWhereHas('emails', fn($q) => $q->where('address_em', $email))
+            fn ($q) => $q->where('email_identity', $email)
+                ->orWhereHas('emails', fn ($q) => $q->where('address_em', $email))
         );
     }
 
@@ -126,12 +126,12 @@ abstract class Person extends Model implements Searchable
     {
         return $this->person1Links()->with('person2')->get()->concat(
             $this->person2Links()->with('person1')->get()
-        )->map(fn($pl) => $pl->setOtherAsPerson($this->id));
+        )->map(fn ($pl) => $pl->setOtherAsPerson($this->id));
     }
 
     public function getRelatedLinksOfPersonLinks()
     {
-        return $this->getAllPersonLinks()->flatMap(fn($pl) => $pl->person->getAllPersonLinks())->unique(fn($q) => $q->person2_id)->filter(fn($q) => !in_array($this->id, [$q->person1_id, $q->person2_id]) && $q->linkType?->child_can_access_siblings == 1);
+        return $this->getAllPersonLinks()->flatMap(fn ($pl) => $pl->person->getAllPersonLinks())->unique(fn ($q) => $q->person2_id)->filter(fn ($q) => !in_array($this->id, [$q->person1_id, $q->person2_id], true) && $q->linkType?->child_can_access_siblings == 1);
     }
 
     public function getFullNameAttribute()
@@ -259,14 +259,14 @@ abstract class Person extends Model implements Searchable
     /* ELEMENTS */
     /**
      * @param string[] $infoToShow The info to show in the labels. Possible options
-     * are 'address', 'phone', 'email', 'team'
+     *                             are 'address', 'phone', 'email', 'team'
      */
     public function nameAndContactLabelsEl($infoToShow = ['address', 'phone', 'email'])
     {
-        $phone = in_array('phone', $infoToShow) ? $this->getFirstValidPhoneLabel() : null;
-        $address = in_array('address', $infoToShow) ? $this->getFirstValidAddressLabel() : null;
-        $email = in_array('email', $infoToShow) ? $this->email_identity : null;
-        $team = in_array('team', $infoToShow) ? $this->getLastTeam() : null;
+        $phone = in_array('phone', $infoToShow, true) ? $this->getFirstValidPhoneLabel() : null;
+        $address = in_array('address', $infoToShow, true) ? $this->getFirstValidAddressLabel() : null;
+        $email = in_array('email', $infoToShow, true) ? $this->email_identity : null;
+        $team = in_array('team', $infoToShow, true) ? $this->getLastTeam() : null;
 
         return _Rows(
             _LabelWithIcon('profile', $this->full_name),

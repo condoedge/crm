@@ -27,12 +27,12 @@ class InscriptionAnswerForm extends Modal
     {
         $this->model->event_id = request('change_to_event_id');
         $this->model->save();
-        
+
         return $this->approvePersonToEvent();
     }
 
     public function approvePersonToEvent()
-    {        
+    {
         $this->model->acceptInscription();
 
         return redirect()->route('person-events.list', [
@@ -52,7 +52,6 @@ class InscriptionAnswerForm extends Modal
                         _Html($this->person->gender_label),
                     ),
                 )->p4(),
-
                 _Button('inscriptions.accept')->selfPost('approvePersonToEvent')->redirect(),
             )->class('space-y-4'),
             !$this->otherEventsOptions->count() ? null : _Rows(

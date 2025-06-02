@@ -6,19 +6,19 @@ use Condoedge\Utils\Models\ModelBase;
 
 class EventAudience extends ModelBase //No need for softdeletes here
 {
-	use \Condoedge\Crm\Models\BelongsToEventTrait;
+    use \Condoedge\Crm\Models\BelongsToEventTrait;
 
-	/* RELATIONS */
+    /* RELATIONS */
 
-	/* SCOPES */
-	public function scopeForAudienceConcern($query, $concern)
-	{
-		$query->where('audience_concern', $concern);
-	}
+    /* SCOPES */
+    public function scopeForAudienceConcern($query, $concern)
+    {
+        $query->where('audience_concern', $concern);
+    }
 
-	/* CALCULATED FIELDS */
+    /* CALCULATED FIELDS */
 
-	/* ACTIONS */
+    /* ACTIONS */
 
-	/* ELEMENTS */
+    /* ELEMENTS */
 }

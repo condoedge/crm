@@ -15,8 +15,7 @@ enum ScheduleFrequencyEnum: int
 
     public function label()
     {
-        return match ($this)
-        {
+        return match ($this) {
             static::SINGLE => __('events.single'),
             static::DAILY => __('events.daily'),
             static::WEEKLY => __('events.weekly'),
@@ -30,8 +29,7 @@ enum ScheduleFrequencyEnum: int
     {
         $dateCopy = $date->copy();
 
-        return match ($this) 
-        {
+        return match ($this) {
             static::DAILY => $dateCopy->addDays($diff + 1),
             static::WEEKLY => $dateCopy->addWeeks($diff + 1),
             static::MONTHLY => $dateCopy->addMonths($diff + 1),
@@ -43,8 +41,7 @@ enum ScheduleFrequencyEnum: int
 
     public function diffToNow($date)
     {
-        return match ($this) 
-        {
+        return match ($this) {
             static::DAILY => $date->diffInDays(now()),
             static::WEEKLY => $date->diffInWeeks(now()),
             static::MONTHLY => $date->diffInMonths(now()),

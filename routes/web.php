@@ -4,17 +4,17 @@
 
 use Condoedge\Crm\Http\Controllers\CustomInscriptionGenerable;
 
-Route::layout('layouts.guest')->middleware('guest')->group(function(){
+Route::layout('layouts.guest')->middleware('guest')->group(function () {
 
     Route::get('join/{inscription_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionLandingPage::class)->name('inscription.landing');
 
     Route::get('join-email/{inscription_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionEmailStep1Form::class)->name('inscription.email.step1');
 
-	Route::middleware(['signed'])->group(function(){
+    Route::middleware(['signed'])->group(function () {
 
-    	Route::get('inscription/confirmation/{inscription_code}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
+        Route::get('inscription/confirmation/{inscription_code}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
 
-    	Route::get('create-account/{inscription_code}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
+        Route::get('create-account/{inscription_code}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
 
 
     });
@@ -23,7 +23,7 @@ Route::layout('layouts.guest')->middleware('guest')->group(function(){
 
 });
 
-Route::middleware(['signed', 'throttle:10,1'])->group(function(){
+Route::middleware(['signed', 'throttle:10,1'])->group(function () {
 
     Route::get('accept-inscription/{id}', Condoedge\Crm\Http\Controllers\PersonRegistrableAcceptController::class)->name('person-registrable.accept');
 
@@ -31,9 +31,8 @@ Route::middleware(['signed', 'throttle:10,1'])->group(function(){
 
 
 //Registration Management in dashboard
-Route::layout('layouts.dashboard')->middleware(['auth'])->group(function(){
+Route::layout('layouts.dashboard')->middleware(['auth'])->group(function () {
 
     Route::get('inscriptions/{event_id}', Condoedge\Crm\Kompo\InscriptionHandling\InscriptionsList::class)
-    	->name('inscriptions.list');
+        ->name('inscriptions.list');
 });
-

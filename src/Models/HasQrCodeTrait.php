@@ -4,8 +4,8 @@ namespace Condoedge\Crm\Models;
 
 trait HasQrCodeTrait
 {
-	//public const QRCODE_COLUMN_NAME = 'qrcode_col_name';
-	//public const QRCODE_LENGTH = 8;
+    //public const QRCODE_COLUMN_NAME = 'qrcode_col_name';
+    //public const QRCODE_LENGTH = 8;
 
     /* RELATIONS */
 
@@ -39,10 +39,10 @@ trait HasQrCodeTrait
     {
         $this->setQrCodeIfEmpty();
 
-        if (in_array(static::QRCODE_COLUMN_NAME, array_keys($this->getDirty()))) {
+        if (in_array(static::QRCODE_COLUMN_NAME, array_keys($this->getDirty()), true)) {
             $this->save();
         }
-        
+
         return $this->getQrCodeString();
     }
 
@@ -54,7 +54,7 @@ trait HasQrCodeTrait
     /* SCOPES */
     public function scopeForQrCode($query, $qrCode)
     {
-    	$query->where(static::QRCODE_COLUMN_NAME, $qrCode);
+        $query->where(static::QRCODE_COLUMN_NAME, $qrCode);
     }
 
     /* ELEMENTS */

@@ -9,7 +9,8 @@ use Illuminate\Queue\SerializesModels;
 
 class PersonInscriptionConfirmationMail extends Mailable
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     protected $inscriptionId;
     protected $inscription;
