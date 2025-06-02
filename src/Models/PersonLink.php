@@ -10,12 +10,12 @@ class PersonLink extends Model
     /* RELATIONS */
     public function person1()
     {
-        return $this->belongsTo(PersonModel::getClass(), 'person1_id');
+        return $this->belongsTo(PersonModel::getClass(), 'person1_id')->withoutGlobalScope('authUserHasPermissions');
     }
 
     public function person2()
     {
-        return $this->belongsTo(PersonModel::getClass(), 'person2_id');
+        return $this->belongsTo(PersonModel::getClass(), 'person2_id')->withoutGlobalScope('authUserHasPermissions');
     }
 
     public function linkType()
