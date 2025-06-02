@@ -234,7 +234,7 @@ abstract class Person extends Model implements Searchable
     public function usersIdsAllowedToManage()
     {
         return array_merge(
-            [],
+            [auth()->id()],
             $this->getRelatedLinksOfPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
             $this->getAllPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
         );
