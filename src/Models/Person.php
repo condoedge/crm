@@ -25,10 +25,6 @@ abstract class Person extends Model implements Searchable
         'spoken_languages' => 'array',
     ];
 
-    protected $sensibleColumns = [
-        'date_of_birth',
-    ];
-
     protected $table = 'persons';
 
     public function save(array $options = [])
