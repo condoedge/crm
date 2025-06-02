@@ -120,30 +120,30 @@ abstract class Person extends Model implements Searchable
             fn ($q) => $q->where('email_identity', $email)
                 ->orWhereHas('emails', fn ($q) => $q->where('address_em', $email))
         );
-    }    
-    
+    }
+
     public function scopeUserOwnedRecords($query)
     {
         $currentUserId = auth()->id();
-        
+
         if (!$currentUserId) {
             return $query->whereRaw('1 = 0'); // Return no results if no user authenticated
         }
-        
+
         // Get person IDs that the current user can manage
         $directPersonIds = static::where('user_id', $currentUserId)->pluck('id');
-          // Get person IDs linked through person1Links (where current user owns person2)
+        // Get person IDs linked through person1Links (where current user owns person2)
         $linkedThroughPerson1 = DB::table('person_links as pl1')
             ->join('persons as p2', 'pl1.person2_id', '=', 'p2.id')
             ->where('p2.user_id', $currentUserId)
             ->pluck('pl1.person1_id');
-        
+
         // Get person IDs linked through person2Links (where current user owns person1)
         $linkedThroughPerson2 = DB::table('person_links as pl2')
             ->join('persons as p1', 'pl2.person1_id', '=', 'p1.id')
             ->where('p1.user_id', $currentUserId)
             ->pluck('pl2.person2_id');
-        
+
         // Get sibling access if child_can_access_siblings is enabled
         $siblingIds = DB::table('person_links as pl_parent')
             ->join('person_links as pl_sibling', 'pl_parent.person1_id', '=', 'pl_sibling.person1_id')
@@ -153,7 +153,7 @@ abstract class Person extends Model implements Searchable
             ->where('lt.child_can_access_siblings', 1)
             ->where('pl_sibling.person2_id', '!=', 'pl_parent.person2_id')
             ->pluck('pl_sibling.person2_id');
-        
+
         // Combine all accessible person IDs
         $accessiblePersonIds = $directPersonIds
             ->concat($linkedThroughPerson1)
@@ -161,7 +161,7 @@ abstract class Person extends Model implements Searchable
             ->concat($siblingIds)
             ->unique()
             ->values();
-        
+
         return $query->whereIn('id', $accessiblePersonIds);
     }
 
@@ -229,14 +229,14 @@ abstract class Person extends Model implements Searchable
     public function getRegisteringPersonEmail()
     {
         return $this->getRegisteringPerson()->email_identity;
-    }    
-    
+    }
+
     public function usersIdsAllowedToManage()
     {
         return array_merge(
             [],
-            $this->getRelatedLinksOfPersonLinks()->map(fn($pl) => $pl->person->user_id)->filter()->all(),
-            $this->getAllPersonLinks()->map(fn($pl) => $pl->person->user_id)->filter()->all(),
+            $this->getRelatedLinksOfPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
+            $this->getAllPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
         );
     }
 
