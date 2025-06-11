@@ -4,9 +4,9 @@ namespace Condoedge\Crm\Kompo\PersonTeams;
 
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\PersonTeam;
-use Condoedge\Utils\Kompo\Common\Table;
+use Condoedge\Utils\Kompo\Common\WhiteTable;
 
-class PersonTeamsWithRolesTable extends Table
+class PersonTeamsWithRolesTable extends WhiteTable
 {
     public const ID = 'person-roles-table';
     public $id = self::ID;
