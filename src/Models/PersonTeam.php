@@ -49,6 +49,11 @@ class PersonTeam extends Model
     // 	return $this->to?->isPast()? TeamRoleStatusEnum::FINISHED : TeamRoleStatusEnum::IN_PROGRESS;
     // }
 
+    public function getRoleName()
+    {
+        return $this->teamRoleIncludingDeleted?->roleRelation?->name ?: $this->occupation ?: __('crm.unknown');
+    }
+
     /* ACTIONS */
     public function terminate()
     {

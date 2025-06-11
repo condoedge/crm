@@ -58,7 +58,7 @@ class PersonTeamsWithRolesTable extends Table
     public function render($personTeam)
     {
         return _TableRow(
-            _Html($personTeam->teamRoleIncludingDeleted?->roleRelation?->name ?: '-')->class('font-semibold'),
+            _Html($personTeam->getRoleName() ?: '-')->class('font-semibold'),
             $personTeam->team->getFullInfoTableElement(),
             _Rows(
                 _Html($personTeam->from->format('d/m/Y')),
