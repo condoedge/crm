@@ -6,6 +6,7 @@ use Condoedge\Crm\Facades\EventModel;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
+use Condoedge\Utils\Facades\UserModel;
 use Condoedge\Utils\Models\Model;
 use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Teams\BelongsToTeamTrait;
@@ -38,6 +39,11 @@ class Inscription extends Model
     public function inscribedBy()
     {
         return $this->belongsTo(PersonModel::getClass(), 'inscribed_by');
+    }
+
+    public function invitedBy()
+    {
+        return $this->belongsTo(UserModel::getClass(), 'invited_by');
     }
 
     public function relatedInscriptions()
@@ -78,7 +84,7 @@ class Inscription extends Model
 
     public function scopeForScoutYear($query, $year)
     {
-        return $query->whereHas('event', fn ($q) => $q->whereHas('mainTemplate', fn ($q) => $q->where('scout_year', $year)));
+        return $query->whereHas('event', fn($q) => $q->whereHas('mainTemplate', fn($q) => $q->where('scout_year', $year)));
     }
 
     /* CALCULATED FIELDS */
@@ -186,12 +192,12 @@ class Inscription extends Model
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
 
         return static::where($inscriptionType?->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id', $personId)
-            ->when($inscriptionType?->basedInInscriptionForOtherPerson() && !$getMain, fn ($q) => $q->whereNull('person_id'))
-            ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
-            ->when($inscriptionType, fn ($q) => $q->where('type', $inscriptionType->value))
-            ->when($roleId, fn ($q) => $q->where('role_id', $roleId))
+            ->when($inscriptionType?->basedInInscriptionForOtherPerson() && !$getMain, fn($q) => $q->whereNull('person_id'))
+            ->when($teamId, fn($q) => $q->where('team_id', $teamId))
+            ->when($inscriptionType, fn($q) => $q->where('type', $inscriptionType->value))
+            ->when($roleId, fn($q) => $q->where('role_id', $roleId))
             ->where('status', '<=', InscriptionStatusEnum::FILLED)
-            ->when($getMain, fn ($q) => $q->whereNull('related_inscription_id'))
+            ->when($getMain, fn($q) => $q->whereNull('related_inscription_id'))
             ->first();
     }
 
@@ -215,6 +221,7 @@ class Inscription extends Model
         $inscription->team_id = $teamId;
         $inscription->type = $inscriptionType->value;
         $inscription->inscribed_by = $inscriptionType->basedInInscriptionForOtherPerson() ? $personId : null;
+        $inscription->invited_by = auth()->id();
         $inscription->role_id = $roleId;
         $inscription->save();
 
