@@ -64,7 +64,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
                 _Html($personTeam->from->format('d/m/Y')),
                 _Html($personTeam->to?->format('d/m/Y'))->class('text-gray-400'),
             ),
-            $personTeam->teamRoleIncludingDeleted?->statusPill() ?? $personTeam->getStatusPillElement(),
+            $personTeam->getStatusPillElement() ?? $personTeam->teamRoleIncludingDeleted?->statusPill(),
             _Html(),
             _TripleDotsDropdown(
                 _DeleteLink('permissions.delete')->class('py-1 px-3 text-danger rounded-md')->byKey($personTeam),
