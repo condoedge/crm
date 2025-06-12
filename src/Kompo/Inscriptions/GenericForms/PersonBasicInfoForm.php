@@ -35,12 +35,12 @@ abstract class PersonBasicInfoForm extends ImgFormLayout
 
             $this->extraTopInputs(),
 
-            _Input('inscriptions.first-name')->name('first_name'),
-            _Input('inscriptions.last-name')->name('last_name'),
+            _Input('inscriptions.first-name')->name('first_name')->required(),
+            _Input('inscriptions.last-name')->name('last_name')->required(),
             _Select('inscriptions.gender')->name('gender')->options(
                 GenderEnum::optionsWithLabels()
             ),
-            _Date('inscriptions.dob')->name('date_of_birth')->class('mb-12'),
+            _Date('inscriptions.dob')->name('date_of_birth')->class('mb-12')->required(),
             _TwoColumnsButtons(
                 !$this->getBackLinkRoute() ? null : _Link2Outlined('inscriptions.back')
                     ->href($this->getBackLinkRoute()),

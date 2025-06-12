@@ -28,19 +28,19 @@ class EventRegistrationPeriodForm extends Modal
     public function render()
     {
         return _Rows(
-            _Input('inscriptions.title')->name('registration_name')
+            _Input('inscriptions.title')->name('registration_name')->required()
                     ->default(__('inscriptions.registrations').' '.$this->event->name_ev),
             _Columns(
                 _Select('inscriptions.registration-type')->name('registration_type')->options(RegistrationTypeEnum::optionsWithLabels()),
             ),
             _CardLevel5(
                 _Columns(
-                    _DateTime('inscriptions.registration-period-start')->name('registration_start'),
-                    _DateTime('inscriptions.registration-period-end')->name('registration_end'),
+                    _DateTime('inscriptions.registration-period-start')->name('registration_start')->required(),
+                    _DateTime('inscriptions.registration-period-end')->name('registration_end')->required(),
                 ),
             )->class('px-6 pb-2'),
-            _InputDollar('inscriptions.amount-for-registration')->name('registration_price'),
-            _Input('inscriptions.number-of-participants')->name('registration_max_members'),
+            _InputDollar('inscriptions.amount-for-registration')->name('registration_price')->required(),
+            _Input('inscriptions.number-of-participants')->name('registration_max_members')->required(),
             _SubmitButton('inscriptions.save'),
         )->class('p-8');
     }

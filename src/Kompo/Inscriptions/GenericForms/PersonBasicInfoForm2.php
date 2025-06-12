@@ -44,11 +44,11 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
 
             _Rows(
                 !$this->withNames ? null : _Rows(
-                    _Input('inscriptions.first-name')->name('first_name')->default($this->model->first_name ?: auth()->user()?->getFirstName()),
-                    _Input('inscriptions.last-name')->name('last_name')->default($this->model->last_name ?: auth()->user()?->getLastName()),
+                    _Input('inscriptions.first-name')->name('first_name')->required()->default($this->model->first_name ?: auth()->user()?->getFirstName()),
+                    _Input('inscriptions.last-name')->name('last_name')->required()->default($this->model->last_name ?: auth()->user()?->getLastName()),
                 ),
-                $this->placeInput()->class('place-input-without-visual')->default($this->model->address ?: auth()->user()?->address),
-                _PhoneInput('inscriptions.my-phone')->name('inscribed_phone')->default($this->model->inscribed_phone ?: auth()->user()?->getPrimaryPhoneNumber()),
+                $this->placeInput()->required()->class('place-input-without-visual')->default($this->model->address ?: auth()->user()?->address),
+                _PhoneInput('inscriptions.my-phone')->name('inscribed_phone')->required()->default($this->model->inscribed_phone ?: auth()->user()?->getPrimaryPhoneNumber()),
                 SpokenLanguageEnum::getMultiSelect()->default(array_keys(config('kompo.locales')))->class('mb-12'),
             ),
             _SubmitButtonBig2('inscriptions.continue')->redirect()->class('mb-12'),

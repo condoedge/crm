@@ -44,16 +44,16 @@ class DiciplinaryActionForm extends Modal
                 ->default($this->person?->id)
                 ->options([$this->person?->id => $this->person?->full_name])->name('person_id')
                 ->attr(['disabled' => 'disabled']),
-            _Date('disciplinary.effective-from')->name('action_from')
+            _Date('disciplinary.effective-from')->name('action_from')->required()
                 ->default(now()->format('Y-m-d')),
-            _Date('disciplinary.effective-to')->name('action_to'),
-            _Select('disciplinary.action')->name('action_type')
+            _Date('disciplinary.effective-to')->name('action_to')->required(),
+            _Select('disciplinary.action')->name('action_type')->required()
                 ->when($this->specificAction, fn ($select) => $select->class('hidden')->default($this->specificAction->value))
                 ->options(DiciplinaryActionTypeEnum::optionsWithLabels()),
-            _Select('disciplinary.added-by')->name('added_by')
+            _Select('disciplinary.added-by')->name('added_by')->required()
                 ->default(auth()->id())
-                ->options([auth()->id() => auth()->user()->name]),
-            _Select('disciplinary.reason')->name('action_reason_type')->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
+                ->options([auth()->id() => auth()->user()->name])-,
+            _Select('disciplinary.reason')->name('action_reason_type')->required()->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
             _Textarea('disciplinary.reason-description')->name('action_reason_description'),
             _SubmitButton('generic.save'),
         );
