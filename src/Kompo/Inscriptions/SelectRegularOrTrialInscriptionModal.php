@@ -11,6 +11,7 @@ class SelectRegularOrTrialInscriptionModal extends Modal
     protected $_Title = 'inscriptions.select-regular-or-oneday';
 
     public $class = 'max-w-lg bg-level1 rounded-lg';
+    protected $headerClass = "bg-level1 rounded-lg";
 
     protected $baseType;
 
@@ -24,7 +25,7 @@ class SelectRegularOrTrialInscriptionModal extends Modal
     public function header()
     {
         return [
-            _ModalTitle('inscriptions.select-regular-or-oneday')?->class('!text-white !text-xl sm:!text-2xl bg-level1'),
+            _ModalTitle('inscriptions.select-regular-or-oneday')?->class('!text-white !text-xl sm:!text-2xl'),
         ];
     }
 
