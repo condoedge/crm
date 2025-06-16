@@ -36,8 +36,8 @@ trait InscriptionFormUtilsTrait
 
         $this->inscriptionId = $this->inscription?->id;
 
-        $this->person = $this->inscription?->person ?? $this->inscription?->inscribedBy;
-        $this->mainPerson = $this->person?->getRegisteringPerson();
+        $this->person = $this->inscription?->person;
+        $this->mainPerson = $this->inscription?->inscribedBy ?? $this->person?->getRegisteringPerson();
 
         $this->personId = $this->person?->id;
 
