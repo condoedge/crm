@@ -10,8 +10,8 @@ class SelectRegularOrTrialInscriptionModal extends Modal
 
     protected $_Title = 'inscriptions.select-regular-or-oneday';
 
-    public $class = 'max-w-lg bg-level1 rounded-lg';
-    protected $headerClass = "bg-level1 rounded-lg";
+    public $class = 'max-w-lg !bg-level1 rounded-lg';
+    protected $headerClass = "!bg-level1 rounded-lg";
 
     protected $baseType;
 
