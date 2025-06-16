@@ -24,6 +24,7 @@ abstract class Person extends Model implements Searchable
     protected $casts = [
         'gender' => GenderEnum::class,
         'spoken_languages' => 'array',
+        'date_of_birth' => 'date',
     ];
 
     protected $table = 'persons';
@@ -181,6 +182,11 @@ abstract class Person extends Model implements Searchable
     public function getFullNameAttribute()
     {
         return getFullName($this->first_name, $this->last_name);
+    }
+
+    public function getYearsOldAttribute()
+    {
+        return $this->date_of_birth?->age;
     }
 
     public function hasActiveBlock()
