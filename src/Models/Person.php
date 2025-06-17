@@ -168,7 +168,7 @@ abstract class Person extends Model implements Searchable
 
     public function scopeSecurityForTeams($query, $teamIds)
     {
-        return $query->whereHas('personTeams', fn($q) => $q->whereIn('team_id', $teamIds));
+        return $query->whereHas('personTeams', fn ($q) => $q->whereIn('team_id', $teamIds));
     }
 
     /* CALCULATED FIELDS */
