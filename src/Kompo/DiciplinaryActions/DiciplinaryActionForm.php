@@ -52,7 +52,7 @@ class DiciplinaryActionForm extends Modal
                 ->options(DiciplinaryActionTypeEnum::optionsWithLabels()),
             _Select('disciplinary.added-by')->name('added_by')->required()
                 ->default(auth()->id())
-                ->options([auth()->id() => auth()->user()->name])-,
+                ->options([auth()->id() => auth()->user()->name]),
             _Select('disciplinary.reason')->name('action_reason_type')->required()->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
             _Textarea('disciplinary.reason-description')->name('action_reason_description'),
             _SubmitButton('generic.save'),
