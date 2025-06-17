@@ -21,7 +21,8 @@ class PersonDiciplinaryActionsTable extends WhiteTable
     {
         return _FlexBetween(
             _TitleMain('disciplinary.disciplinary-actions'),
-            _Button('disciplinary.add-new-disciplinary-action')->selfCreate('getDiciplinaryActionForm')->inModal(),
+            _Button('disciplinary.add-new-disciplinary-action')
+                ->selfCreate('getDiciplinaryActionForm')->inModal()->checkAuthWrite('DiciplinaryAction'),
         )->class('mb-4');
     }
 
@@ -56,7 +57,7 @@ class PersonDiciplinaryActionsTable extends WhiteTable
             _TripleDotsDropdown(
                 _Link('disciplinary.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
                 _Link('disciplinary.finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh(),
-            ),
+            )->checkAuthWrite('DiciplinaryAction', specificModel: $diciplinaryAction),
         );
     }
 
