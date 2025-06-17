@@ -85,8 +85,8 @@ abstract class Person extends Model implements Searchable
     {
         return $query->whereHas(
             'personTeams',
-            fn($q) => $q->whereNull('to')
-                ->when($teamId, fn($q) => $q->where('team_id', $teamId))
+            fn ($q) => $q->whereNull('to')
+                ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
         );
     }
 
@@ -107,19 +107,19 @@ abstract class Person extends Model implements Searchable
 
     public function scopeHasActiveTeam($query)
     {
-        return $query->whereHas('personTeams', fn($q) => $q->active());
+        return $query->whereHas('personTeams', fn ($q) => $q->active());
     }
 
     public function scopeOnlyInThisTeam($query, $teamId = null)
     {
-        return $query->whereHas('personTeams', fn($q) => $q->where('team_id', $teamId ?? currentTeamId()));
+        return $query->whereHas('personTeams', fn ($q) => $q->where('team_id', $teamId ?? currentTeamId()));
     }
 
     public function scopeSearchByEmail($query, $email)
     {
         return $query->where(
-            fn($q) => $q->where('email_identity', $email)
-                ->orWhereHas('emails', fn($q) => $q->where('address_em', $email))
+            fn ($q) => $q->where('email_identity', $email)
+                ->orWhereHas('emails', fn ($q) => $q->where('address_em', $email))
         );
     }
 
@@ -171,12 +171,12 @@ abstract class Person extends Model implements Searchable
     {
         return $this->person1Links()->with('person2')->get()->concat(
             $this->person2Links()->with('person1')->get()
-        )->map(fn($pl) => $pl->setOtherAsPerson($this->id));
+        )->map(fn ($pl) => $pl->setOtherAsPerson($this->id));
     }
 
     public function getRelatedLinksOfPersonLinks()
     {
-        return $this->getAllPersonLinks()->flatMap(fn($pl) => $pl->person->getAllPersonLinks())->unique(fn($q) => $q->person2_id)->filter(fn($q) => !in_array($this->id, [$q->person1_id, $q->person2_id], true) && $q->linkType?->child_can_access_siblings == 1);
+        return $this->getAllPersonLinks()->flatMap(fn ($pl) => $pl->person->getAllPersonLinks())->unique(fn ($q) => $q->person2_id)->filter(fn ($q) => !in_array($this->id, [$q->person1_id, $q->person2_id], true) && $q->linkType?->child_can_access_siblings == 1);
     }
 
     public function getFullNameAttribute()
@@ -241,8 +241,8 @@ abstract class Person extends Model implements Searchable
     {
         return array_merge(
             [$this->relatedUser?->id],
-            $this->getRelatedLinksOfPersonLinks()->map(fn($pl) => $pl->person->user_id)->filter()->all(),
-            $this->getAllPersonLinks()->map(fn($pl) => $pl->person->user_id)->filter()->all(),
+            $this->getRelatedLinksOfPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
+            $this->getAllPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
         );
     }
 
