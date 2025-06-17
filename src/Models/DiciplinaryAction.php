@@ -36,6 +36,13 @@ class DiciplinaryAction extends Model
         return $query->where('action_type', DiciplinaryActionTypeEnum::BAN);
     }
 
+    public function scopeSecurityForTeams($query, $teamsIds)
+    {
+        return $query->whereHas('person', function ($q) use ($teamsIds) {
+            $q->securityForTeams($teamsIds);
+        });
+    }
+
     // ELEMENTS
     public function actionTypePill()
     {

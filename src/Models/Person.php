@@ -166,6 +166,11 @@ abstract class Person extends Model implements Searchable
         return $query->whereIn('id', $accessiblePersonIds);
     }
 
+    public function scopeSecurityForTeams($query, $teamIds)
+    {
+        return $query->whereHas('personTeams', fn($q) => $q->whereIn('team_id', $teamIds));
+    }
+
     /* CALCULATED FIELDS */
     public function getAllPersonLinks()
     {
