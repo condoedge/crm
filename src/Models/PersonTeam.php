@@ -36,11 +36,7 @@ class PersonTeam extends Model
     /* SCOPES */
     public function scopeActive($query)
     {
-        return $query->where(
-            fn ($q) => $q
-            ->where('to', '>', now())
-            ->orWhereNull('to')
-        );
+        return $query; // Removed, now just using deleted_at to determine active status.
     }
 
     /* CALCULATED FIELDS */
@@ -58,6 +54,7 @@ class PersonTeam extends Model
     public function terminate()
     {
         $this->to = now();
+        $this->deleted_at = now();
         $this->save();
 
         $this->teamRole?->terminate();
