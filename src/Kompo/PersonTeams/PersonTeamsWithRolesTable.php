@@ -35,7 +35,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
     public function query()
     {
         return $this->person->personTeams()
-            ->when(!request('show_all'), fn ($q) => $q->active())
+            ->when(request('show_all'), fn ($q) => $q->withTrashed())
             ->orderByDesc('from')
             ->with([
                 'team',

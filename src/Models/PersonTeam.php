@@ -55,6 +55,7 @@ class PersonTeam extends Model
     {
         $this->to = now();
         $this->deleted_at = now();
+        $this->status = PersonTeamStatusEnum::TERMINATED;
         $this->save();
 
         $this->teamRole?->terminate();
