@@ -10,12 +10,12 @@ trait PersonInscriptionsRelatedTrait
     /* RELATIONS */
     public function registeredBy()
     {
-        return $this->belongsTo(PersonModel::getClass(), 'registered_by');
+        return $this->belongsTo(PersonModel::getClass(), 'registered_by')->throughAuthorizedRelation();
     }
 
     public function registeredBys()
     {
-        return $this->hasMany(PersonModel::getClass(), 'registered_by');
+        return $this->hasMany(PersonModel::getClass(), 'registered_by')->throughAuthorizedRelation();
     }
 
     /* CALCULATED FIELDS */

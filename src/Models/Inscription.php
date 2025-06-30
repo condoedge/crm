@@ -36,9 +36,15 @@ class Inscription extends Model
         return $this->belongsTo(RoleModel::getClass());
     }
 
+    public function person()
+    {
+        return $this->belongsTo(PersonModel::getClass())->throughAuthorizedRelation();
+    }
+
+
     public function inscribedBy()
     {
-        return $this->belongsTo(PersonModel::getClass(), 'inscribed_by');
+        return $this->belongsTo(PersonModel::getClass(), 'inscribed_by')->throughAuthorizedRelation();
     }
 
     public function invitedBy()
