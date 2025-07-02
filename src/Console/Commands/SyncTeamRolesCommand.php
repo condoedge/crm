@@ -3,6 +3,7 @@
 namespace Condoedge\Crm\Console\Commands;
 
 use Condoedge\Crm\Models\PersonTeam;
+use Condoedge\Crm\Models\PersonTeamStatusEnum;
 use Illuminate\Console\Command;
 
 class SyncTeamRolesCommand extends Command
@@ -35,6 +36,7 @@ class SyncTeamRolesCommand extends Command
                     $personTeam->teamRole()->withoutGlobalScopes()->first()?->terminate();
 
                     if (!$personTeam->deleted_at) {
+                        $personTeam->status = PersonTeamStatusEnum::TERMINATED;
                         $personTeam->deleted_at = now();
                         $personTeam->save();
                     }
