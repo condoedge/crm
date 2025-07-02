@@ -35,11 +35,9 @@ class SyncTeamRolesCommand extends Command
                 $personTeams->each(function ($personTeam) {
                     $personTeam->teamRole()->withoutGlobalScopes()->first()?->terminate();
 
-                    if (!$personTeam->deleted_at) {
-                        $personTeam->status = PersonTeamStatusEnum::TERMINATED;
-                        $personTeam->deleted_at = now();
-                        $personTeam->save();
-                    }
+                    $personTeam->status = PersonTeamStatusEnum::TERMINATED;
+                    $personTeam->deleted_at = now();
+                    $personTeam->save();
                 });
             });
     }
