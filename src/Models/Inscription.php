@@ -330,10 +330,11 @@ class Inscription extends Model
         $this->getActiveRelatedPersonTeam()?->terminate();
     }
 
-    public function isPayed()
+    public function isPaid()
     {
         return true;
     }
+    
     public function validToComplete()
     {
         return $this->canConsiderAsPaidAtInscriptionLevel() && $this->status->accepted();
@@ -386,7 +387,7 @@ class Inscription extends Model
             $inscriptions->each->confirmChildRegistration();
         }
 
-        fireRegisteredEvent($user);
+        // fireRegisteredEvent($user);
     }
 
     public function markAsPaid()
@@ -433,7 +434,7 @@ class Inscription extends Model
 
     public function hasPendingPayment()
     {
-        return !$this->type->requiresPayment() || $this->isPayed();
+        return !$this->type->requiresPayment() || $this->isPaid();
     }
 
     public function confirmInscriptionFilled()
