@@ -122,6 +122,12 @@ class PersonTeam extends Model
         return $personTeam;
     }
 
+    public function markAsPaid()
+    {
+        $this->status = PersonTeamStatusEnum::ACTIVE;
+        $this->save();
+    }
+
     // We're using HasSecurity plugin that handles deleting event to manage security restrictions.
     public function deletable()
     {

@@ -342,7 +342,7 @@ class Inscription extends Model
 
     public function canConsiderAsPaidAtInscriptionLevel()
     {
-        return (!$this->hasPendingPayment() || !static::managePaymentFromInscription());
+        return !$this->hasPendingPayment() || !static::managePaymentFromInscription();
     }
 
     public function confirmUserRegistration($user)
@@ -392,11 +392,9 @@ class Inscription extends Model
 
     public function markAsPaid()
     {
-        if (!$this->canConsiderAsPaidAtInscriptionLevel()) {
-            $personTeams = PersonTeam::where('last_inscription_id', $this->id)->get();
+        $personTeams = PersonTeam::where('last_inscription_id', $this->id)->get();
 
-            $personTeams->each->markAsPaid();
-        }
+        $personTeams->each->markAsPaid();
 
         $this->status = InscriptionStatusEnum::COMPLETED_SUCCESSFULLY;
         $this->save();
@@ -434,7 +432,7 @@ class Inscription extends Model
 
     public function hasPendingPayment()
     {
-        return !$this->type->requiresPayment() || $this->isPaid();
+        return $this->type->requiresPayment() && !$this->isPaid();
     }
 
     public function confirmInscriptionFilled()
