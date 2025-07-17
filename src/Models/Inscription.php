@@ -334,7 +334,7 @@ class Inscription extends Model
     {
         return true;
     }
-    
+
     public function validToComplete()
     {
         return $this->canConsiderAsPaidAtInscriptionLevel() && $this->status->accepted();
