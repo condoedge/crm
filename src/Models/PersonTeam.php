@@ -102,7 +102,8 @@ class PersonTeam extends Model
     public static function getOrCreateForAdultInscription($inscription, $teamRole)
     {
         $personTeam = static::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $inscription->team_id)
-            ->where(fn($q) => $q->whereNull('team_role_id')
+            ->where(
+                fn ($q) => $q->whereNull('team_role_id')
                 ->orWhere('team_role_id', $teamRole->id)
             )->first();
 
