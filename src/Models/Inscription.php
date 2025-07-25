@@ -347,7 +347,7 @@ class Inscription extends Model
 
     public function confirmUserRegistration($user)
     {
-        if ($this->status->completed()) {
+        if ($this->status->completed() || !$user) {
             return;
         }
 
