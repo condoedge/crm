@@ -14,10 +14,10 @@ class AssignTeamRole extends BaseModal
         PersonTeam::createFromTeamRole($this->model);
     }
 
-    static public function terminateTeamRole($teamRole)
+    public static function terminateTeamRole($teamRole)
     {
         $teamRole->terminate();
-        
+
         PersonTeam::where('team_role_id', $teamRole->id)
             ->get()->each->terminate();
     }
