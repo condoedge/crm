@@ -51,8 +51,8 @@ class EventRegistrationPeriodForm extends Modal
             'registration_name' => 'required',
             'registration_start' => 'required',
             'registration_end' => 'required',
-            'registration_price' => 'required',
-            'registration_max_members' => 'required',
+            'registration_price' => 'required|min:0',
+            'registration_max_members' => 'required|min:0',
         ];
     }
 }
