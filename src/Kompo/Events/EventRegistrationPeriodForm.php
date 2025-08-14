@@ -49,8 +49,8 @@ class EventRegistrationPeriodForm extends Modal
     {
         return [
             'registration_name' => 'required',
-            'registration_start' => 'required',
-            'registration_end' => 'required',
+            'registration_start' => 'required|date',
+            'registration_end' => 'required|date|after_or_equal:registration_start',
             'registration_price' => 'required|min:0',
             'registration_max_members' => 'required|min:0',
         ];
