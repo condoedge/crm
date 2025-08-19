@@ -85,8 +85,7 @@ abstract class Person extends Model implements Searchable
     {
         return $query->whereHas(
             'personTeams',
-            fn ($q) => $q->whereNull('to')
-                ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
+            fn ($q) => $q->when($teamId, fn ($q) => $q->where('team_id', $teamId))
         );
     }
 
