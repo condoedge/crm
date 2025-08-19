@@ -28,7 +28,7 @@ class DiciplinaryActionForm extends Modal
 
     public function afterSave()
     {
-        if ($this->model->action_from->isToday()) {
+        if ($this->model->action_from->isPast() || $this->model->action_from->isToday()) {
             $this->model->action_type->startedAction($this->model);
         }
 

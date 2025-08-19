@@ -35,10 +35,6 @@ enum DiciplinaryActionTypeEnum: int
 
     public function startedAction($diciplinaryAction)
     {
-        if ($this->checkIfHasOthersAction($diciplinaryAction)) {
-            return;
-        }
-
         $user = $diciplinaryAction->person->relatedUser;
 
         return match($this) {
@@ -67,8 +63,10 @@ enum DiciplinaryActionTypeEnum: int
     {
         return $diciplinaryAction->person->diciplinaryActions()
             ->active()
-            ->whereDate('action_to', '!=', now())
+            ->whereDate('action_to', '>', now())
+            ->whereDate('action_from', '<=', now())
             ->where('action_type', $diciplinaryAction->action_type)
+            ->where('id', '!=', $diciplinaryAction->id)
             ->count();
     }
 }
