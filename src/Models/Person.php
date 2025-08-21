@@ -217,10 +217,10 @@ abstract class Person extends Model implements Searchable
             return 'crm.pending';
         }
 
-        if ($this->personTeams->whereNull('to')->first()) {
+        if ($this->personTeams->filter(fn($team) => is_null($team->to) || $team->to > now())->first()) {
             return 'crm.active';
         }
-
+        
         return 'crm.inactive';
     }
 

@@ -36,7 +36,7 @@ class PersonTeam extends Model
     /* SCOPES */
     public function scopeActive($query)
     {
-        return $query; // Removed, now just using deleted_at to determine active status.
+        return $query->whereNull('deleted_at'); // Removed, now just using deleted_at to determine active status.
     }
 
     /* CALCULATED FIELDS */
