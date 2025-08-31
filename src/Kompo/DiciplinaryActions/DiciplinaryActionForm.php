@@ -17,6 +17,8 @@ class DiciplinaryActionForm extends Modal
     protected $specificAction;
     protected $noHeaderButtons = true;
 
+    protected $refreshId;
+
     public function created()
     {
         $this->specificAction = is_numeric($this->prop('specific_action')) ? DiciplinaryActionTypeEnum::from($this->prop('specific_action')) : null;
@@ -24,6 +26,7 @@ class DiciplinaryActionForm extends Modal
 
         $this->personId = $this->prop('person_id');
         $this->person = $this->personId ? PersonModel::findOrFail($this->personId) : null;
+        $this->refreshId = $this->prop('refresh_id');
     }
 
     public function afterSave()
@@ -55,7 +58,7 @@ class DiciplinaryActionForm extends Modal
                 ->options([auth()->id() => auth()->user()->name]),
             _Select('disciplinary.reason')->name('action_reason_type')->required()->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
             _Textarea('disciplinary.reason-description')->name('action_reason_description'),
-            _SubmitButton('generic.save'),
+            _SubmitButton('generic.save')->refresh($this->refreshId)->alert('translate.disciplinary.action-saved'),
         );
     }
 

@@ -8,6 +8,8 @@ use Condoedge\Utils\Kompo\Common\WhiteTable;
 
 class PersonDiciplinaryActionsTable extends WhiteTable
 {
+    public $id = 'person-diciplinary-actions-table';
+
     protected $personId;
     protected $person;
 
@@ -56,7 +58,8 @@ class PersonDiciplinaryActionsTable extends WhiteTable
             $diciplinaryAction->actionTypePill(),
             _TripleDotsDropdown(
                 _Link('disciplinary.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
-                _Link('disciplinary.finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh(),
+                $diciplinaryAction->action_to?->isPast() ? null : 
+                    _Link('translate.disciplinary.finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh($this->id),
             )->checkAuthWrite('DiciplinaryAction', specificModel: $diciplinaryAction),
         );
     }
@@ -65,6 +68,7 @@ class PersonDiciplinaryActionsTable extends WhiteTable
     {
         return new DiciplinaryActionForm($diciplinaryActionId, [
             'person_id' => $this->personId,
+            'refresh_id' => $this->id,
         ]);
     }
 
