@@ -58,7 +58,7 @@ class PersonDiciplinaryActionsTable extends WhiteTable
             $diciplinaryAction->actionTypePill(),
             _TripleDotsDropdown(
                 _Link('disciplinary.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
-                $diciplinaryAction->action_to?->isPast() ? null : 
+                $diciplinaryAction->action_to?->isPast() ? null :
                     _Link('translate.disciplinary.finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh($this->id),
             )->checkAuthWrite('DiciplinaryAction', specificModel: $diciplinaryAction),
         );
