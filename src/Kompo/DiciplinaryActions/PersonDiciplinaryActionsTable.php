@@ -57,7 +57,7 @@ class PersonDiciplinaryActionsTable extends WhiteTable
             _Html($diciplinaryAction->addedBy->name),
             _Flex(
                 $diciplinaryAction->actionTypePill(),
-                _Sax('check-mark')->class('text-green-600')->balloon('translate.finished'),
+                !$diciplinaryAction->action_to?->isPast() ? null : _Sax('check-mark')->class('text-green-600')->balloon('translate.finished'),
             )->class('gap-2'),
             _TripleDotsDropdown(
                 _Link('disciplinary.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
