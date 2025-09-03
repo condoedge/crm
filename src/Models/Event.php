@@ -89,12 +89,12 @@ abstract class Event extends Model
     /* SCOPES */
     public function scopeForRegistrationSystem($query)
     {
-        $query->whereNotNull('registration_system');
+        $query->whereNotNull('public_registration_system');
     }
 
     public function scopeWithoutRegistrationSystem($query)
     {
-        $query->where(fn ($q) => $q->whereNull('registration_system')->orWhere('registration_system', 0));
+        $query->where(fn ($q) => $q->whereNull('public_registration_system')->orWhere('public_registration_system', 0));
     }
 
     /* CALCULATED FIELDS */
