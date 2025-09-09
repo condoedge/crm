@@ -36,10 +36,7 @@ class InscriptionEmailStep1Form extends ImgFormLayout
         $redirectTo = $this->getRedirectUrl($person);
 
         if ($user = User::where('email', $email)->first()) {
-            return redirect(route('login.password', [
-                'email' => $email,
-                'redirect_to' => $redirectTo,
-            ]));
+            return response()->modal($this->alreadyRegisteredComponent($email, $redirectTo));
         } elseif (!$this->type->hasEmailVerification()) {
             return redirect()->to($redirectTo);
         } else {
@@ -68,8 +65,20 @@ class InscriptionEmailStep1Form extends ImgFormLayout
                 : _Checkbox('inscriptions.legal-age-terms')->name('legal_age_terms', false)->class('mb-6'),
 
             _Input('inscriptions.my-email')->name('email')->required(),
-            _SubmitButtonBig2('inscriptions.verify-my-email')->redirect(),
+            _SubmitButtonBig2('inscriptions.verify-my-email'),
         ];
+    }
+
+    protected function alreadyRegisteredComponent($email, $redirectTo)
+    {
+        return _Rows(
+            _Html('translate.you-are-already-registered')->class('mb-6 text-lg text-white font-semibold'),
+            _Html('translate.you-can-login-to-your-account-and-continue-the-registration-process')->class('mb-6 text-sm text-white'),
+            _Link2Button('translate.auth.login')->href(route('login.password', [
+                'email' => $email,
+                'redirect_to' => $redirectTo,
+            ])),
+        )->class('bg-level1 p-6 rounded-xl');
     }
 
     public function rules()
