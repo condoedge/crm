@@ -58,7 +58,7 @@ class DiciplinaryActionForm extends Modal
                 ->options([auth()->id() => auth()->user()->name]),
             _Select('disciplinary.reason')->name('action_reason_type')->required()->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
             _Textarea('disciplinary.reason-description')->name('action_reason_description'),
-            _SubmitButton('generic.save')->refresh($this->refreshId)->alert('translate.disciplinary.action-saved'),
+            _SubmitButton('generic.save')->refresh($this->refreshId)->alert('disciplinary.action-saved'),
         );
     }
 

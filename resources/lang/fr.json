@@ -1,6 +1,7 @@
 {
 	"disciplinary.abusive": "Abusif / Abusive",
 	"disciplinary.action": "Action",
+	"disciplinary.action-saved": "Action sauvegardée !",
 	"disciplinary.action-type": "Type d'action",
 	"disciplinary.add-diciplinary-action": "Ajouter une mesure disciplinaire",
 	"disciplinary.add-new-disciplinary-action": "Ajouter une mesure disciplinaire",
@@ -9,12 +10,15 @@
 	"disciplinary.ban-this-member": "Bannir ce membre",
 	"disciplinary.block": "Bloquer",
 	"disciplinary.block-this-member": "Bloquer ce membre",
+	"disciplinary.button-finish": "Terminer",
 	"disciplinary.disciplinary-actions": "Mesures disciplinaires",
 	"disciplinary.discrimination": "Discrimination",
 	"disciplinary.edit": "Modifier",
 	"disciplinary.effective-date": "Date d'entrée en vigueur",
 	"disciplinary.effective-from": "En vigueur le",
 	"disciplinary.effective-to": "En vigueur jusqu'au",
+	"disciplinary.finish": "Mettre fin à la mesure disciplinaire",
+	"disciplinary.finished": "Terminé !",
 	"disciplinary.harassment": "Harcèlement ou intimidation",
 	"disciplinary.member": "Membre",
 	"disciplinary.other": "Autre",
@@ -22,10 +26,13 @@
 	"disciplinary.reason-description": "Description",
 	"disciplinary.terminate": "Mettre fin",
 	"disciplinary.violence": "Violence",
+	"disciplinary.you-are-already-registered": "Vous êtes déjà inscrit(e)",
+	"disciplinary.you-can-login-to-your-account-and-continue-the-registration-process": "Vous pouvez vous connecter à votre compte et continuer le processus d'inscription",
 	"error.must-be-a-valid-phone-number": "Doit être un numéro de téléphone valide (XXX-XXX-XXXX)",
 	"events.absent": "Absent",
 	"events.confirmed": "Confirmé",
 	"events.not-sure": "Pas certain",
 	"events.pending": "En attente",
-	"events.present": "Présent"
+	"events.present": "Présent",
+	"inscriptions.auth-login": "Se connecter"
 }

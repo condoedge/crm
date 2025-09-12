@@ -1,6 +1,7 @@
 {
 	"disciplinary.abusive": "Abusive",
 	"disciplinary.action": "Action",
+	"disciplinary.action-saved": "Action saved!",
 	"disciplinary.action-type": "Action type",
 	"disciplinary.add-diciplinary-action": "Add disciplinary action",
 	"disciplinary.add-new-disciplinary-action": "Add disciplinary action",
@@ -9,12 +10,15 @@
 	"disciplinary.ban-this-member": "Ban this member",
 	"disciplinary.block": "Block",
 	"disciplinary.block-this-member": "Block this member",
+	"disciplinary.button-finish": "Finish",
 	"disciplinary.disciplinary-actions": "Disciplinary actions",
 	"disciplinary.discrimination": "Discrimination",
 	"disciplinary.edit": "Edit",
 	"disciplinary.effective-date": "Effective date",
 	"disciplinary.effective-from": "Effective from",
 	"disciplinary.effective-to": "Effective until",
+	"disciplinary.finish": "Terminate disciplinary",
+	"disciplinary.finished": "Finished !",
 	"disciplinary.harassment": "Harassment or bullying",
 	"disciplinary.member": "Member",
 	"disciplinary.other": "Other",
@@ -22,10 +26,13 @@
 	"disciplinary.reason-description": "Description",
 	"disciplinary.terminate": "Terminate",
 	"disciplinary.violence": "Violence",
+	"disciplinary.you-are-already-registered": "You are already registered",
+	"disciplinary.you-can-login-to-your-account-and-continue-the-registration-process": "You can log into your account continue the registration process",
 	"error.must-be-a-valid-phone-number": "Must be a valid phone number (XXX-XXX-XXXX)",
 	"events.absent": "Absent",
 	"events.confirmed": "Confirmed",
 	"events.not-sure": "Not sure",
 	"events.pending": "Pending",
-	"events.present": "Present"
+	"events.present": "Present",
+	"inscriptions.auth-login": "Log in"
 }

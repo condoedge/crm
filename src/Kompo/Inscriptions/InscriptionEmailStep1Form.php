@@ -72,9 +72,9 @@ class InscriptionEmailStep1Form extends ImgFormLayout
     protected function alreadyRegisteredComponent($email, $redirectTo)
     {
         return _Rows(
-            _Html('translate.you-are-already-registered')->class('mb-6 text-lg text-white font-semibold'),
-            _Html('translate.you-can-login-to-your-account-and-continue-the-registration-process')->class('mb-6 text-sm text-white'),
-            _Link2Button('translate.auth.login')->href(route('login.password', [
+            _Html('inscriptions.you-are-already-registered')->class('mb-6 text-lg text-white font-semibold'),
+            _Html('inscriptions.you-can-login-to-your-account-and-continue-the-registration-process')->class('mb-6 text-sm text-white'),
+            _Link2Button('inscriptions.auth-login')->href(route('login.password', [
                 'email' => $email,
                 'redirect_to' => $redirectTo,
             ])),
