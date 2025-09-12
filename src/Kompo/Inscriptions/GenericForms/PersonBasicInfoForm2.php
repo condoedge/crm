@@ -6,6 +6,7 @@ use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\SpokenLanguageEnum;
 use Condoedge\Crm\Rules\PhoneNumberRule;
 use Condoedge\Utils\Kompo\Common\ImgFormLayout;
+use Condoedge\Utils\Rule\NameRule;
 
 abstract class PersonBasicInfoForm2 extends ImgFormLayout
 {
@@ -72,8 +73,8 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
     public function rules()
     {
         return array_merge(!$this->withNames ? [] : [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => ['required', new NameRule()],
+            'last_name' => ['required', new NameRule()],
         ], [
             'address.address1' => 'required',
             'inscribed_phone' => ['required', new PhoneNumberRule()],

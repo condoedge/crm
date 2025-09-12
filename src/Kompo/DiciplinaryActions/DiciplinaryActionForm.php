@@ -72,6 +72,8 @@ class DiciplinaryActionForm extends Modal
 
             'person_id' => 'required|exists:persons,id',
             'added_by' => 'required|exists:users,id',
+
+            'action_reason_description' => 'nullable|string|max:255',
         ];
     }
 }

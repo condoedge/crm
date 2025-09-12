@@ -85,7 +85,7 @@ class InscriptionEmailStep1Form extends ImgFormLayout
     {
         return array_merge(
             [
-                'email' => 'required|email',
+                'email' => 'required|email|max:255',
             ],
             $this->type->askForLegalAgeTerms() ? ['legal_age_terms' => 'required'] : []
         );

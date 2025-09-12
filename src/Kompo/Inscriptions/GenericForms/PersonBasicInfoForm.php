@@ -6,6 +6,7 @@ use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\GenderEnum;
 use Condoedge\Crm\Rules\MinAgeBySchoolYear;
 use Condoedge\Utils\Kompo\Common\ImgFormLayout;
+use Condoedge\Utils\Rule\NameRule;
 
 abstract class PersonBasicInfoForm extends ImgFormLayout
 {
@@ -62,8 +63,9 @@ abstract class PersonBasicInfoForm extends ImgFormLayout
     public function rules()
     {
         return [
-            'first_name' => 'required',
-            'last_name' => 'required',
+            'first_name' => ['required', new NameRule()],
+            'last_name' => ['required', new NameRule()],
+            'gender' => ['required', 'in:' . collect(GenderEnum::cases())->pluck('value')->join(',')],
             'date_of_birth' => ['required', 'date', new MinAgeBySchoolYear(6, 10, 1)],
         ];
     }

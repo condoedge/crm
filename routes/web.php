@@ -4,7 +4,7 @@
 
 use Condoedge\Crm\Http\Controllers\CustomInscriptionGenerable;
 
-Route::layout('layouts.guest')->middleware('guest', 'disable-automatic-security')->group(function () {
+Route::layout('layouts.guest')->middleware('disable-automatic-security')->group(function () {
 
     Route::get('join/{inscription_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionLandingPage::class)->name('inscription.landing');
 
