@@ -61,6 +61,10 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
         $this->app->bind('inscription-type-enum', function () {
             return config('condoedge-crm.inscription-type-enum');
         });
+
+        $this->app->bind('person-team-type-enum', function () {
+            return config('condoedge-crm.person-team-type-enum');
+        });
     }
 
     protected function loadHelpers()

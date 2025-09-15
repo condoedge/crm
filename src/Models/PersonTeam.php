@@ -3,9 +3,9 @@
 namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\PersonModel;
+use Condoedge\Crm\Facades\PersonTeamTypeEnumGlobal;
 use Condoedge\Utils\Models\Model;
 use Kompo\Auth\Models\Teams\TeamRole;
-use Kompo\Auth\Models\Teams\TeamRoleStatusEnum;
 
 class PersonTeam extends Model
 {
@@ -20,6 +20,7 @@ class PersonTeam extends Model
         'status' => PersonTeamStatusEnum::class,
         'from' => 'datetime',
         'to' => 'datetime',
+        'role_type' => PersonTeamTypeEnum::class,
     ];
 
     /* RELATIONS */
@@ -76,7 +77,7 @@ class PersonTeam extends Model
         if ($personTeam = static::where('team_role_id', $teamRole->id)->first()) {
             $personTeam->status = $status ?? $personTeam->status;
             $personTeam->to = $expirationDate;
-            $personTeam->role_type = $personTeamType ?? $personTeam->role_type;
+            $personTeam->role_type = $personTeamType ?? $personTeam->role_type ?? PersonTeamTypeEnumGlobal::getByRole($teamRole->id);
             $personTeam->last_inscription_id = $inscription?->id ?? $personTeam->last_inscription_id;
             $personTeam->inscription_type = $inscription?->type?->value ?? $personTeam->inscription_type;
             $personTeam->save();
@@ -91,7 +92,7 @@ class PersonTeam extends Model
         $personTeam->team_id = $teamRole->team_id;
         $personTeam->from = now();
         $personTeam->to = $expirationDate;
-        $personTeam->role_type = $personTeamType ?? $teamRole->role_type;
+        $personTeam->role_type = $personTeamType ?? PersonTeamTypeEnumGlobal::getByRole($teamRole->id);
         $personTeam->inscription_type = $inscription?->type?->value;
         $personTeam->last_inscription_id = $inscription?->id;
         $personTeam->save();
@@ -99,6 +100,7 @@ class PersonTeam extends Model
         return $personTeam;
     }
 
+    // TODO
     public static function getOrCreateForAdultInscription($inscription, $teamRole)
     {
         $personTeam = static::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $inscription->team_id)
