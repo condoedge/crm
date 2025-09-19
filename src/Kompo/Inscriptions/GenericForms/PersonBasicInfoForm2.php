@@ -4,9 +4,9 @@ namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\SpokenLanguageEnum;
-use Condoedge\Crm\Rules\PhoneNumberRule;
 use Condoedge\Utils\Kompo\Common\ImgFormLayout;
 use Condoedge\Utils\Rule\NameRule;
+use Condoedge\Utils\Rule\InternationalPhoneRule;
 
 abstract class PersonBasicInfoForm2 extends ImgFormLayout
 {
@@ -49,7 +49,7 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
                     _Input('inscriptions.last-name')->name('last_name')->required()->default($this->model->last_name ?: auth()->user()?->getLastName()),
                 ),
                 $this->placeInput()->required()->class('place-input-without-visual')->default($this->model->address ?: auth()->user()?->address),
-                _PhoneInput('inscriptions.my-phone')->name('inscribed_phone')->required()->default($this->model->inscribed_phone ?: auth()->user()?->getPrimaryPhoneNumber()),
+                _InternationalPhoneInput('inscriptions.my-phone')->name('inscribed_phone')->required()->default($this->model->inscribed_phone ?: auth()->user()?->getPrimaryPhoneNumber()),
                 SpokenLanguageEnum::getMultiSelect()->default(array_keys(config('kompo.locales')))->class('mb-12'),
             ),
             _SubmitButtonBig2('inscriptions.continue')->redirect()->class('mb-12'),
@@ -77,7 +77,7 @@ abstract class PersonBasicInfoForm2 extends ImgFormLayout
             'last_name' => ['required', new NameRule()],
         ], [
             'address.address1' => 'required',
-            'inscribed_phone' => ['required', new PhoneNumberRule()],
+            'inscribed_phone' => ['required', new InternationalPhoneRule()],
         ]);
     }
 }
