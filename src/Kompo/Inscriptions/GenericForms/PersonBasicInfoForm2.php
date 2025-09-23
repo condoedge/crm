@@ -5,8 +5,8 @@ namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\SpokenLanguageEnum;
 use Condoedge\Utils\Kompo\Common\ImgFormLayout;
-use Condoedge\Utils\Rule\NameRule;
 use Condoedge\Utils\Rule\InternationalPhoneRule;
+use Condoedge\Utils\Rule\NameRule;
 
 abstract class PersonBasicInfoForm2 extends ImgFormLayout
 {
