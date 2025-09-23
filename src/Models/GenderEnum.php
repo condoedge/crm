@@ -30,6 +30,15 @@ enum GenderEnum: int
         };
     }
 
+    public function letterFromAge($age)
+    {
+        return match ($this) {
+            static::FEMALE => $age < 18 ? __('crm.girl-letter') : __('crm.woman-letter'),
+            static::MALE => $age < 18 ? __('crm.boy-letter') : __('crm.man-letter'),
+            static::OTHER => __('crm.other-letter'),
+        };
+    }
+
     public function letter()
     {
         return match ($this) {
