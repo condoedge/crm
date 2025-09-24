@@ -63,10 +63,12 @@ trait InscriptionFormUtilsTrait
     {
         $person = auth()->user()?->getRelatedMainPerson();
 
+        // Needed before updateRegisteringPersonId because that method uses the type inside
+        $this->inscription?->updateType($type);
+
         if ($person) {
             $this->inscription?->updateRegisteringPersonId($person->id);
         }
-        $this->inscription?->updateType($type);
 
         if ($this->inscription) {
             return redirect()->to($this->inscription?->getRegistrationUrl());
