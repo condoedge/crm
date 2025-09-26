@@ -101,8 +101,11 @@ class Inscription extends Model
     public function scopeRelatedToEmail($query, $email)
     {
         return $query->whereHas(
-            'person.registeredBy', fn ($q) => $q->where('email_identity', $email)
-        )->orWhere(fn($q) => $q->whereHas('person', fn($q) => $q->where('email_identity', $email)
+            'person.registeredBy',
+            fn ($q) => $q->where('email_identity', $email)
+        )->orWhere(fn ($q) => $q->whereHas(
+            'person',
+            fn ($q) => $q->where('email_identity', $email)
             ->whereDoesntHave('registeredBy')
         ));
     }
