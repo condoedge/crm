@@ -2,10 +2,12 @@
 
 namespace Condoedge\Crm;
 
+use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Kompo\Auth\Facades\UserModel;
 
 class CondoedgeCrmServiceProvider extends ServiceProvider
 {
@@ -34,6 +36,12 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
 
         $this->setCommands();
         $this->setCronJobs();
+
+        UserModel::created(function ($user) {
+            InscriptionModel::relatedToEmail($user->email)->approved()->get()->each(function ($inscription) use ($user) {
+                $inscription->confirmInscriptionAsUserIfRegistered();
+            });
+        });
     }
 
     /**

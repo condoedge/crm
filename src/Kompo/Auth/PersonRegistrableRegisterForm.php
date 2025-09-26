@@ -52,7 +52,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 
     public function afterSave()
     {
-        $this->inscription->confirmUserRegistration($this->model);
+        $this->inscription->confirmInscriptionAsUserIfRegistered();
 
         auth()->guard()->login($this->model);
     }

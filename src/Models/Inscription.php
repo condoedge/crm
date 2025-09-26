@@ -93,6 +93,20 @@ class Inscription extends Model
         return $query->whereHas('event', fn ($q) => $q->whereHas('mainTemplate', fn ($q) => $q->where('scout_year', $year)));
     }
 
+    public function scopeApproved($query)
+    {
+        return $query->where('status', InscriptionStatusEnum::APPROVED);
+    }
+
+    public function scopeRelatedToEmail($query, $email)
+    {
+        return $query->whereHas(
+            'person.registeredBy', fn ($q) => $q->where('email_identity', $email)
+        )->orWhere(fn($q) => $q->whereHas('person', fn($q) => $q->where('email_identity', $email)
+            ->whereDoesntHave('registeredBy')
+        ));
+    }
+
     /* CALCULATED FIELDS */
     public function getActiveRelatedPersonTeam()
     {
@@ -343,6 +357,27 @@ class Inscription extends Model
     public function canConsiderAsPaidAtInscriptionLevel()
     {
         return !$this->hasPendingPayment() || !static::managePaymentFromInscription();
+    }
+
+    public function getRegisteringRelatedUser()
+    {
+        $email = $this->person->getRegisteringPersonEmail();
+        $user = UserModel::where('email', $email)->first();
+
+        return $user;
+    }
+
+    public function confirmInscriptionAsUserIfRegistered()
+    {
+        $user = $this->getRegisteringRelatedUser();
+
+        if (!$this->status->accepted()) {
+            throw new \Exception('Inscription is not accepted');
+        }
+
+        if (!$this->status->completed() && $user) {
+            $this->confirmUserRegistration($user);
+        }
     }
 
     public function confirmUserRegistration($user)
