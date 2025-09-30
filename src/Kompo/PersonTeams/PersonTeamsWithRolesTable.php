@@ -3,7 +3,7 @@
 namespace Condoedge\Crm\Kompo\PersonTeams;
 
 use Condoedge\Crm\Facades\PersonModel;
-use Condoedge\Crm\Models\PersonTeam;
+use Condoedge\Crm\Facades\PersonTeamModel;
 use Condoedge\Utils\Kompo\Common\WhiteTable;
 
 class PersonTeamsWithRolesTable extends WhiteTable
@@ -77,7 +77,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
 
     public function terminateRole($personTeamId)
     {
-        $teamRole = PersonTeam::findOrFail($personTeamId);
+        $teamRole = PersonTeamModel::findOrFail($personTeamId);
         $teamRole->terminate();
     }
 

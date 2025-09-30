@@ -5,6 +5,7 @@ use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 return [
     'event-model-namespace' => Condoedge\Crm\Models\Event::class,
     'person-model-namespace' => Condoedge\Crm\Models\Person::class,
+    'person-team-model-namespace' => Condoedge\Crm\Models\PersonTeam::class,
 
     'inscription-model-namespace' => getAppClass(\App\Models\Inscriptions\Inscription::class, Condoedge\Crm\Models\Inscription::class),
 

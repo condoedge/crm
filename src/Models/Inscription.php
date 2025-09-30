@@ -10,6 +10,7 @@ use Condoedge\Utils\Facades\UserModel;
 use Condoedge\Utils\Models\Model;
 use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Teams\BelongsToTeamTrait;
+use Condoedge\Crm\Facades\PersonTeamModel;
 
 /**
  * It's used to go through the inscription process. It's one per each person and team.
@@ -113,7 +114,7 @@ class Inscription extends Model
     /* CALCULATED FIELDS */
     public function getActiveRelatedPersonTeam()
     {
-        return PersonTeam::where('team_id', $this->team_id)->where('person_id', $this->person_id)->active()->first();
+        return PersonTeamModel::where('team_id', $this->team_id)->where('person_id', $this->person_id)->active()->first();
     }
 
     public function getInscriptionRoute($route, $extra = [])
@@ -411,7 +412,7 @@ class Inscription extends Model
                 // $teamRole->save();
             }
 
-            PersonTeam::getOrCreateForAdultInscription($this, $teamRole);
+            PersonTeamModel::getOrCreateForAdultInscription($this, $teamRole);
             $person->user_id = $user->id;
             $person->save();
 
@@ -430,7 +431,7 @@ class Inscription extends Model
 
     public function markAsPaid()
     {
-        $personTeams = PersonTeam::where('last_inscription_id', $this->id)->get();
+        $personTeams = PersonTeamModel::where('last_inscription_id', $this->id)->get();
 
         $personTeams->each->markAsPaid();
 

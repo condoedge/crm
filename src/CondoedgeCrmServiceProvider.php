@@ -58,6 +58,10 @@ class CondoedgeCrmServiceProvider extends ServiceProvider
             return new (config('condoedge-crm.person-model-namespace'));
         });
 
+        $this->app->bind('person-team-model', function () {
+            return new (config('condoedge-crm.person-team-model-namespace'));
+        });
+
         $this->app->bind('inscription-model', function () {
             return new (config('condoedge-crm.inscription-model-namespace'));
         });

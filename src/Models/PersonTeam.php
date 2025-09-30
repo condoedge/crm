@@ -6,6 +6,7 @@ use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Facades\PersonTeamTypeEnumGlobal;
 use Condoedge\Utils\Models\Model;
 use Kompo\Auth\Models\Teams\TeamRole;
+use Kompo\Auth\Facades\RoleModel;
 
 class PersonTeam extends Model
 {
@@ -23,6 +24,25 @@ class PersonTeam extends Model
         'role_type' => PersonTeamTypeEnum::class,
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+        
+        static::saving(function ($model) {
+            /** For now these are redundant fields (role_id, role_name). 
+             *  But it could be useful if we have people without user so without team_role
+             *  here we set it to have all of them syncronized
+            */
+            if ($model->isDirty('team_role_id')) {
+                $model->role_id = $model->teamRole?->role;
+            }
+
+            if ($model->isDirty('role_id')) {
+                $model->role_name = $model->teamRole?->roleRelation?->name;
+            }
+        });
+    }
+
     /* RELATIONS */
     public function teamRole()
     {
@@ -32,6 +52,11 @@ class PersonTeam extends Model
     public function teamRoleIncludingDeleted()
     {
         return $this->teamRole()->withTrashed()->withoutGlobalScopes();
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(RoleModel::getClass(), 'role_id');
     }
 
     /* SCOPES */

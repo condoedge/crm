@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Kompo\PersonTeams;
 
-use Condoedge\Crm\Models\PersonTeam;
+use Condoedge\Crm\Facades\PersonTeamModel;
 use Kompo\Auth\Teams\Roles\AssignRoleModal as BaseModal;
 
 class AssignTeamRole extends BaseModal
@@ -11,14 +11,14 @@ class AssignTeamRole extends BaseModal
 
     public function afterSave()
     {
-        PersonTeam::createFromTeamRole($this->model);
+        PersonTeamModel::createFromTeamRole($this->model);
     }
 
     public static function terminateTeamRole($teamRole)
     {
         $teamRole->terminate();
 
-        PersonTeam::where('team_role_id', $teamRole->id)
+        PersonTeamModel::where('team_role_id', $teamRole->id)
             ->get()->each->terminate();
     }
 }

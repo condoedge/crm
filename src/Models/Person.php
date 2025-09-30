@@ -10,6 +10,7 @@ use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\Model;
 use Illuminate\Support\Facades\DB;
 use Kompo\Auth\Facades\RoleModel;
+use Condoedge\Crm\Facades\PersonTeamModel;
 
 abstract class Person extends Model implements Searchable
 {
@@ -67,7 +68,7 @@ abstract class Person extends Model implements Searchable
 
     public function personTeams()
     {
-        return $this->hasMany(PersonTeam::class);
+        return $this->hasMany(PersonTeamModel::getClass());
     }
 
     public function diciplinaryActions()
@@ -296,7 +297,7 @@ abstract class Person extends Model implements Searchable
             $teamRole = $user->createTeamRole($team, $role);
             // $teamRole->terminated_at = $inscription->getExpirationDate();
 
-            PersonTeam::createFromTeamRole($teamRole, $inscription->type->getSpecificPersonTeamStatus($inscription), $inscription->getExpirationDate(), $inscription, $inscription->type->getChildPersonTeamType());
+            PersonTeamModel::createFromTeamRole($teamRole, $inscription->type->getSpecificPersonTeamStatus($inscription), $inscription->getExpirationDate(), $inscription, $inscription->type->getChildPersonTeamType());
         }
 
         PersonEvent::createPersonEvent($person, $inscription->getEventToAttend());

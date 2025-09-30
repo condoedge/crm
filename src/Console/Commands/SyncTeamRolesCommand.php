@@ -2,7 +2,7 @@
 
 namespace Condoedge\Crm\Console\Commands;
 
-use Condoedge\Crm\Models\PersonTeam;
+use Condoedge\Crm\Facades\PersonTeamModel;
 use Condoedge\Crm\Models\PersonTeamStatusEnum;
 use Illuminate\Console\Command;
 
@@ -27,7 +27,7 @@ class SyncTeamRolesCommand extends Command
      */
     public function handle()
     {
-        PersonTeam::whereRaw('DATE(person_teams.to) <= CURDATE()')
+        PersonTeamModel::whereRaw('DATE(person_teams.to) <= CURDATE()')
             ->withTrashed()
             ->selectRaw('team_role_id')
             ->whereHas('teamRole') // If has teamRole it means it is not terminated or deleted
