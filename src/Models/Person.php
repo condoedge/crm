@@ -5,12 +5,12 @@ namespace Condoedge\Crm\Models;
 use App\Models\Teams\Team;
 use App\Models\User;
 use Condoedge\Crm\Facades\PersonModel;
+use Condoedge\Crm\Facades\PersonTeamModel;
 use Condoedge\Utils\Models\ContactInfo\Email\Email;
 use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\Model;
 use Illuminate\Support\Facades\DB;
 use Kompo\Auth\Facades\RoleModel;
-use Condoedge\Crm\Facades\PersonTeamModel;
 
 abstract class Person extends Model implements Searchable
 {

@@ -5,12 +5,12 @@ namespace Condoedge\Crm\Models;
 use Condoedge\Crm\Facades\EventModel;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
+use Condoedge\Crm\Facades\PersonTeamModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Condoedge\Utils\Facades\UserModel;
 use Condoedge\Utils\Models\Model;
 use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Teams\BelongsToTeamTrait;
-use Condoedge\Crm\Facades\PersonTeamModel;
 
 /**
  * It's used to go through the inscription process. It's one per each person and team.
