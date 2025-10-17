@@ -163,7 +163,7 @@ abstract class Person extends Model implements Searchable
             ->unique()
             ->values();
 
-        return $query->whereIn('id', $accessiblePersonIds);
+        return $query->whereIn('persons.id', $accessiblePersonIds);
     }
 
     public function scopeSecurityForTeams($query, $teamIds)

@@ -43,6 +43,28 @@ class DiciplinaryAction extends Model
         });
     }
 
+    // ACTIONS
+    public static function blockPerson($personId, $reason = null)
+    {
+        $diciplinaryAction = new self();
+        $diciplinaryAction->person_id = $personId;
+        $diciplinaryAction->action_type = DiciplinaryActionTypeEnum::BLOCK;
+        $diciplinaryAction->action_from = now();
+        $diciplinaryAction->action_reason_type = DiciplinaryReasonTypeEnum::OTHER;
+        $diciplinaryAction->action_reason_description = $reason;
+
+        $diciplinaryAction->save();
+
+        $diciplinaryAction->executeLogic();
+
+        return $diciplinaryAction;
+    }
+
+    public function executeLogic()
+    {
+        $this->action_type->startedAction($this);
+    }
+
     // ELEMENTS
     public function actionTypePill()
     {
