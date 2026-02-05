@@ -225,6 +225,11 @@ abstract class Person extends Model implements Searchable
         return 'crm.inactive';
     }
 
+    public function hasNegativeStatus()
+    {
+        return $this->hasActiveBan() || $this->hasActiveBlock();
+    }
+
     public static function getOptionsForTeamWithFullName($teamId)
     {
         $team = Team::findOrFail($teamId);
@@ -301,6 +306,15 @@ abstract class Person extends Model implements Searchable
         }
 
         PersonEvent::createPersonEvent($person, $inscription->getEventToAttend());
+    }
+
+    public function unblockMember()
+    {
+        $activeBlocks = $this->diciplinaryActions()->active()->blockType()->get();
+
+        foreach ($activeBlocks as $block) {
+            $block->finish();
+        }
     }
 
     /* SEARCHABLE */

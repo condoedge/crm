@@ -65,6 +65,14 @@ class DiciplinaryAction extends Model
         $this->action_type->startedAction($this);
     }
 
+    public function finish()
+    {
+        $this->action_to = now();
+        $this->save();
+
+        $this->action_type->finishedAction($this);
+    }
+
     // ELEMENTS
     public function actionTypePill()
     {
