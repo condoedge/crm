@@ -13,6 +13,7 @@ enum InscriptionStatusEnum: int
     case REJECTED = 6;
     case PENDING_PAYMENT = 9;
     case COMPLETED_SUCCESSFULLY = 10;
+    case TT = 15;
 
     public function label(): string
     {
@@ -24,6 +25,7 @@ enum InscriptionStatusEnum: int
             self::REJECTED => __('crm.rejected'),
             self::PENDING_PAYMENT => __('crm.pending-payment'),
             self::COMPLETED_SUCCESSFULLY => __('crm.completed-successfully'),
+            self::TT => __('crm.tt'),
         };
     }
 
@@ -37,6 +39,7 @@ enum InscriptionStatusEnum: int
             self::REJECTED => 'bg-danger',
             self::PENDING_PAYMENT => 'bg-warning',
             self::COMPLETED_SUCCESSFULLY => 'bg-positive',
+            self::TT => 'bg-gray-500',
         };
     }
 
@@ -46,6 +49,7 @@ enum InscriptionStatusEnum: int
             self::PENDING_PAYMENT => true,
             self::APPROVED => true,
             self::COMPLETED_SUCCESSFULLY => true,
+            self::TT => true,
             default => false,
         };
     }
@@ -54,6 +58,7 @@ enum InscriptionStatusEnum: int
     {
         return match ($this) {
             self::COMPLETED_SUCCESSFULLY => true,
+            self::TT => true,
             default => false,
         };
     }

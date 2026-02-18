@@ -8,7 +8,7 @@ class InscriptionLandingPage extends ImgFormLayout
 {
     use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
 
-    protected $imgUrl = 'images/base-email-image.png';
+    protected $imgUrl = 'images/base-email-image.webp';
     protected $rightColumnBodyWrapperClass = '';
 
     public function created()

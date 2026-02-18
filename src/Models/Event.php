@@ -113,7 +113,7 @@ abstract class Event extends Model
         $coverPath = $this->cover_ev['path'] ?? null;
 
         if (!$coverPath) {
-            return asset('images/base-email-image.png');
+            return asset('images/base-email-image.webp');
         }
 
         return \Storage::disk($this->cover_ev['disk'] ?? 'public')->url($coverPath);

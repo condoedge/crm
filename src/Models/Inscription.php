@@ -74,6 +74,11 @@ class Inscription extends Model
         return $query->where('status', InscriptionStatusEnum::FILLED);
     }
 
+    public function scopePending($query)
+    {
+        return $query->whereIn('status', [InscriptionStatusEnum::FILLED, InscriptionStatusEnum::CREATED, InscriptionStatusEnum::PENDING_PAYMENT]);
+    }
+
     public function scopeCountsInTotal($query)
     {
         return $query->whereIn('status', [

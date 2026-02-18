@@ -9,7 +9,7 @@ class PersonRegistrableRegisterForm extends ImgFormLayout
 {
     use \Condoedge\Crm\Kompo\Inscriptions\GenericForms\InscriptionFormUtilsTrait;
 
-    protected $imgUrl = 'images/register-image.png';
+    protected $imgUrl = 'images/register-image.webp';
 
     public $model = User::class;
 

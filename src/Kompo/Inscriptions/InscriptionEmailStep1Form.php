@@ -10,7 +10,7 @@ use Kompo\Auth\Models\Teams\EmailRequest;
 
 class InscriptionEmailStep1Form extends ImgFormLayout
 {
-    protected $imgUrl = 'images/base-email-image.png';
+    protected $imgUrl = 'images/base-email-image.webp';
 
     protected $qrCode;
     protected $type;
