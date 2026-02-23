@@ -59,15 +59,11 @@ class RegisterScoutDrawer extends Form
         return _Rows(
             _MiniTitle('inscriptions.parent-info')->class('mb-2'),
             _CardLevel4(
-                _Flex(
-                    _Select()->name('parent_id', false)
-                        ->placeholder('inscriptions.search-parent')
-                        ->searchOptions(3, 'searchParents')
-                        ->class('mb-0 flex-1'),
-                    _Link()->icon(_Sax('import', 20))
-                        ->selfPost('loadParentFields')->withAllFormValues()->inPanel('parent-fields-panel')
-                        ->class('mt-2 ml-2 vlBtn vlBtnSmall vlBtnInfo'),
-                )->class('items-start'),
+                _Select()->name('parent_id', false)
+                    ->placeholder('inscriptions.search-parent')
+                    ->searchOptions(3, 'searchParents')
+                    ->class('mb-0')
+                    ->onChange(fn($e) => $e->selfGet('loadParentFields')->withAllFormValues()->inPanel('parent-fields-panel')),
             )->p4(),
             _Html('inscriptions.or-add-new-parent')->class('text-center text-sm text-gray-500'),
             _Panel(
@@ -99,7 +95,7 @@ class RegisterScoutDrawer extends Form
                 ->default($parent?->date_of_birth)
                 ->class('mb-0 mt-3'),
             _CanadianPlace('helpers.address', 'parent_address')
-                ->default($parent?->getFirstValidAddress()?->address1)
+                ->default(loadFormattedLabel($parent?->getFirstValidAddress()))
                 ->class('mb-0 mt-3'),
             SpokenLanguageEnum::getMultiSelect()
                 ->name('parent_spoken_languages', false)
@@ -120,15 +116,11 @@ class RegisterScoutDrawer extends Form
         return _Rows(
             _MiniTitle('inscriptions.scout-info')->class('mb-2'),
             _CardLevel4(
-                _Flex(
-                    _Select()->name('scout_id', false)
-                        ->placeholder('inscriptions.search-scout')
-                        ->searchOptions(3, 'searchScouts')
-                        ->class('mb-0 flex-1'),
-                    _Link()->icon(_Sax('import', 20))
-                        ->selfPost('loadScoutFields')->withAllFormValues()->inPanel('scout-fields-panel')
-                        ->class('mt-2 ml-2 vlBtn vlBtnSmall vlBtnInfo'),
-                )->class('items-start'),
+                _Select()->name('scout_id', false)
+                    ->placeholder('inscriptions.search-scout')
+                    ->searchOptions(3, 'searchScouts')
+                    ->class('mb-0')
+                    ->onChange(fn($e) => $e->selfGet('loadScoutFields')->withAllFormValues()->inPanel('scout-fields-panel')),
             )->p4(),
             _Html('inscriptions.or-add-new-scout')->class('text-center text-sm text-gray-500'),
             _Panel(
@@ -158,7 +150,7 @@ class RegisterScoutDrawer extends Form
                     ->class('mb-0'),
             )->class('mt-3'),
             _CanadianPlace('helpers.address', 'scout_address')
-                ->default($scout?->getFirstValidAddress()?->address1)
+                ->default(loadFormattedLabel($scout?->getFirstValidAddress()))
                 ->class('mb-0 mt-3'),
             SpokenLanguageEnum::getMultiSelect()
                 ->name('scout_spoken_languages', false)
