@@ -281,19 +281,7 @@ abstract class Person extends Model implements Searchable
 
     public function createOrGetUserByRegisteredBy($inscription, $team)
     {
-        $user = User::where('email', $this->email_identity ?: $this->constructFakeEmail())->first();
-
-        if (!$user) {
-            $user = User::create([
-                'name' => $this->full_name,
-                'email' => $this->email_identity ?: $this->constructFakeEmail(), // TODO we could do the email nullable
-                'password' => bcrypt(value: \Str::random(12)),
-            ]);
-        }
-
-        $person = $inscription->person;
-        $person->user_id = $user->id;
-        $person->save();
+        $user = $this->createOrGetUser();
 
         // Get the role for the children getting first the child inscription type
         if ($role = $inscription->type->getRegisteredByRole()?->getRole($inscription)) {
@@ -305,7 +293,25 @@ abstract class Person extends Model implements Searchable
             PersonTeamModel::createFromTeamRole($teamRole, $inscription->type->getSpecificPersonTeamStatus($inscription), $inscription->getExpirationDate(), $inscription, $inscription->type->getChildPersonTeamType());
         }
 
-        PersonEvent::createPersonEvent($person, $inscription->getEventToAttend());
+        PersonEvent::createPersonEvent($this, $inscription->getEventToAttend());
+    }
+
+    public function createOrGetUser()
+    {
+        $user = User::where('email', $this->email_identity ?: $this->constructFakeEmail())->first();
+
+        if (!$user) {
+            $user = User::create([
+                'name' => $this->full_name,
+                'email' => $this->email_identity ?: $this->constructFakeEmail(), // TODO we could do the email nullable
+                'password' => bcrypt(value: \Str::random(12)),
+            ]);
+        }
+
+        $this->user_id = $user->id;
+        $this->save();
+
+        return $user;
     }
 
     public function unblockMember()
