@@ -370,7 +370,8 @@ abstract class Person extends Model implements Searchable
 
     public function securityRelatedTeamIds()
     {
-        return $this->personTeams()->active()->pluck('team_id')->unique();
+        return $this->personTeams()->active()->pluck('team_id')->unique()
+            ->all();
     }
 
     protected function emailContactEl($email) //Override in project
