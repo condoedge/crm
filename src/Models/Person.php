@@ -11,6 +11,7 @@ use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\Model;
 use Illuminate\Support\Facades\DB;
 use Kompo\Auth\Facades\RoleModel;
+use Condoedge\Utils\Models\Traits\MemoizesResults;
 
 abstract class Person extends Model implements Searchable
 {
@@ -21,6 +22,7 @@ abstract class Person extends Model implements Searchable
 
     use \Condoedge\Crm\Models\PersonInscriptionsRelatedTrait;
     use \Condoedge\Crm\Models\PersonCharacteristicsRelatedTrait;
+    use MemoizesResults;
 
     protected $casts = [
         'gender' => GenderEnum::class,
@@ -196,33 +198,39 @@ abstract class Person extends Model implements Searchable
 
     public function hasActiveBlock()
     {
-        return $this->diciplinaryActions()->active()->blockType()->exists();
+        return $this->memoize('has_active_block', function () {
+            return $this->diciplinaryActions()->active()->blockType()->exists();
+        });
     }
 
     public function hasActiveBan()
     {
-        return $this->diciplinaryActions()->active()->banType()->exists();
+        return $this->memoize('has_active_ban', function () {
+            return $this->diciplinaryActions()->active()->banType()->exists();
+        });
     }
 
     public function getActivityStatus()
     {
-        if ($this->hasActiveBan()) {
-            return 'crm.banned';
-        }
+        return $this->memoize('activity_status', function () {
+            if ($this->hasActiveBan()) {
+                return 'crm.banned';
+            }
 
-        if ($this->hasActiveBlock()) {
-            return 'crm.blocked';
-        }
+            if ($this->hasActiveBlock()) {
+                return 'crm.blocked';
+            }
 
-        if (!$this->personTeams->count()) {
-            return 'crm.pending';
-        }
+            if (!$this->personTeams->count()) {
+                return 'crm.pending';
+            }
 
-        if ($this->personTeams->filter(fn ($team) => is_null($team->to) || $team->to > now())->first()) {
-            return 'crm.active';
-        }
+            if ($this->personTeams->filter(fn ($team) => is_null($team->to) || $team->to > now())->first()) {
+                return 'crm.active';
+            }
 
-        return 'crm.inactive';
+            return 'crm.inactive';
+        });
     }
 
     public function hasNegativeStatus()
