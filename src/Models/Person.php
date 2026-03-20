@@ -183,7 +183,23 @@ abstract class Person extends Model implements Searchable
 
     public function getRelatedLinksOfPersonLinks()
     {
-        return $this->getAllPersonLinks()->flatMap(fn ($pl) => $pl->person->getAllPersonLinks())->unique(fn ($q) => $q->person2_id)->filter(fn ($q) => !in_array($this->id, [$q->person1_id, $q->person2_id], true) && $q->linkType?->child_can_access_siblings == 1);
+        return PersonLink::query()
+            ->whereIn('person1_id', function ($query) {
+                $query->from('person_links')
+                    ->selectRaw('DISTINCT CASE WHEN person1_id = ? THEN person2_id ELSE person1_id END', [$this->id])
+                    ->where(function ($q) {
+                        $q->where('person1_id', $this->id)
+                            ->orWhere('person2_id', $this->id);
+                    });
+            })
+            ->where('person1_id', '!=', $this->id)
+            ->where('person2_id', '!=', $this->id)
+            ->whereHas('linkType', fn ($q) => $q->where('child_can_access_siblings', 1))
+            ->with(['person1', 'person2', 'linkType'])
+            ->get()
+            ->unique(fn ($q) => $q->person2_id)
+            ->values()
+            ->map(fn ($pl) => $pl->setRelation('person', $pl->person2));
     }
 
     public function getFullNameAttribute()
