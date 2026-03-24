@@ -28,6 +28,8 @@ class RegisterScoutDrawer extends Form
     protected $teamId;
     protected $team;
 
+    public $permissionKey = 'register_a_scout';
+
     public function created()
     {
         $this->teamId = $this->prop('team_id') ?? currentTeamId();
