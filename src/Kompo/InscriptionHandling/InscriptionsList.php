@@ -9,6 +9,8 @@ class InscriptionsList extends WhiteTable
 {
     protected $eventId;
 
+    protected $permissionKey = 'Inscription';
+
     public function created()
     {
         $this->eventId = $this->prop('event_id');
