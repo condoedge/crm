@@ -9,6 +9,10 @@ trait PersonCharacteristicsRelatedTrait
     /* CALCULATED FIELDS */
     public function getAgeLabelAttribute()
     {
+        if (!$this->date_of_birth) {
+            return null;
+        }
+
         return getAgeFromDob($this->date_of_birth) .' '.__('general-years');
     }
 
@@ -43,6 +47,10 @@ trait PersonCharacteristicsRelatedTrait
     /* ELEMENTS */
     public function ageLabelPill()
     {
+        if (!$this->date_of_birth) {
+            return _Pill()->class('hidden');
+        }
+
         return _Pill($this->age_label);
     }
 

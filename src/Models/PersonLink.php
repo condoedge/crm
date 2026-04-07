@@ -65,6 +65,37 @@ class PersonLink extends Model
         return $this;
     }
 
+    public function getLinkedPerson($forPersonId)
+    {
+        return $this->person1_id == $forPersonId ? 
+            $this->person2 : 
+            $this->person1;
+    }
+
+    public function getLinkingLabel($forPersonId)
+    {
+        return $this->linkType->getLinkingLabel($forPersonId);
+    }
+
+    public function anotherPersonIsEmergencyContactOf($personId)
+    {
+        $orderColToCheck = $this->getEmergencyContactOrderColumn($personId);
+
+        return $this->$orderColToCheck !== null;
+    }
+
+    public function getEmergencyContactOrderForPerson($personId)
+    {
+        $orderColToCheck = $this->getEmergencyContactOrderColumn($personId);
+
+        return $this->$orderColToCheck;
+    }
+
+    public function getEmergencyContactOrderColumn($personId)
+    {
+        return $this->person1_id == $personId ? 'emergency_contact_order_of_p1' : 'emergency_contact_order_of_p2';
+    }
+
     public static function getLinkBetween($person1, $person2)
     {
         return self::where(function ($query) use ($person1, $person2) {
