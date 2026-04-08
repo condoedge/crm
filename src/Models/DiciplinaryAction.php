@@ -16,6 +16,12 @@ class DiciplinaryAction extends Model
         'action_reason_type' => DiciplinaryReasonTypeEnum::class,
     ];
 
+    // CALCULATED FIELDS
+    public function isActive()
+    {
+        return $this->action_from <= now() && (is_null($this->action_to) || $this->action_to > now());
+    }
+
     // SCOPE
     public function scopeActive($query)
     {

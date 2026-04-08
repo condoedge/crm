@@ -215,14 +215,14 @@ abstract class Person extends Model implements Searchable
     public function hasActiveBlock()
     {
         return $this->memoize('has_active_block', function () {
-            return $this->diciplinaryActions()->active()->blockType()->exists();
+            return $this->diciplinaryActions()->asSystemOperation()->active()->blockType()->exists();
         });
     }
 
     public function hasActiveBan()
     {
         return $this->memoize('has_active_ban', function () {
-            return $this->diciplinaryActions()->active()->banType()->exists();
+            return $this->diciplinaryActions()->asSystemOperation()->active()->banType()->exists();
         });
     }
 
@@ -237,11 +237,11 @@ abstract class Person extends Model implements Searchable
                 return 'crm.blocked';
             }
 
-            if (!$this->personTeams->count()) {
+            if (!$this->personTeams()->asSystemOperation()->count()) {
                 return 'crm.pending';
             }
 
-            if ($this->personTeams->filter(fn ($team) => is_null($team->to) || $team->to > now())->first()) {
+            if ($this->personTeams()->asSystemOperation()->get()->filter(fn ($team) => is_null($team->to) || $team->to > now())->first()) {
                 return 'crm.active';
             }
 
