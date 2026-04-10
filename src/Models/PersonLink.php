@@ -7,6 +7,8 @@ use Condoedge\Utils\Models\Model;
 
 class PersonLink extends Model
 {
+    public $permissionKey = 'Person.sensibleRelationships';
+
     /* RELATIONS */
     public function person1()
     {
