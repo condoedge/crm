@@ -28,45 +28,6 @@ class PersonLink extends Model
     /* SCOPES */
 
     /* CALCULATED FIELDS */
-
-    /* ACTIONS */
-    public static function upsertLinkBetween($person1, $person2, $linkTypeId)
-    {
-        $personLink = PersonLink::getLinkBetween($person1, $person2);
-
-        if ($personLink) {
-            $personLink->link_type_id = $linkTypeId;
-            $personLink->save();
-        } else {
-            $personLink = PersonLink::createLinkBetween($person1, $person2, $linkTypeId);
-        }
-
-        return $personLink;
-    }
-
-    public static function createLinkBetween($person1, $person2, $linkTypeId)
-    {
-        $personLink = new PersonLink();
-        $personLink->person1_id = $person1->id;
-        $personLink->person2_id = $person2->id;
-        $personLink->link_type_id = $linkTypeId;
-        $personLink->save();
-
-        return $personLink;
-    }
-
-    public function setOtherAsPerson($mainPersonId)
-    {
-        if ($this->person2_id == $mainPersonId) {
-            $this->person = $this->person1;
-        }
-        if ($this->person1_id == $mainPersonId) {
-            $this->person = $this->person2;
-        }
-
-        return $this;
-    }
-
     public function getLinkedPerson($forPersonId)
     {
         return $this->person1_id == $forPersonId ? 
@@ -105,6 +66,56 @@ class PersonLink extends Model
         })->orWhere(function ($query) use ($person1, $person2) {
             $query->where('person1_id', $person2->id)->where('person2_id', $person1->id);
         })->first();
+    }
+
+    public function isParentOfTheAnother($personId)
+    {
+        return $this->linkType->is_parent && $this->person1_id == $personId
+            || $this->linkType->is_child && $this->person2_id == $personId;
+    }
+
+    public function isChildOfTheAnother($personId)
+    {
+        return $this->linkType->is_child && $this->person1_id == $personId
+            || $this->linkType->is_parent && $this->person2_id == $personId;
+    }
+
+    /* ACTIONS */
+    public static function upsertLinkBetween($person1, $person2, $linkTypeId)
+    {
+        $personLink = PersonLink::getLinkBetween($person1, $person2);
+
+        if ($personLink) {
+            $personLink->link_type_id = $linkTypeId;
+            $personLink->save();
+        } else {
+            $personLink = PersonLink::createLinkBetween($person1, $person2, $linkTypeId);
+        }
+
+        return $personLink;
+    }
+
+    public static function createLinkBetween($person1, $person2, $linkTypeId)
+    {
+        $personLink = new PersonLink();
+        $personLink->person1_id = $person1->id;
+        $personLink->person2_id = $person2->id;
+        $personLink->link_type_id = $linkTypeId;
+        $personLink->save();
+
+        return $personLink;
+    }
+
+    public function setOtherAsPerson($mainPersonId)
+    {
+        if ($this->person2_id == $mainPersonId) {
+            $this->person = $this->person1;
+        }
+        if ($this->person1_id == $mainPersonId) {
+            $this->person = $this->person2;
+        }
+
+        return $this;
     }
 
     /* ELEMENTS */
