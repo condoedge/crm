@@ -65,10 +65,10 @@ class DiciplinaryActionForm extends Modal
     public function rules()
     {
         return [
-            'action_type' => 'required|in:' . collect(DiciplinaryActionTypeEnum::cases())->keys()->implode(','),
+            'action_type' => 'required|in:' . collect(DiciplinaryActionTypeEnum::cases())->map->value->implode(','),
             'action_from' => 'required|date',
             'action_to' => 'nullable|date|after:action_from',
-            'action_reason_type' => 'required|in:' . collect(DiciplinaryReasonTypeEnum::cases())->keys()->implode(','),
+            'action_reason_type' => 'required|in:' . collect(DiciplinaryReasonTypeEnum::cases())->map->value->implode(','),
 
             'person_id' => 'required|exists:persons,id',
             'added_by' => 'required|exists:users,id',
