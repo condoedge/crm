@@ -31,6 +31,10 @@ class Inscription extends Model
         'type' => InscriptionTypeEnum::class,
     ];
 
+    protected $fillable = [
+        'event_id',
+    ];
+
     /* RELATIONS */
     public function role()
     {
