@@ -26,6 +26,15 @@ class PersonLink extends Model
     }
 
     /* SCOPES */
+    //For auth security
+    public function scopeSecurityForTeams($query, $teamIds)
+    {
+        $query->whereHas('person1', function ($query) use ($teamIds) {
+            $query->securityForTeams($teamIds);
+        })->orWhereHas('person2', function ($query) use ($teamIds) {
+            $query->securityForTeams($teamIds);
+        });
+    }
 
     /* CALCULATED FIELDS */
     public function getLinkedPerson($forPersonId)
