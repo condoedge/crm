@@ -49,7 +49,7 @@ class DiciplinaryActionForm extends Modal
                 ->attr(['disabled' => 'disabled']),
             _Date('disciplinary.effective-from')->name('action_from')->required()
                 ->default(now()->format('Y-m-d')),
-            _Date('disciplinary.effective-to')->name('action_to')->required(),
+            _Date('disciplinary.effective-to')->name('action_to'),
             _Select('disciplinary.action')->name('action_type')->required()
                 ->when($this->specificAction, fn ($select) => $select->class('hidden')->default($this->specificAction->value))
                 ->options(DiciplinaryActionTypeEnum::optionsWithLabels()),
