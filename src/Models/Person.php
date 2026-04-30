@@ -176,8 +176,8 @@ abstract class Person extends Model implements Searchable
     /* CALCULATED FIELDS */
     public function getAllPersonLinks()
     {
-        return $this->person1Links()->with('person2')->get()->concat(
-            $this->person2Links()->with('person1')->get()
+        return $this->person1Links()->asSystemOperation()->with('person2')->get()->concat(
+            $this->person2Links()->asSystemOperation()->with('person1')->get()
         )->map(fn ($pl) => $pl->setOtherAsPerson($this->id));
     }
 
