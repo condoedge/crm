@@ -184,6 +184,7 @@ abstract class Person extends Model implements Searchable
     public function getRelatedLinksOfPersonLinks()
     {
         return PersonLink::query()
+            ->asSystemOperation()
             ->whereIn('person1_id', function ($query) {
                 $query->from('person_links')
                     ->selectRaw('DISTINCT CASE WHEN person1_id = ? THEN person2_id ELSE person1_id END', [$this->id])
