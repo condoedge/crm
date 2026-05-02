@@ -53,9 +53,6 @@ class DiciplinaryActionForm extends Modal
             _Select('disciplinary.action')->name('action_type')->required()
                 ->when($this->specificAction, fn ($select) => $select->class('hidden')->default($this->specificAction->value))
                 ->options(DiciplinaryActionTypeEnum::optionsWithLabels()),
-            _Select('disciplinary.added-by')->name('added_by')->required()
-                ->default(auth()->id())
-                ->options([auth()->id() => auth()->user()->name]),
             _Select('disciplinary.reason')->name('action_reason_type')->required()->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
             _Textarea('disciplinary.reason-description')->name('action_reason_description'),
             _SubmitButton('generic.save')->refresh($this->refreshId)->alert('disciplinary.action-saved'),
