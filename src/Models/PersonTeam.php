@@ -62,7 +62,11 @@ class PersonTeam extends Model
     /* SCOPES */
     public function scopeActive($query)
     {
-        return $query->whereNull('person_teams.deleted_at'); // Removed, now just using deleted_at to determine active status.
+        return $query->whereNull('persons.deleted_at')->where(
+            fn ($q) => $q
+            ->where('persons.to', '>', now())
+            ->orWhereNull('persons.to')
+        ); // The persons.to clarification is redundant since we set deleted_at but i'm looking for changing that in a future
     }
 
     /* CALCULATED FIELDS */
