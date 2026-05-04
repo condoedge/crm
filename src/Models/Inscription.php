@@ -496,15 +496,6 @@ class Inscription extends Model
         $this->save();
     }
 
-    public function moveToAnotherTeamAndEvent($teamId, $eventId)
-    {
-        $this->getActiveRelatedPersonTeam()?->moveToAnotherUnit($teamId);
-
-        $this->event_id = $eventId;
-        $this->team_id = $teamId;
-        $this->save();
-    }
-
     /* ELEMENTS */
     public function visualStatusPill()
     {
