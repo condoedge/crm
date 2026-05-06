@@ -44,9 +44,10 @@ class DiciplinaryActionForm extends Modal
     {
         return _Rows(
             _Select('disciplinary.member')->name('person_id')
-                ->default($this->person?->id)
-                ->options([$this->person?->id => $this->person?->full_name])->name('person_id')
-                ->attr(['disabled' => 'disabled']),
+                ->class('[&>.vlInputWrapper]:bg-gray-100 remove-x')
+                ->value($this->person?->id)
+                ->options([$this->person?->id => $this->person?->full_name])
+                ->attr(['disabled' => 'disabled'])->disabled(),
             _Date('disciplinary.effective-from')->name('action_from')->required()
                 ->default(now()->format('Y-m-d')),
             _Date('disciplinary.effective-to')->name('action_to'),
