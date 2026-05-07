@@ -22,12 +22,17 @@ class PersonTeamsWithRolesTable extends WhiteTable
 
     public function top()
     {
+        $userCanAddHimself = isImpersonated() || auth()->user()->hasRole('super-admin') || isSuperAdmin();
+        $userIsViewingHimself = $this->person->relatedUser?->id === auth()->id();
+
         return _FlexEnd(
             _Toggle('permissions.show-inactive')->name('show_all', false)->filter()
                 ->class('[&>.vlFormLabel]:w-max !mb-0'),
             _Dropdown('permissions.actions')->button()
                 ->submenu(
-                    _Link('permissions.assign-role')->class('py-1 px-3')->selfGet('getAssignRoleModal')->inModal(),
+                    $userIsViewingHimself && !$userCanAddHimself ? null : 
+                        _Link('permissions.assign-role')->class('py-1 px-3')
+                            ->selfGet('getAssignRoleModal')->inModal(),
                 )->checkAuthWrite('TeamRole'),
         )->class('mb-3 gap-6 items-center');
     }
