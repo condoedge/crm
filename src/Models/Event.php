@@ -72,17 +72,17 @@ abstract class Event extends Model
 
     public function countedInscriptions()
     {
-        return $this->inscriptions()->countsInTotal();
+        return $this->inscriptions()->countsInTotal()->whereHas('person');
     }
 
     public function confirmedInscriptions()
     {
-        return $this->inscriptions()->confirmed();
+        return $this->inscriptions()->confirmed()->whereHas('person');
     }
 
     public function awaitingInscriptions()
     {
-        return $this->inscriptions()->awaitingApproval();
+        return $this->inscriptions()->awaitingApproval()->whereHas('person');
     }
 
 
