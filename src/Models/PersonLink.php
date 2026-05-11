@@ -4,10 +4,16 @@ namespace Condoedge\Crm\Models;
 
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Utils\Models\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Kompo\Auth\Contracts\Security\HasPermissionKey;
+use Kompo\Auth\Contracts\Security\ScopedToTeam;
 
-class PersonLink extends Model
+class PersonLink extends Model implements HasPermissionKey, ScopedToTeam
 {
-    public $permissionKey = 'Person.sensibleRelationships';
+    public function getPermissionKey(): string
+    {
+        return 'Person.sensibleRelationships';
+    }
 
     /* RELATIONS */
     public function person1()
@@ -26,14 +32,24 @@ class PersonLink extends Model
     }
 
     /* SCOPES */
-    //For auth security
-    public function scopeSecurityForTeams($query, $teamIds)
+    public function applyTeamSecurityScope(Builder $query, array $teamIds): void
     {
-        $query->whereHas('person1', function ($query) use ($teamIds) {
-            $query->securityForTeams($teamIds);
-        })->orWhereHas('person2', function ($query) use ($teamIds) {
-            $query->securityForTeams($teamIds);
-        });
+        $personPrototype = new (PersonModel::getClass());
+
+        $query->where(fn ($outer) => $outer
+            ->whereHas('person1', fn ($q) => $personPrototype->applyTeamSecurityScope($q, $teamIds))
+            ->orWhereHas('person2', fn ($q) => $personPrototype->applyTeamSecurityScope($q, $teamIds))
+        );
+    }
+
+    public function getRelatedTeamIds(): array
+    {
+        return collect()
+            ->concat($this->person1?->getRelatedTeamIds() ?? [])
+            ->concat($this->person2?->getRelatedTeamIds() ?? [])
+            ->unique()
+            ->values()
+            ->all();
     }
 
     /* CALCULATED FIELDS */

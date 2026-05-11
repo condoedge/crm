@@ -2,9 +2,12 @@
 
 namespace Condoedge\Crm\Models;
 
+use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Utils\Models\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Kompo\Auth\Contracts\Security\ScopedToTeam;
 
-class DiciplinaryAction extends Model
+class DiciplinaryAction extends Model implements ScopedToTeam
 {
     use BelongsToPersonTrait;
 
@@ -42,11 +45,16 @@ class DiciplinaryAction extends Model
         return $query->where('action_type', DiciplinaryActionTypeEnum::BAN);
     }
 
-    public function scopeSecurityForTeams($query, $teamsIds)
+    public function applyTeamSecurityScope(Builder $query, array $teamIds): void
     {
-        return $query->whereHas('person', function ($q) use ($teamsIds) {
-            $q->securityForTeams($teamsIds);
-        });
+        $personPrototype = new (PersonModel::getClass());
+
+        $query->whereHas('person', fn ($q) => $personPrototype->applyTeamSecurityScope($q, $teamIds));
+    }
+
+    public function getRelatedTeamIds(): array
+    {
+        return $this->person?->getRelatedTeamIds() ?? [];
     }
 
     // ACTIONS

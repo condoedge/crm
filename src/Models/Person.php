@@ -10,10 +10,13 @@ use Condoedge\Utils\Models\ContactInfo\Email\Email;
 use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Builder;
+use Kompo\Auth\Contracts\Security\HasOwnedRecords;
+use Kompo\Auth\Contracts\Security\ScopedToTeam;
 use Kompo\Auth\Facades\RoleModel;
 use Condoedge\Utils\Models\Traits\MemoizesResults;
 
-abstract class Person extends Model implements Searchable
+abstract class Person extends Model implements Searchable, HasOwnedRecords, ScopedToTeam
 {
     use \Condoedge\Utils\Models\ContactInfo\Email\MorphManyEmails;
     use \Condoedge\Utils\Models\ContactInfo\Maps\MorphManyAddresses;
@@ -125,52 +128,64 @@ abstract class Person extends Model implements Searchable
         );
     }
 
-    public function scopeUserOwnedRecords($query)
+    /**
+     * Owned-records contract.
+     *
+     * A user owns a Person when either:
+     *   - the Person row has `persons.user_id = $userId` (direct), OR
+     *   - a `person_links` row marks the user's person as the PARENT side
+     *     (per the link_type's `is_parent` / `is_child` flags) and
+     *     `can_manage = true`. Mirrors PersonLink::isParentOfTheAnother:
+     *       is_parent + managing.id == person1_id → manages person2
+     *       is_child  + managing.id == person2_id → manages person1
+     */
+    public function ownedRecordIdsForUser(int $userId): array
     {
-        $currentUserId = auth()->id();
+        $direct = static::query()
+            ->where('persons.user_id', $userId)
+            ->pluck('persons.id');
 
-        if (!$currentUserId) {
-            return $query->whereRaw('1 = 0'); // Return no results if no user authenticated
-        }
+        $managedAsP1Parent = DB::table('person_links as pl')
+            ->join('link_types as lt', 'lt.id', '=', 'pl.link_type_id')
+            ->join('persons as managing', 'managing.id', '=', 'pl.person1_id')
+            ->where('pl.can_manage', true)
+            ->where('lt.is_parent', true)
+            ->where('managing.user_id', $userId)
+            ->pluck('pl.person2_id');
 
-        // Get person IDs that the current user can manage
-        $directPersonIds = static::where('user_id', $currentUserId)->pluck('id');
-        // Get person IDs linked through person1Links (where current user owns person2)
-        $linkedThroughPerson1 = DB::table('person_links as pl1')
-            ->join('persons as p2', 'pl1.person2_id', '=', 'p2.id')
-            ->where('p2.user_id', $currentUserId)
-            ->pluck('pl1.person1_id');
+        $managedAsP2Parent = DB::table('person_links as pl')
+            ->join('link_types as lt', 'lt.id', '=', 'pl.link_type_id')
+            ->join('persons as managing', 'managing.id', '=', 'pl.person2_id')
+            ->where('pl.can_manage', true)
+            ->where('lt.is_child', true)
+            ->where('managing.user_id', $userId)
+            ->pluck('pl.person1_id');
 
-        // Get person IDs linked through person2Links (where current user owns person1)
-        $linkedThroughPerson2 = DB::table('person_links as pl2')
-            ->join('persons as p1', 'pl2.person1_id', '=', 'p1.id')
-            ->where('p1.user_id', $currentUserId)
-            ->pluck('pl2.person2_id');
+        return $direct->merge($managedAsP1Parent)->merge($managedAsP2Parent)->unique()->values()->all();
+    }
 
-        // Get sibling access if child_can_access_siblings is enabled
-        $siblingIds = DB::table('person_links as pl_parent')
+    protected function getSiblingsIds()
+    {
+        $userId = $this->relatedUser?->id;
+
+        return DB::table('person_links as pl_parent')
             ->join('person_links as pl_sibling', 'pl_parent.person1_id', '=', 'pl_sibling.person1_id')
             ->join('link_types as lt', 'pl_parent.link_type_id', '=', 'lt.id')
             ->join('persons as p_current', 'pl_parent.person2_id', '=', 'p_current.id')
-            ->where('p_current.user_id', $currentUserId)
+            ->where('p_current.user_id', $userId)
             ->where('lt.child_can_access_siblings', 1)
             ->where('pl_sibling.person2_id', '!=', 'pl_parent.person2_id')
             ->pluck('pl_sibling.person2_id');
-
-        // Combine all accessible person IDs
-        $accessiblePersonIds = $directPersonIds
-            ->concat($linkedThroughPerson1)
-            ->concat($linkedThroughPerson2)
-            ->concat($siblingIds)
-            ->unique()
-            ->values();
-
-        return $query->whereIn('persons.id', $accessiblePersonIds);
     }
 
-    public function scopeSecurityForTeams($query, $teamIds)
+    public function applyTeamSecurityScope(Builder $query, array $teamIds): void
     {
-        return $query->whereHas('personTeams', fn ($q) => $q->whereIn('team_id', $teamIds));
+        $query->whereHas('personTeams', fn ($q) => $q->whereIn('team_id', $teamIds));
+    }
+
+    public function getRelatedTeamIds(): array
+    {
+        return $this->personTeams()->active()->pluck('team_id')->unique()->values()->all();
     }
 
     /* CALCULATED FIELDS */
@@ -271,16 +286,6 @@ abstract class Person extends Model implements Searchable
     {
         return $this->getRegisteringPerson()->email_identity;
     }
-
-    public function usersIdsAllowedToManage()
-    {
-        return array_merge(
-            [$this->relatedUser?->id],
-            $this->getRelatedLinksOfPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
-            $this->getAllPersonLinks()->map(fn ($pl) => $pl->person->user_id)->filter()->all(),
-        );
-    }
-
 
     /* ACTIONS */
     public static function retrieveByEmailIdentity($email)
@@ -391,12 +396,6 @@ abstract class Person extends Model implements Searchable
             !$email ? null : $this->emailContactEl($email),
             !$address ? null : _AddressWithIcon($address),
         )->class('mb-3');
-    }
-
-    public function securityRelatedTeamIds()
-    {
-        return $this->personTeams()->active()->pluck('team_id')->unique()
-            ->all();
     }
 
     protected function emailContactEl($email) //Override in project
