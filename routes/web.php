@@ -6,15 +6,27 @@ use Condoedge\Crm\Http\Controllers\CustomInscriptionGenerable;
 
 Route::layout('layouts.guest')->middleware('disable-automatic-security')->group(function () {
 
-    Route::get('join/{inscription_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionLandingPage::class)->name('inscription.landing');
+    // NOTE: SISC overrides these vendor routes by repointing the class at the SISC subclass.
+    // Route URIs and names are unchanged so signed magic-link emails keep working.
+    // Class targets resolve at request time, so swapping the class string here is safe and
+    // does not touch any other consumer.
+    Route::get('join/{inscription_code?}', class_exists(\App\Kompo\Inscriptions\SiscInscriptionLandingPage::class)
+        ? \App\Kompo\Inscriptions\SiscInscriptionLandingPage::class
+        : Condoedge\Crm\Kompo\Inscriptions\InscriptionLandingPage::class)->name('inscription.landing');
 
-    Route::get('join-email/{inscription_code?}', Condoedge\Crm\Kompo\Inscriptions\InscriptionEmailStep1Form::class)->name('inscription.email.step1');
+    Route::get('join-email/{inscription_code?}', class_exists(\App\Kompo\Inscriptions\SiscInscriptionEmailStep1Form::class)
+        ? \App\Kompo\Inscriptions\SiscInscriptionEmailStep1Form::class
+        : Condoedge\Crm\Kompo\Inscriptions\InscriptionEmailStep1Form::class)->name('inscription.email.step1');
 
     Route::middleware(['signed'])->group(function () {
 
-        Route::get('inscription/confirmation/{inscription_code}', Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
+        Route::get('inscription/confirmation/{inscription_code}', class_exists(\App\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)
+            ? \App\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class
+            : Condoedge\Crm\Kompo\Inscriptions\InscriptionRegistrableConfirmationForm::class)->name('inscription.confirmation');
 
-        Route::get('create-account/{inscription_code}', Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
+        Route::get('create-account/{inscription_code}', class_exists(\App\Kompo\Inscriptions\SiscPersonRegistrableRegisterForm::class)
+            ? \App\Kompo\Inscriptions\SiscPersonRegistrableRegisterForm::class
+            : Condoedge\Crm\Kompo\Auth\PersonRegistrableRegisterForm::class)->name('person-registrable.register');
 
 
     });
