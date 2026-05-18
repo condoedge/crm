@@ -130,19 +130,12 @@ class PersonTeam extends Model
         $newYear = $inscription->event?->scout_year;
         $inscriptionTypeValue = $inscription->type?->value;
 
-        $query = static::where('person_id', $personId)->where('team_id', $inscription->team_id)
+        $personTeam = static::where('person_id', $personId)->where('team_id', $inscription->team_id)
             ->where(fn ($q) => $q->where('inscription_type', $inscriptionTypeValue)->orWhereNull('inscription_type'))
             ->where(
                 fn ($q) => $q->whereNull('team_role_id')
                 ->orWhere('team_role_id', $teamRole->id)
-            );
-
-        // Scope match to same scout year so prior-year PT is preserved as history.
-        if ($newYear !== null) {
-            $query->whereHas('lastInscription.event', fn ($q) => $q->where('scout_year', $newYear));
-        }
-
-        $personTeam = $query->first();
+            )->first();
 
         if (!$personTeam) {
             $personTeam =  static::createFromTeamRole($teamRole, expirationDate: $inscription->getExpirationDate(), inscription: $inscription);
