@@ -289,20 +289,9 @@ class Inscription extends Model
 
     public function getRegistrationUrl()
     {
-        if (!$this->type) {
-            return route('inscription.landing', [
-                'inscription_code' => $this->getExistentQrOrCreateNew(),
-            ]);
-        }
-
-        if (!$this->person_id && !$this->inscribed_by) {
-            return route('inscription.email.step1', [
-                'inscription_code' => $this->getExistentQrOrCreateNew(),
-                'type' => $this->type
-            ]);
-        }
-
-        return $this->type->registerRoute($this);
+        return route('inscription.resume', [
+            'inscription_code' => $this->getExistentQrOrCreateNew(),
+        ]);
     }
 
     public function createOrGetRegistrationUrl($personId, $teamId, $type)
@@ -310,13 +299,6 @@ class Inscription extends Model
         $inscription = static::getOrCreatePendingForMainPerson($personId, $teamId, $type, null, true);
 
         return $inscription->getRegistrationUrl();
-    }
-
-    public function getInscriptionDoneRoute()
-    {
-        return \URL::signedRoute('inscription.done1', [
-            'inscription_code' => $this->getExistentQrOrCreateNew(),
-        ]);
     }
 
     public function getFirstRegisteredPerson()

@@ -70,11 +70,6 @@ class PersonTeam extends Model
     }
 
     /* CALCULATED FIELDS */
-    // public function getStatusAttribute()
-    // {
-    // 	return $this->to?->isPast()? TeamRoleStatusEnum::FINISHED : TeamRoleStatusEnum::IN_PROGRESS;
-    // }
-
     public function getRoleName()
     {
         return $this->teamRoleIncludingDeleted?->roleRelation?->name ?: $this->occupation ?: __('crm.unknown');
@@ -129,14 +124,25 @@ class PersonTeam extends Model
         return $personTeam;
     }
 
-    // TODO
     public static function getOrCreateForAdultInscription($inscription, $teamRole)
     {
-        $personTeam = static::where('person_id', $inscription->person->getRegisteringPerson()->id)->where('team_id', $inscription->team_id)
+        $personId = $inscription->person->getRegisteringPerson()->id;
+        $newYear = $inscription->event?->scout_year;
+        $inscriptionTypeValue = $inscription->type?->value;
+
+        $query = static::where('person_id', $personId)->where('team_id', $inscription->team_id)
+            ->where(fn ($q) => $q->where('inscription_type', $inscriptionTypeValue)->orWhereNull('inscription_type'))
             ->where(
                 fn ($q) => $q->whereNull('team_role_id')
                 ->orWhere('team_role_id', $teamRole->id)
-            )->first();
+            );
+
+        // Scope match to same scout year so prior-year PT is preserved as history.
+        if ($newYear !== null) {
+            $query->whereHas('lastInscription.event', fn ($q) => $q->where('scout_year', $newYear));
+        }
+
+        $personTeam = $query->first();
 
         if (!$personTeam) {
             $personTeam =  static::createFromTeamRole($teamRole, expirationDate: $inscription->getExpirationDate(), inscription: $inscription);
@@ -147,7 +153,7 @@ class PersonTeam extends Model
         $personTeam->role_type = $inscription->type->getAdultPersonTeamType();
         $personTeam->status = $inscription->type->getSpecificPersonTeamStatus($inscription);
         $personTeam->to = $inscription->getExpirationDate();
-        $personTeam->inscription_type = $inscription->type?->value;
+        $personTeam->inscription_type = $inscriptionTypeValue;
         $personTeam->last_inscription_id = $inscription->id;
         $personTeam->save();
 
