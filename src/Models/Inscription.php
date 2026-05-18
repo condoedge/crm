@@ -205,14 +205,6 @@ class Inscription extends Model
 
     /* ACTIONS */
 
-    public static function getForCurrentYearQuery($personId, $inscriptionType)
-    {
-        return static::where('person_id', $personId)
-            ->where('type', $inscriptionType->value)
-            ->forScoutYear(now()->year)
-            ->latest();
-    }
-
     /**
      * This only works to get void inscriptions to be filled. Just used in the inscription process it's not created
      * to get it from other context like person profile. We need to avoid void inscriptions or creating new ones when there are voids.
