@@ -203,6 +203,11 @@ class Inscription extends Model
         return $this->status == InscriptionStatusEnum::APPROVED;
     }
 
+    public function getInscribingPerson()
+    {
+        return $this->inscribedBy ?? $this->person;
+    }
+
     /* ACTIONS */
 
     /**
