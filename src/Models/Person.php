@@ -246,22 +246,22 @@ abstract class Person extends Model implements Searchable, HasOwnedRecords, Scop
     {
         return $this->memoize('activity_status', function () {
             if ($this->hasActiveBan()) {
-                return 'crm.banned';
+                return __('crm.banned');
             }
 
             if ($this->hasActiveBlock()) {
-                return 'crm.blocked';
+                return __('crm.blocked');
             }
 
             if (!$this->personTeams()->asSystemOperation()->count()) {
-                return 'crm.pending';
+                return __('crm.pending');
             }
 
             if ($this->personTeams()->asSystemOperation()->get()->filter(fn ($team) => is_null($team->to) || $team->to > now())->first()) {
-                return 'crm.active';
+                return __('crm.active');
             }
 
-            return 'crm.inactive';
+            return __('crm.inactive');
         });
     }
 
