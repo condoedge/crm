@@ -7,7 +7,7 @@ enum ScheduleFrequencyEnum: int
     use \Condoedge\Utils\Models\Traits\EnumKompo;
 
     case SINGLE = 1;
-    case CUSTOM = 5;
+    // case CUSTOM = 5;
     case DAILY = 10;
     case WEEKLY = 30;
     case MONTHLY = 40;
@@ -21,7 +21,7 @@ enum ScheduleFrequencyEnum: int
             static::WEEKLY => __('events.weekly'),
             static::MONTHLY => __('events.monthly'),
             static::YEARLY => __('events.yearly'),
-            static::CUSTOM => __('events.customs'),
+            // static::CUSTOM => __('events.customs'),
         };
     }
 
@@ -35,7 +35,7 @@ enum ScheduleFrequencyEnum: int
             static::MONTHLY => $dateCopy->addMonths($diff + 1),
             static::YEARLY => $dateCopy->addYears($diff + 1),
             static::SINGLE => null,
-            static::CUSTOM => null,
+            // static::CUSTOM => null,
         };
     }
 
@@ -47,7 +47,7 @@ enum ScheduleFrequencyEnum: int
             static::MONTHLY => $date->diffInMonths(now()),
             static::YEARLY => $date->diffInYears(now()),
             static::SINGLE => null,
-            static::CUSTOM => null,
+            // static::CUSTOM => null,
         };
     }
 }
