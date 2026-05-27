@@ -6,6 +6,7 @@ use App\Models\Teams\Team;
 use App\Models\User;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Facades\PersonTeamModel;
+use Condoedge\Utils\Contracts\Security\BulkResolvableTeamOwners;
 use Condoedge\Utils\Models\ContactInfo\Email\Email;
 use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\Model;
@@ -16,7 +17,7 @@ use Kompo\Auth\Contracts\Security\ScopedToTeam;
 use Kompo\Auth\Facades\RoleModel;
 use Condoedge\Utils\Models\Traits\MemoizesResults;
 
-abstract class Person extends Model implements Searchable, HasOwnedRecords, ScopedToTeam
+abstract class Person extends Model implements Searchable, HasOwnedRecords, ScopedToTeam, BulkResolvableTeamOwners
 {
     use \Condoedge\Utils\Models\ContactInfo\Email\MorphManyEmails;
     use \Condoedge\Utils\Models\ContactInfo\Maps\MorphManyAddresses;
@@ -186,6 +187,33 @@ abstract class Person extends Model implements Searchable, HasOwnedRecords, Scop
     public function getRelatedTeamIds(): array
     {
         return $this->personTeams()->active()->pluck('team_id')->unique()->values()->all();
+    }
+
+    /**
+     * Bulk-resolve related team_ids for many Person instances at once. Called
+     * by `CachedTeamSecurityService::prewarmTeamOwners` to seed the per-request
+     * cache before `BatchPermissionService` iterates the collection — without
+     * this, every model triggers its own `personTeams()->active()->pluck`
+     * query, which becomes the dominant cost when loading a large contact list.
+     */
+    public static function bulkResolveRelatedTeamIds(iterable $models): array
+    {
+        $ids = [];
+        foreach ($models as $model) {
+            if ($key = $model->getKey()) {
+                $ids[$key] = true;
+            }
+        }
+        if (empty($ids)) {
+            return [];
+        }
+
+        return PersonTeamModel::whereIn('person_id', array_keys($ids))
+            ->active()
+            ->get(['person_id', 'team_id'])
+            ->groupBy('person_id')
+            ->map(fn ($rows) => $rows->pluck('team_id')->unique()->values()->all())
+            ->all();
     }
 
     /* CALCULATED FIELDS */
