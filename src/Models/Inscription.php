@@ -9,15 +9,18 @@ use Condoedge\Crm\Facades\PersonTeamModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Condoedge\Utils\Facades\UserModel;
 use Condoedge\Utils\Models\Model;
+use Kompo\Auth\Contracts\Security\ScopedToTeam;
 use Kompo\Auth\Facades\RoleModel;
+use Kompo\Auth\Models\Concerns\Security\BelongsToOneTeam;
 use Kompo\Auth\Models\Teams\BelongsToTeamTrait;
 
 /**
  * It's used to go through the inscription process. It's one per each person and team.
  * In that way we have a record with all the details: status, type, role, etc.
  */
-class Inscription extends Model
+class Inscription extends Model implements ScopedToTeam
 {
+    use BelongsToOneTeam;
     use BelongsToPersonTrait;
     use BelongsToTeamTrait;
 

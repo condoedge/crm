@@ -5,8 +5,9 @@ namespace Condoedge\Crm\Models;
 use Kompo\Database\HasTranslations;
 
 use Condoedge\Utils\Models\Model;
+use Kompo\Auth\Contracts\Security\NoTeamScope;
 
-class LinkType extends Model
+class LinkType extends Model implements NoTeamScope
 {
     use HasTranslations;
 
