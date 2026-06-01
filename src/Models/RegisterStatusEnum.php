@@ -10,6 +10,7 @@ enum RegisterStatusEnum: int
     case RS_ACCEPTED = 5;
     case RS_REJECTED = 6;
     case RS_PAID = 9;
+    case RS_UNREGISTERED = 10;
 
     public function label()
     {
@@ -18,6 +19,7 @@ enum RegisterStatusEnum: int
             static::RS_ACCEPTED => __('inscriptions.approved'),
             static::RS_REJECTED => __('inscriptions.rejected'),
             static::RS_PAID => __('inscriptions.paid'),
+            static::RS_UNREGISTERED => __('translate.unregistered'),
         };
     }
 }
