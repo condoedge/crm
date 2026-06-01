@@ -97,6 +97,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
 
         return new (config('kompo-auth.assign-role-modal-namespace'))([
             'user_id' => $this->person->relatedUser?->id,
+            'refresh_id' => self::ID,
         ]);
     }
 }
