@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Inscriptions\RegisterStatusEnum;
+use Condoedge\Crm\Models\RegisterStatusEnum;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
