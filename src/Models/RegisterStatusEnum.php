@@ -19,7 +19,7 @@ enum RegisterStatusEnum: int
             static::RS_ACCEPTED => __('inscriptions.approved'),
             static::RS_REJECTED => __('inscriptions.rejected'),
             static::RS_PAID => __('inscriptions.paid'),
-            static::RS_UNREGISTERED => __('translate.unregistered'),
+            static::RS_UNREGISTERED => __('inscriptions.unregistered'),
         };
     }
 }

@@ -43,6 +43,7 @@ class EventAttendance extends Model
 
             $attendance = new static();
             $attendance->event_id = $personEvent->event_id;
+            $attendance->attendance_date = $personEvent->event?->start_date ?: now();
             $attendance->attendable_id = $personEvent->person_id;
             $attendance->attendable_type = PersonModel::getActualClassNameForMorph(PersonModel::getClass());
         }
