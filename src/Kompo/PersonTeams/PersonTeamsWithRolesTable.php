@@ -23,7 +23,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
 
     public function top()
     {
-        $canAssignRole = $this->person->relatedUser->id && AssignRoleModal::canBeOpenedForTeamAndUser(auth()->user(), $this->person->relatedUser?->id);
+        $canAssignRole = $this->person->relatedUser?->id && AssignRoleModal::canBeOpenedForTeamAndUser(auth()->user(), $this->person->relatedUser?->id);
 
         return _FlexEnd(
             _Toggle('permissions.show-inactive')->name('show_all', false)->filter()
