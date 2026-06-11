@@ -80,6 +80,7 @@ class InscriptionsList extends WhiteTable
     {
         return new static([
             'is_export' => true,
+            'event_id' => $this->eventId,
         ]);
     }
 }
