@@ -7,12 +7,15 @@ use Condoedge\Utils\Kompo\Common\WhiteTable;
 
 class InscriptionsList extends WhiteTable
 {
+    protected $isExport;
     protected $eventId;
 
     protected $permissionKey = 'Inscription';
 
     public function created()
     {
+        $this->isExport = $this->prop('is_export');
+
         $this->eventId = $this->prop('event_id');
     }
 
@@ -71,5 +74,12 @@ class InscriptionsList extends WhiteTable
     public function getInscriptionAnswerForm($id)
     {
         return new InscriptionAnswerForm($id);
+    }
+
+    public function getExportableInstance()
+    {
+        return new static([
+            'is_export' => true,
+        ]);
     }
 }
