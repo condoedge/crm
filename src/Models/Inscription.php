@@ -230,6 +230,8 @@ class Inscription extends Model implements ScopedToTeam
             ->when($inscriptionType, fn ($q) => $q->where('type', $inscriptionType->value))
             ->when($roleId, fn ($q) => $q->where('role_id', $roleId))
             ->where('status', '<=', InscriptionStatusEnum::FILLED)
+            // CANCELED=0 sits below FILLED=2; never resurrect a canceled inscription.
+            ->where('status', '!=', InscriptionStatusEnum::CANCELED)
             ->when($getMain, fn ($q) => $q->whereNull('related_inscription_id'))
             ->first();
     }
@@ -364,76 +366,10 @@ class Inscription extends Model implements ScopedToTeam
 
     public function confirmInscriptionAsUserIfRegistered()
     {
-        $user = $this->getRegisteringRelatedUser();
-
-        if (!$this->status->accepted()) {
-            throw new \Exception('Inscription is not accepted');
-        }
-
-        if (!$this->status->completed() && $user) {
-            $this->confirmUserRegistration($user);
-        }
-    }
-
-    public function confirmUserRegistration($user)
-    {
-        if ($this->status->completed() || !$user) {
-            return;
-        }
-
-        $person = $this->person->getRegisteringPerson();
-
-        $person->user_id = $user->id;
-        $person->save();
-
-        $roleId = $this->type->getRole($this);
-
-        if (!$roleId) {
-            abort(403, __('error.there-is-not-role-assigned-to-your-inscription'));
-        }
-
-        if ($this->type->basedInInscriptionForOtherPerson() || $this->validToComplete()) {
-            $role = RoleModel::getOrCreate($this->type->getRole($this));
-
-            $teamRole = $user->createTeamRole($this->team, $role->id);
-
-            if (!$this->type->basedInInscriptionForOtherPerson() && ($event = $this->getEventToAttend())) {
-                PersonEvent::createPersonEvent($this->person, $event);
-                // $teamRole->terminated_at = $this->getExpirationDate();
-                // $teamRole->save();
-            }
-
-            PersonTeamModel::getOrCreateForAdultInscription($this, $teamRole);
-            $person->user_id = $user->id;
-            $person->save();
-
-            $this->setConfirmedStatus();
-        }
-
-        if ($this->type->basedInInscriptionForOtherPerson()) {
-            $inscriptions = collect([$this])->merge($this->relatedInscriptions);
-            // Create temporal user for the child or the registered person
-
-            $inscriptions->each->confirmChildRegistration();
-        }
-
-        // fireRegisteredEvent($user);
-    }
-
-    public function markAsPaid()
-    {
-        $personTeams = PersonTeamModel::where('last_inscription_id', $this->id)->get();
-
-        $personTeams->each->markAsPaid();
-
-        $this->status = InscriptionStatusEnum::COMPLETED_SUCCESSFULLY;
-        $this->save();
-    }
-
-    public function setConfirmedStatus()
-    {
-        $this->status = !$this->canConsiderAsPaidAtInscriptionLevel() ? InscriptionStatusEnum::PENDING_PAYMENT : InscriptionStatusEnum::COMPLETED_SUCCESSFULLY;
-        $this->save();
+        // The consuming app owns confirmation (type roles, membership models,
+        // status policy); the package only triggers it through this seam.
+        app(\Condoedge\Crm\Contracts\InscriptionRegistrationServiceContract::class)
+            ->confirmRegistrationIfUserExists($this);
     }
 
     public static function managePaymentFromInscription()
@@ -449,15 +385,6 @@ class Inscription extends Model implements ScopedToTeam
     public function getEventToAttend()
     {
         return $this->event;
-    }
-
-    public function confirmChildRegistration()
-    {
-        if ($this->validToComplete()) {
-            $this->person->createOrGetUserByRegisteredBy($this, $this->team);
-        }
-
-        $this->setConfirmedStatus();
     }
 
     public function hasPendingPayment()
