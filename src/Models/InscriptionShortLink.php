@@ -79,7 +79,11 @@ class InscriptionShortLink extends Model
             $inscription->setQrCodeIfEmpty();
         }
 
-        $inscription->related_inscription_id = $mainInscription?->id;
+        // Both lookups can resolve to the same main row; never let it point to itself.
+        if ($mainInscription && $mainInscription->id !== $inscription->id) {
+            $inscription->related_inscription_id = $mainInscription->id;
+        }
+
         $inscription->event_id = $this->event_id;
         $inscription->save();
 
