@@ -10,5 +10,6 @@ use Condoedge\Crm\Models\Inscription;
  */
 interface InscriptionRegistrationServiceContract
 {
-    public function confirmRegistrationIfUserExists(Inscription $inscription): void;
+    /** Confirm this inscription's registration into membership if its registering user exists. */
+    public function confirmPendingRegistration(Inscription $inscription): void;
 }

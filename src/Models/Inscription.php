@@ -369,7 +369,7 @@ class Inscription extends Model implements ScopedToTeam
         // The consuming app owns confirmation (type roles, membership models,
         // status policy); the package only triggers it through this seam.
         app(\Condoedge\Crm\Contracts\InscriptionRegistrationServiceContract::class)
-            ->confirmRegistrationIfUserExists($this);
+            ->confirmPendingRegistration($this);
     }
 
     public static function managePaymentFromInscription()
