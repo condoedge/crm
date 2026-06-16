@@ -8,7 +8,7 @@ use Kompo\Auth\Teams\Roles\AssignRoleModal as BaseModal;
 class AssignTeamRole extends BaseModal
 {
     protected $refreshId = 'person-roles-table';
-    protected $permissionKey = 'PersonTeam';
+    protected $permissionKey = 'assign_role';
 
     public function afterSave()
     {
