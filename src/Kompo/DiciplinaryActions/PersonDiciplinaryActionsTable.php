@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Kompo\DiciplinaryActions;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\DiciplinaryAction;
 use Condoedge\Utils\Kompo\Common\WhiteTable;
+use Kompo\Auth\Models\Teams\PermissionTypeEnum;
 
 class PersonDiciplinaryActionsTable extends WhiteTable
 {
@@ -24,7 +25,8 @@ class PersonDiciplinaryActionsTable extends WhiteTable
         return _FlexBetween(
             _TitleMain('disciplinary.disciplinary-actions'),
             _Button('disciplinary.add-new-disciplinary-action')
-                ->selfCreate('getDiciplinaryActionForm')->inModal()->checkAuthWrite('DiciplinaryAction'),
+                ->selfCreate('getDiciplinaryActionForm')->inModal()
+                ->checkAuthAny(['administration_information', 'user_disciplinary_action'], PermissionTypeEnum::WRITE),
         )->class('mb-4');
     }
 
@@ -63,7 +65,7 @@ class PersonDiciplinaryActionsTable extends WhiteTable
                 _Link('disciplinary.edit')->class('py-1 px-2')->selfGet('getDiciplinaryActionForm', ['diciplinary_action' => $diciplinaryAction->id])->inModal(),
                 $diciplinaryAction->action_to?->isPast() ? null :
                     _Link('disciplinary.button-finish')->class('py-1 px-2')->selfPost('finishDiciplinaryAction', ['diciplinary_action' => $diciplinaryAction->id])->refresh($this->id),
-            )->checkAuthWrite('DiciplinaryAction', specificModel: $diciplinaryAction),
+            )->checkAuthAny(['administration_information', 'user_disciplinary_action'], PermissionTypeEnum::WRITE),
         );
     }
 
