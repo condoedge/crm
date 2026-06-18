@@ -2,9 +2,11 @@
 
 namespace Condoedge\Crm\Models;
 
+use Condoedge\Utils\Contracts\Security\HasOwnedRecords;
+use Condoedge\Utils\Contracts\Security\ScopedToTeam;
 use Condoedge\Utils\Models\Model;
 
-class PersonEvent extends Model
+class PersonEvent extends Model implements HasOwnedRecords, ScopedToTeam
 {
     use \Condoedge\Crm\Models\BelongsToPersonTrait;
     use \Condoedge\Crm\Models\BelongsToEventTrait;
@@ -40,6 +42,26 @@ class PersonEvent extends Model
         return EventAttendance::forPersonEvent($this->id)
             ->where('attendance_status', EventAttendanceStatus::ABSTENT)
             ->exists();
+    }
+
+    /* SECURITY */
+    public function ownedRecordIdsForUser($userId): array
+    {
+        return static::whereHas('person', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })->pluck('id')->toArray();
+    }
+
+    public function applyTeamSecurityScope($query, array $teamIds): void
+    {
+        $query->whereHas('event', function ($q) use ($teamIds) {
+            $q->whereIn('team_id', $teamIds);
+        });
+    }
+
+    public function getRelatedTeamIds(): array
+    {
+        return [$this->event->team_id];
     }
 
     /* ROUTES */

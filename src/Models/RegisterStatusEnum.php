@@ -22,4 +22,9 @@ enum RegisterStatusEnum: int
             static::RS_UNREGISTERED => __('inscriptions.unregistered'),
         };
     }
+
+    public static function activeStatuses(): array
+    {
+        return [static::RS_ACCEPTED, static::RS_PAID];
+    }
 }
