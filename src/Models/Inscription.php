@@ -225,7 +225,7 @@ class Inscription extends Model implements ScopedToTeam
         $inscriptionType = is_string($inscriptionType) ? getInscriptionTypes()[$inscriptionType] : $inscriptionType;
 
         return static::where($inscriptionType?->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id', $personId)
-            ->when($inscriptionType?->basedInInscriptionForOtherPerson() && !$getMain, fn ($q) => $q->whereNull('person_id'))
+            ->when($inscriptionType?->basedInInscriptionForOtherPerson(), fn ($q) => $q->whereNull('person_id'))
             ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
             ->when($inscriptionType, fn ($q) => $q->where('type', $inscriptionType->value))
             ->when($roleId, fn ($q) => $q->where('role_id', $roleId))
