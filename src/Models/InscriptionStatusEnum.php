@@ -9,6 +9,9 @@ enum InscriptionStatusEnum: int
     case CANCELED = 0;
     case CREATED = 1;
     case FILLED = 2;
+
+    case INVITED_NOT_FILLED = 3;
+
     case APPROVED = 5;
     case REJECTED = 6;
     case PENDING_PAYMENT = 9;
@@ -21,6 +24,7 @@ enum InscriptionStatusEnum: int
             self::CANCELED => __('crm.canceled'),
             self::CREATED => __('crm.invited'),
             self::FILLED => __('crm.pending'),
+            self::INVITED_NOT_FILLED => __('translate.invited'),
             self::APPROVED => __('crm.approved'),
             self::REJECTED => __('crm.rejected'),
             self::PENDING_PAYMENT => __('crm.pending-payment'),
@@ -35,6 +39,7 @@ enum InscriptionStatusEnum: int
             self::CANCELED => 'bg-danger',
             self::CREATED => 'bg-info',
             self::FILLED => 'bg-warning',
+            self::INVITED_NOT_FILLED => 'bg-info',
             self::APPROVED => 'bg-greenmain',
             self::REJECTED => 'bg-danger',
             self::PENDING_PAYMENT => 'bg-warning',

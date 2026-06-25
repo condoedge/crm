@@ -83,7 +83,7 @@ class Inscription extends Model implements ScopedToTeam
 
     public function scopePending($query)
     {
-        return $query->whereIn('status', [InscriptionStatusEnum::FILLED, InscriptionStatusEnum::CREATED, InscriptionStatusEnum::PENDING_PAYMENT]);
+        return $query->whereIn('status', [InscriptionStatusEnum::FILLED, InscriptionStatusEnum::INVITED_NOT_FILLED, InscriptionStatusEnum::CREATED, InscriptionStatusEnum::PENDING_PAYMENT]);
     }
 
     public function scopeCountsInTotal($query)
@@ -229,7 +229,7 @@ class Inscription extends Model implements ScopedToTeam
             ->when($teamId, fn ($q) => $q->where('team_id', $teamId))
             ->when($inscriptionType, fn ($q) => $q->where('type', $inscriptionType->value))
             ->when($roleId, fn ($q) => $q->where('role_id', $roleId))
-            ->where('status', '<=', InscriptionStatusEnum::FILLED)
+            ->where('status', '<=', InscriptionStatusEnum::INVITED_NOT_FILLED)
             // CANCELED=0 sits below FILLED=2; never resurrect a canceled inscription.
             ->where('status', '!=', InscriptionStatusEnum::CANCELED)
             ->when($getMain, fn ($q) => $q->whereNull('related_inscription_id'))

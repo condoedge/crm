@@ -3,6 +3,8 @@
 namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 
 use Condoedge\Crm\Facades\InscriptionModel;
+use Condoedge\Crm\Facades\PersonModel;
+use Kompo\Auth\Models\Teams\EmailRequest;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 trait InscriptionFormUtilsTrait
@@ -74,6 +76,14 @@ trait InscriptionFormUtilsTrait
             return redirect()->to($this->inscription?->getRegistrationUrl());
         } elseif (auth()->user()) {
             return redirect()->to(InscriptionModel::createOrGetRegistrationUrl($person->id, null, $type));
+        } elseif ($email = $this->prop('email')) {
+            $person = PersonModel::getOrCreatePersonFromEmail($email);
+            $redirectTo = InscriptionModel::createOrGetRegistrationUrl($person->id, null, $type);
+
+            $emailRequest = EmailRequest::getOrCreateEmailRequest($email);
+            $emailRequest->setRedirectUrl($redirectTo);
+            $emailRequest->sendEmailVerificationNotification();
+            return redirect()->to(\URL::signedRoute('check.verify.email', ['id' => $emailRequest]));
         } else {
             return redirect()->route('inscription.email.step1', [
                 'inscription_code' => $this->inscriptionCode,
