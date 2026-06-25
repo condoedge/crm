@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Kompo\DiciplinaryActions;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\DiciplinaryAction;
 use Condoedge\Crm\Models\DiciplinaryActionTypeEnum;
+use Condoedge\Crm\Models\DiciplinaryReasonType;
 use Condoedge\Crm\Models\DiciplinaryReasonTypeEnum;
 use Condoedge\Utils\Kompo\Common\Modal;
 
@@ -54,7 +55,10 @@ class DiciplinaryActionForm extends Modal
             _Select('disciplinary.action')->name('action_type')->required()
                 ->when($this->specificAction, fn ($select) => $select->class('hidden')->default($this->specificAction->value))
                 ->options(DiciplinaryActionTypeEnum::optionsWithLabels()),
-            _Select('disciplinary.reason')->name('action_reason_type')->required()->options(DiciplinaryReasonTypeEnum::optionsWithLabels()),
+            _Select('disciplinary.reason')->name('action_reason_type_id')->required()
+                ->options(DiciplinaryReasonType::forTeams($this->person?->activePersonTeams()->pluck('team_id') ?: [currentTeamId()])
+                    ->pluck('name', 'id')
+                ),
             _Textarea('disciplinary.reason-description')->name('action_reason_description'),
             _SubmitButton('generic.save')->refresh($this->refreshId)->alert('disciplinary.action-saved'),
         );
@@ -66,7 +70,7 @@ class DiciplinaryActionForm extends Modal
             'action_type' => 'required|in:' . collect(DiciplinaryActionTypeEnum::cases())->map->value->implode(','),
             'action_from' => 'required|date',
             'action_to' => 'nullable|date|after:action_from',
-            'action_reason_type' => 'required|in:' . collect(DiciplinaryReasonTypeEnum::cases())->map->value->implode(','),
+            'action_reason_type_id' => 'required|exists:diciplinary_reason_types,id',
 
             'person_id' => 'required|exists:persons,id',
             'added_by' => 'required|exists:users,id',

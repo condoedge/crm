@@ -52,7 +52,7 @@ class PersonDiciplinaryActionsTable extends WhiteTable
                 _Html($diciplinaryAction->action_from->format('Y-m-d')),
                 _Html($diciplinaryAction->action_to?->format('Y-m-d') ?? '-')->class('text-gray-400'),
             ),
-            _Html($diciplinaryAction->action_reason_type->label()),
+            _Html($diciplinaryAction->actionReasonType?->name ?? '-'),
             _Html($diciplinaryAction->action_reason_description),
             _Html($diciplinaryAction->addedBy->name),
             _Flex(

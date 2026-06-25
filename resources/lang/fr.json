@@ -34,5 +34,9 @@
 	"events.not-sure": "Pas certain",
 	"events.pending": "En attente",
 	"events.present": "Présent",
+	"crm.description": "Description",
+	"crm.add-disciplinary-reason-type": "Ajouter un type de raison disciplinaire",
+	"crm.manage-disciplinary-reason-type": "Gerer le type de raison disciplinaire",
+	"crm.disciplinary-reason-types": "Types de raisons disciplinaires",
 	"inscriptions.auth-login": "Se connecter"
 }

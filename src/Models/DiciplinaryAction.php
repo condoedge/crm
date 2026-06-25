@@ -16,8 +16,12 @@ class DiciplinaryAction extends Model implements ScopedToTeam
         'action_to' => 'date',
 
         'action_type' => DiciplinaryActionTypeEnum::class,
-        'action_reason_type' => DiciplinaryReasonTypeEnum::class,
     ];
+
+    public function actionReasonType()
+    {
+        return $this->belongsTo(DiciplinaryReasonType::class, 'action_reason_type_id');
+    }
 
     // CALCULATED FIELDS
     public function isActive()
@@ -64,7 +68,7 @@ class DiciplinaryAction extends Model implements ScopedToTeam
         $diciplinaryAction->person_id = $personId;
         $diciplinaryAction->action_type = DiciplinaryActionTypeEnum::BLOCK;
         $diciplinaryAction->action_from = now();
-        $diciplinaryAction->action_reason_type = DiciplinaryReasonTypeEnum::OTHER;
+        $diciplinaryAction->action_reason_type_id = null;
         $diciplinaryAction->action_reason_description = $reason;
 
         $diciplinaryAction->save();
