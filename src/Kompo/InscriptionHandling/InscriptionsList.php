@@ -10,7 +10,7 @@ class InscriptionsList extends WhiteTable
     protected $isExport;
     protected $eventId;
 
-    protected $permissionKey = 'Inscription';
+    protected $permissionKey = 'volunteers_registration';
 
     public function created()
     {
