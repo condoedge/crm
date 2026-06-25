@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Kompo\PersonTeams;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Facades\PersonTeamModel;
 use Condoedge\Utils\Kompo\Common\WhiteTable;
+use Kompo\Auth\Models\Teams\PermissionTypeEnum;
 use Kompo\Auth\Teams\Roles\AssignRoleModal;
 
 class PersonTeamsWithRolesTable extends WhiteTable
@@ -23,17 +24,20 @@ class PersonTeamsWithRolesTable extends WhiteTable
 
     public function top()
     {
-        $canAssignRole = $this->person->relatedUser?->id && AssignRoleModal::canBeOpenedForTeamAndUser(auth()->user(), $this->person->relatedUser?->id);
+        // Role actions are inactive on one's own profile (#1330 section 20).
+        $canAssignRole = $this->person->relatedUser?->id
+            && $this->person->user_id !== auth()->id()
+            && AssignRoleModal::canBeOpenedForTeamAndUser(auth()->user(), $this->person->relatedUser?->id);
 
         return _FlexEnd(
             _Toggle('permissions.show-inactive')->name('show_all', false)->filter()
                 ->class('[&>.vlFormLabel]:w-max !mb-0'),
             !$canAssignRole ? null : _Dropdown('permissions.actions')->button()
                 ->submenu(
-                    !$canAssignRole ? null : 
+                    !$canAssignRole ? null :
                         _Link('permissions.assign-role')->class('py-1 px-3')
                             ->selfGet('getAssignRoleModal')->inModal(),
-                )->checkAuthWrite('TeamRole'),
+                )->checkAuthAny(['administration_information', 'assign_role'], PermissionTypeEnum::WRITE),
         )->class('mb-3 gap-6 items-center');
     }
 
@@ -72,12 +76,12 @@ class PersonTeamsWithRolesTable extends WhiteTable
             $personTeam->getStatusPillElement() ?? $personTeam->teamRoleIncludingDeleted?->statusPill(),
             _Html(),
             _FlexEnd(
-                _TripleDotsDropdown(
+                $this->person->user_id === auth()->id() ? null : _TripleDotsDropdown(
                     _DeleteLink('permissions.delete')->class('py-1 px-3 text-danger rounded-md text-right justify-end')->byKey($personTeam),
                     ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to)
                         ? _DropdownLink('permissions.terminate')->class('py-1 px-3 justify-end rounded-md text-right')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                         : null,
-                )->class('text-right w-max')->checkAuthWrite('TeamRole', $personTeam->team_id),
+                )->class('text-right w-max')->checkAuthAny(['administration_information', 'assign_role'], PermissionTypeEnum::WRITE, $personTeam->team_id),
             ),
         );
     }
