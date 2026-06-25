@@ -68,6 +68,26 @@ enum InscriptionStatusEnum: int
         };
     }
 
+    public static function notFilledStatuses(): array
+    {
+        return [self::CREATED, self::INVITED_NOT_FILLED];
+    }
+
+    public static function filledStatuses(): array
+    {
+        return [self::FILLED, self::APPROVED, self::PENDING_PAYMENT, self::COMPLETED_SUCCESSFULLY, self::TT];
+    }
+
+    public function isNotFilled(): bool
+    {
+        return in_array($this, self::notFilledStatuses(), true);
+    }
+
+    public function isFilled(): bool
+    {
+        return in_array($this, self::filledStatuses(), true);
+    }
+
     public static function getInsideStatuses()
     {
         return [self::APPROVED, self::PENDING_PAYMENT, self::COMPLETED_SUCCESSFULLY];
