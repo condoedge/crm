@@ -67,7 +67,7 @@ class PersonEvent extends Model implements HasOwnedRecords, ScopedToTeam
     /* ROUTES */
 
     /* ACTIONS */
-    public static function createPersonEvent($person, $event, $status = null)
+    public static function createPersonEvent($person, $event, $status)
     {
         $pr = static::where('person_id', $person->id)->where('event_id', $event->id)->first();
 

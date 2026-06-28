@@ -351,7 +351,7 @@ abstract class Person extends Model implements Searchable, HasOwnedRecords, Scop
             PersonTeamModel::createFromTeamRole($teamRole, $inscription->type->getSpecificPersonTeamStatus($inscription), $inscription->getExpirationDate(), $inscription, $inscription->type->getChildPersonTeamType());
         }
 
-        PersonEvent::createPersonEvent($this, $inscription->getEventToAttend());
+        PersonEvent::createPersonEvent($this, $inscription->getEventToAttend(), RegisterStatusEnum::RS_ACCEPTED);
     }
 
     public function createOrGetUser()
