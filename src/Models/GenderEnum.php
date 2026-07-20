@@ -19,10 +19,8 @@ enum GenderEnum: int
         };
     }
 
-    public function labelFromAge($dateOfBirth)
+    public function labelFromAge($age)
     {
-        $age = getAgeFromDob($dateOfBirth);
-
         return match ($this) {
             static::FEMALE => $age < 18 ? __('crm.girl') : __('crm.woman'),
             static::MALE => $age < 18 ? __('crm.boy') : __('crm.man'),

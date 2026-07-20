@@ -18,7 +18,7 @@ trait PersonCharacteristicsRelatedTrait
 
     public function getGenderLabelAttribute()
     {
-        return $this->gender?->labelFromAge($this->date_of_birth);
+        return $this->gender?->labelFromAge(getAgeFromDob($this->date_of_birth));
     }
 
     /* ACTIONS */

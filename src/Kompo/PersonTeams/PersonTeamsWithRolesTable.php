@@ -66,7 +66,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
             _Html($personTeam->getRoleName() ?: '-')->class('font-semibold'),
             $personTeam->team->getFullInfoTableElement(),
             _Rows(
-                _Html($personTeam->from->format('d/m/Y')),
+                _Html($personTeam->from?->format('d/m/Y')),
                 _Html($personTeam->to?->format('d/m/Y'))->class('text-gray-400'),
             ),
             $personTeam->getStatusPillElement() ?? $personTeam->teamRoleIncludingDeleted?->statusPill(),
