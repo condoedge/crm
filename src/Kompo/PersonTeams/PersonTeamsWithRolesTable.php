@@ -84,7 +84,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
 
     public function terminateRole($personTeamId)
     {
-        $teamRole = PersonTeamModel::findOrFail($personTeamId);
+        $teamRole = PersonTeamModel::withTrashed()->findOrFail($personTeamId);
         $teamRole->terminate();
     }
 

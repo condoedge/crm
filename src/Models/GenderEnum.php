@@ -19,6 +19,13 @@ enum GenderEnum: int
         };
     }
 
+    public static function optionsWithLabelsFromAge($age)
+    {
+        return collect(self::cases())->filter(fn($case) => $case->visibleInSelects())->mapWithKeys(fn($enum) => [
+            $enum->value => $enum->labelFromAge($age),
+        ]);
+    }
+
     public function labelFromAge($age)
     {
         return match ($this) {
