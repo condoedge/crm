@@ -24,7 +24,7 @@ enum InscriptionStatusEnum: int
             self::CANCELED => __('crm.canceled'),
             self::CREATED => __('crm.invited'),
             self::FILLED => __('crm.pending'),
-            self::INVITED_NOT_FILLED => __('translate.invited'),
+            self::INVITED_NOT_FILLED => __('crm.invited'),
             self::APPROVED => __('crm.approved'),
             self::REJECTED => __('crm.rejected'),
             self::PENDING_PAYMENT => __('crm.pending-payment'),
