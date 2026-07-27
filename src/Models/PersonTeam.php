@@ -83,7 +83,7 @@ class PersonTeam extends Model
         $this->status = PersonTeamStatusEnum::TERMINATED;
         $this->save();
 
-        $this->teamRole?->terminate();
+        $this->teamRole()->withTrashed()->first()?->terminate();
     }
 
     public function moveToAnotherUnit($teamId)

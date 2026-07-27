@@ -27,17 +27,13 @@ class SyncTeamRolesCommand extends Command
      */
     public function handle()
     {
-        PersonTeamModel::whereRaw('DATE(person_teams.to) <= CURDATE()')
+        PersonTeamModel::whereRaw('DATE(person_teams.to) <= CURDATE() OR DATE(person_teams.deleted_at) <= CURDATE()')
             ->withTrashed()
             ->selectRaw('team_role_id')
             ->where(fn ($q) => $q->whereHas('teamRole')->orWhereNotNull('deleted_at')) // only those with a team role or already soft deleted
             ->chunk(100, function ($personTeams) {
                 $personTeams->each(function ($personTeam) {
-                    $personTeam->teamRole()->withoutGlobalScopes()->first()?->terminate();
-
-                    $personTeam->status = PersonTeamStatusEnum::TERMINATED;
-                    $personTeam->deleted_at = now();
-                    $personTeam->save();
+                    $personTeam->terminate();
                 });
             });
     }
