@@ -3,7 +3,6 @@
 namespace Condoedge\Crm\Console\Commands;
 
 use Condoedge\Crm\Facades\PersonTeamModel;
-use Condoedge\Crm\Models\PersonTeamStatusEnum;
 use Illuminate\Console\Command;
 
 class SyncTeamRolesCommand extends Command
@@ -27,14 +26,16 @@ class SyncTeamRolesCommand extends Command
      */
     public function handle()
     {
-        PersonTeamModel::whereRaw('DATE(person_teams.to) <= CURDATE() OR DATE(person_teams.deleted_at) <= CURDATE()')
-            ->withTrashed()
-            ->selectRaw('team_role_id')
-            ->where(fn ($q) => $q->whereHas('teamRole', fn($q) => $q->whereNull('terminated_at')->whereNull('suspended_at'))->orWhereNotNull('deleted_at')) // only those with a team role or already soft deleted
-            ->chunk(100, function ($personTeams) {
-                $personTeams->each(function ($personTeam) {
+        $terminated = 0;
+
+        PersonTeamModel::pendingTeamRoleSync()
+            ->chunkById(100, function ($personTeams) use (&$terminated) {
+                $personTeams->each(function ($personTeam) use (&$terminated) {
                     $personTeam->terminate();
+                    $terminated++;
                 });
-            });
+            }, 'person_teams.id', 'id');
+
+        $this->info($terminated . ' person team(s) terminated.');
     }
 }

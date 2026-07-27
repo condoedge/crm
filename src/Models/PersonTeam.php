@@ -69,6 +69,19 @@ class PersonTeam extends Model
         ); // The person_teams.to clarification is redundant since we set deleted_at but i'm looking for changing that in a future
     }
 
+    /**
+     * Memberships that expired (or were soft deleted) while their team role is
+     * still live.
+     */
+    public function scopePendingTeamRoleSync($query)
+    {
+        return $query->withTrashed()
+            ->where(fn ($q) => $q
+                ->whereRaw('person_teams.to is not null and DATE(person_teams.to) <= CURDATE()')
+                ->orWhereNotNull('person_teams.deleted_at'))
+            ->whereHas('teamRole', fn ($q) => $q->withTrashed()->whereNull('terminated_at')->whereNull('suspended_at'));
+    }
+
     /* CALCULATED FIELDS */
     public function getRoleName()
     {
