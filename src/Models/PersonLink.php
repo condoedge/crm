@@ -5,11 +5,15 @@ namespace Condoedge\Crm\Models;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Utils\Models\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Kompo\Auth\Contracts\Security\HasOwnedRecords;
 use Kompo\Auth\Contracts\Security\HasPermissionKey;
 use Kompo\Auth\Contracts\Security\ScopedToTeam;
 
-class PersonLink extends Model implements HasPermissionKey, ScopedToTeam
+class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasOwnedRecords
 {
+    use \Condoedge\Utils\Models\ContactInfo\Email\MorphManyEmails;
+    use \Condoedge\Utils\Models\ContactInfo\Phone\MorphManyPhones;
+
     public function getPermissionKey(): string
     {
         return 'Person.sensibleRelationships';
@@ -50,6 +54,16 @@ class PersonLink extends Model implements HasPermissionKey, ScopedToTeam
             ->unique()
             ->values()
             ->all();
+    }
+
+    public function ownedRecordIdsForUser(int $userId): array
+    {
+        $personPrototype = new (PersonModel::getClass());
+        
+        return $this->where(function ($outer) use ($personPrototype, $userId) {
+            $outer->whereHas('person1', fn ($q) => $personPrototype->ownedRecordIdsForUser($q, $userId))
+                ->orWhereHas('person2', fn ($q) => $personPrototype->ownedRecordIdsForUser($q, $userId));
+        })->pluck('id')->all();
     }
 
     /* CALCULATED FIELDS */

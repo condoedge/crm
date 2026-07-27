@@ -162,7 +162,22 @@ abstract class Person extends Model implements Searchable, HasOwnedRecords, Scop
             ->where('managing.user_id', $userId)
             ->pluck('pl.person1_id');
 
-        return $direct->merge($managedAsP1Parent)->merge($managedAsP2Parent)->unique()->values()->all();
+        $owned = $direct->merge($managedAsP1Parent)->merge($managedAsP2Parent);
+
+        $externalContactsOf = fn ($sideOfMine, $sideOfContact) => \DB::table('person_links as pl')
+            ->join('persons as contact', 'contact.id', '=', "pl.{$sideOfContact}")
+            ->whereIn("pl.{$sideOfMine}", $owned)
+            ->whereNull('contact.user_id')
+            ->whereNotExists(fn ($q) => $q->select(\DB::raw(1))
+                ->from('person_teams as pt')
+                ->whereColumn('pt.person_id', 'contact.id'))
+            ->pluck('contact.id')
+            ->all();
+
+        return $owned
+            ->merge($externalContactsOf('person1_id', 'person2_id'))
+            ->merge($externalContactsOf('person2_id', 'person1_id'))
+            ->unique()->values()->all();
     }
 
     protected function getSiblingsIds()
