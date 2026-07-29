@@ -13,11 +13,13 @@ use Condoedge\Utils\Models\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
 use Kompo\Auth\Contracts\Security\HasOwnedRecords;
+use Kompo\Auth\Contracts\Security\HasScopedOwnedRecords;
 use Kompo\Auth\Contracts\Security\ScopedToTeam;
+use Kompo\Auth\Models\Teams\PermissionTypeEnum;
 use Kompo\Auth\Facades\RoleModel;
 use Condoedge\Utils\Models\Traits\MemoizesResults;
 
-abstract class Person extends Model implements Searchable, HasOwnedRecords, ScopedToTeam, BulkResolvableTeamOwners
+abstract class Person extends Model implements Searchable, HasScopedOwnedRecords, ScopedToTeam, BulkResolvableTeamOwners
 {
     use \Condoedge\Utils\Models\ContactInfo\Email\MorphManyEmails;
     use \Condoedge\Utils\Models\ContactInfo\Maps\MorphManyAddresses;
@@ -140,8 +142,11 @@ abstract class Person extends Model implements Searchable, HasOwnedRecords, Scop
      *       is_parent + managing.id == person1_id → manages person2
      *       is_child  + managing.id == person2_id → manages person1
      */
-    public function ownedRecordIdsForUser(int $userId): array
+    public function ownedRecordIdsForUser(int $userId, ?PermissionTypeEnum $type = null): array
     {
+        // We can't edit contacts if the user has an account, so we set this restriction for contacts
+        $reachesAccountHolders = $type === PermissionTypeEnum::READ;
+
         $direct = static::query()
             ->where('persons.user_id', $userId)
             ->pluck('persons.id');
@@ -167,7 +172,7 @@ abstract class Person extends Model implements Searchable, HasOwnedRecords, Scop
         $externalContactsOf = fn ($sideOfMine, $sideOfContact) => \DB::table('person_links as pl')
             ->join('persons as contact', 'contact.id', '=', "pl.{$sideOfContact}")
             ->whereIn("pl.{$sideOfMine}", $owned)
-            ->whereNull('contact.user_id')
+            ->when(!$reachesAccountHolders, fn ($q) => $q->whereNull('contact.user_id'))
             ->whereNotExists(fn ($q) => $q->select(\DB::raw(1))
                 ->from('person_teams as pt')
                 ->whereColumn('pt.person_id', 'contact.id'))

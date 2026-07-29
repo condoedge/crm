@@ -5,11 +5,12 @@ namespace Condoedge\Crm\Models;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Utils\Models\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Kompo\Auth\Contracts\Security\HasOwnedRecords;
 use Kompo\Auth\Contracts\Security\HasPermissionKey;
+use Kompo\Auth\Contracts\Security\HasScopedOwnedRecords;
 use Kompo\Auth\Contracts\Security\ScopedToTeam;
+use Kompo\Auth\Models\Teams\PermissionTypeEnum;
 
-class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasOwnedRecords
+class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasScopedOwnedRecords
 {
     use \Condoedge\Utils\Models\ContactInfo\Email\MorphManyEmails;
     use \Condoedge\Utils\Models\ContactInfo\Phone\MorphManyPhones;
@@ -56,14 +57,23 @@ class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasOwn
             ->all();
     }
 
-    public function ownedRecordIdsForUser(int $userId): array
+    // A link belongs to whoever owns either of its two ends, for the same verb.
+    // Person resolves its own owned set from a user id — it is not a query scope,
+    // so the ids come back first and constrain the link query.
+    public function ownedRecordIdsForUser(int $userId, ?PermissionTypeEnum $type = null): array
     {
-        $personPrototype = new (PersonModel::getClass());
-        
-        return $this->where(function ($outer) use ($personPrototype, $userId) {
-            $outer->whereHas('person1', fn ($q) => $personPrototype->ownedRecordIdsForUser($q, $userId))
-                ->orWhereHas('person2', fn ($q) => $personPrototype->ownedRecordIdsForUser($q, $userId));
-        })->pluck('id')->all();
+        $ownedPersonIds = (new (PersonModel::getClass()))->ownedRecordIdsForUser($userId, $type);
+
+        if (!$ownedPersonIds) {
+            return [];
+        }
+
+        return static::query()
+            ->where(fn ($q) => $q
+                ->whereIn('person1_id', $ownedPersonIds)
+                ->orWhereIn('person2_id', $ownedPersonIds))
+            ->pluck('id')
+            ->all();
     }
 
     /* CALCULATED FIELDS */
@@ -74,9 +84,28 @@ class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasOwn
             $this->person1;
     }
 
+    /**
+     * The link type whose label describes $personId in this link. Every picker must ask
+     * for the side it is actually describing: a raw link_type_id answers for whoever
+     * happens to sit on person1, so posting it back rewrites the relationship.
+     */
+    public function typeIdDescribing($personId): ?int
+    {
+        if ($this->person1_id == $personId) {
+            return $this->link_type_id;
+        }
+
+        return LinkTypeEnum::tryFrom($this->link_type_id)?->opposite()->value
+            ?: ($this->linkType->opposite_id ?: $this->link_type_id);
+    }
+
+    // Labels the OTHER person: the type describes person1, so person2's role is the
+    // opposite row. Reading it off the type alone always answered with person1's role.
     public function getLinkingLabel($forPersonId)
     {
-        return $this->linkType->getLinkingLabel($forPersonId);
+        return $this->person1_id == $forPersonId
+            ? $this->linkType->getLinkingLabelForPerson2()
+            : $this->linkType->getLinkingLabelForPerson1();
     }
 
     public function anotherPersonIsEmergencyContactOf($personId)
@@ -104,7 +133,7 @@ class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasOwn
             $query->where('person1_id', $person1->id)->where('person2_id', $person2->id);
         })->orWhere(function ($query) use ($person1, $person2) {
             $query->where('person1_id', $person2->id)->where('person2_id', $person1->id);
-        })->first();
+        })->asSystemOperation()->first();
     }
 
     public function isParentOfTheAnother($personId)
