@@ -73,9 +73,10 @@ class PersonTeamsWithRolesTable extends WhiteTable
             _Html(),
             _FlexEnd(
                 _TripleDotsDropdown(
-                    _DeleteLink('permissions.delete')->class('py-1 px-3 text-danger rounded-md text-right justify-end')->byKey($personTeam),
+                    !$this->modifyRoleModalClass() ? null : _DropdownLink('translate.modify-position')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfGet('getChangeRoleModal', ['personTeamId' => $personTeam->id])->inModal(),
+                    _DeleteLink('permissions.delete')->class('!py-1 !px-3 text-danger rounded-md text-right justify-end')->byKey($personTeam),
                     ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to)
-                        ? _DropdownLink('permissions.terminate')->class('py-1 px-3 justify-end rounded-md text-right')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
+                        ? _DropdownLink('permissions.terminate')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                         : null,
                 )->class('text-right w-max')->checkAuthWrite('TeamRole', $personTeam->team_id),
             ),
@@ -86,6 +87,16 @@ class PersonTeamsWithRolesTable extends WhiteTable
     {
         $teamRole = PersonTeamModel::withTrashed()->findOrFail($personTeamId);
         $teamRole->terminate();
+    }
+
+    public function getChangeRoleModal($personTeamId)
+    {
+        return new ($this->modifyRoleModalClass())($personTeamId);
+    }
+
+    protected function modifyRoleModalClass()
+    {
+        return config('kompo-auth.modify-role-modal-namespace');
     }
 
     public function getAssignRoleModal()

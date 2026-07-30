@@ -80,10 +80,19 @@ enum LinkTypeEnum: int
     }
 
     /**
-     * True when storing the link in this orientation would throw detail away: answering
-     * "Child" says nothing about which kind of guardian the other end is, because the
-     * opposite row is the generic Parent. The caller has to name person1's role instead,
-     * and the link gets written the other way round — the granular side is always person1.
+     * True when this role does not survive a round trip through the other side: Mother
+     * inverts to the single Child row, whose own opposite is the generic Parent. So a link
+     * holding Mother must be stored with Mother on person1 or the detail is gone, while
+     * Child, Grandparent/Grandchild and every peer can be stored from either end.
+     */
+    public function isLostByInversion(): bool
+    {
+        return $this->opposite()->opposite() !== $this;
+    }
+
+    /**
+     * The form has to ask for person1's role when the answer given is one whose opposite is
+     * generic: "Child" says nothing about which kind of guardian the other end is.
      */
     public function needsCounterpartRole(): bool
     {

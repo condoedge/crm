@@ -174,6 +174,28 @@ class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasSco
         return $personLink;
     }
 
+    /**
+     * Put $person1Id on person1, turning the row around if it is not there already.
+     *
+     * The emergency order is a person's own ranking and is resolved by side, so it has to
+     * travel with the swap — otherwise the two people silently trade emergency positions.
+     * ReorientParentLinksService does the same pairing in raw SQL for the 75k imported rows;
+     * this is the single-row form and the reason the two columns move together.
+     */
+    public function reorientTo($person1Id): static
+    {
+        if ($this->person1_id == $person1Id) {
+            return $this;
+        }
+
+        [$this->person1_id, $this->person2_id] = [$this->person2_id, $this->person1_id];
+
+        [$this->emergency_contact_order_of_p1, $this->emergency_contact_order_of_p2] =
+            [$this->emergency_contact_order_of_p2, $this->emergency_contact_order_of_p1];
+
+        return $this;
+    }
+
     public function setOtherAsPerson($mainPersonId)
     {
         if ($this->person2_id == $mainPersonId) {
