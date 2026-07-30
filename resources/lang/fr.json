@@ -39,5 +39,6 @@
 	"crm.manage-disciplinary-reason-type": "Gérer le type de raison disciplinaire",
 	"crm.disciplinary-reason-types": "Types de raisons disciplinaires",
 	"crm.invited": "Invité",
-	"inscriptions.auth-login": "Se connecter"
+	"inscriptions.auth-login": "Se connecter",
+	"permissions.modify-position": "Modifier le poste"
 }
