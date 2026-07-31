@@ -40,7 +40,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
     public function query()
     {
         return $this->person->personTeams()
-            ->when(request('show_all'), fn ($q) => $q->withTrashed())
+            ->when(request('show_all'), fn ($q) => $q->withTrashed()->withoutGlobalScopes(['validPersonTeam']))
             ->orderByDesc('from')
             ->with([
                 'team',
@@ -85,8 +85,9 @@ class PersonTeamsWithRolesTable extends WhiteTable
 
     public function terminateRole($personTeamId)
     {
-        $teamRole = PersonTeamModel::withTrashed()->findOrFail($personTeamId);
-        $teamRole->terminate();
+        // This is a PersonTeam, not a TeamRole, despite the historical variable name.
+        $personTeam = PersonTeamModel::withTrashed()->withoutGlobalScopes(['validPersonTeam'])->findOrFail($personTeamId);
+        $personTeam->terminate();
     }
 
     public function getChangeRoleModal($personTeamId)

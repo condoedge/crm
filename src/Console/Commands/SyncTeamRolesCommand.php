@@ -3,7 +3,9 @@
 namespace Condoedge\Crm\Console\Commands;
 
 use Condoedge\Crm\Facades\PersonTeamModel;
+use Condoedge\Crm\Models\PersonTeamStatusEnum;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class SyncTeamRolesCommand extends Command
 {
@@ -37,5 +39,20 @@ class SyncTeamRolesCommand extends Command
             }, 'person_teams.id', 'id');
 
         $this->info($terminated . ' person team(s) terminated.');
+
+        $this->info($this->reconcileLapsedStatuses() . ' lapsed status(es) normalized.');
+    }
+
+    protected function reconcileLapsedStatuses(): int
+    {
+        return DB::table('person_teams')
+            ->whereNull('deleted_at')
+            ->whereNotNull('to')
+            ->where('to', '<=', now())
+            ->where('status', '!=', PersonTeamStatusEnum::TERMINATED->value)
+            ->update([
+                'status' => PersonTeamStatusEnum::TERMINATED->value,
+                'updated_at' => now(),
+            ]);
     }
 }
