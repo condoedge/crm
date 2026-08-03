@@ -9,7 +9,9 @@ trait BelongsToPersonTrait
     /* RELATIONS */
     public function person()
     {
-        return $this->belongsTo(PersonModel::getClass());
+        return $this->belongsTo(PersonModel::getClass())
+            ->withTrashed()
+            ->withoutGlobalScopes();
     }
 
     /* SCOPES */
