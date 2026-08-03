@@ -78,7 +78,9 @@ class PersonTeamsWithRolesTable extends WhiteTable
                     ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to)
                         ? _DropdownLink('permissions.terminate')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                         : null,
-                )->class('text-right w-max')->checkAuthWrite('TeamRole', $personTeam->team_id),
+                    // TODO: TeamRole and PersonTeam permissions should be merged in a single permission since usually they mean the same
+                )->class('text-right w-max')->checkAuthWrite('TeamRole', $personTeam->team_id)
+                    ?->checkAuthWrite('PersonTeam', $personTeam->team_id),
             ),
         );
     }
