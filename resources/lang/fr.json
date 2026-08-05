@@ -40,5 +40,6 @@
 	"crm.disciplinary-reason-types": "Types de raisons disciplinaires",
 	"crm.invited": "Invité",
 	"inscriptions.auth-login": "Se connecter",
-	"permissions.modify-position": "Modifier le poste"
+	"permissions.modify-position": "Modifier le poste",
+	"inscriptions.inscription-type-not-set": "Le type d'inscription n'est pas défini"
 }

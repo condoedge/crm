@@ -40,5 +40,6 @@
 	"crm.disciplinary-reason-types": "Disciplinary reason types",
 	"crm.invited": "Invited",
 	"inscriptions.auth-login": "Log in",
-	"permissions.modify-position": "Modify position"
+	"permissions.modify-position": "Modify position",
+	"inscriptions.inscription-type-not-set": "The inscription type is not set"
 }

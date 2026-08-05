@@ -272,6 +272,10 @@ class Inscription extends Model implements ScopedToTeam
 
     public function updateRegisteringPersonId($personId)
     {
+        if (!$this->type) {
+            throw new \Exception(__('inscriptions.inscription-type-not-set'));
+        }
+
         $column = $this->type->basedInInscriptionForOtherPerson() ? 'inscribed_by' : 'person_id';
         $this->setAttribute($column, $personId);
 
