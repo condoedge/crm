@@ -73,7 +73,7 @@ class PersonTeamsWithRolesTable extends WhiteTable
             _Html(),
             _FlexEnd(
                 _TripleDotsDropdown(
-                    !$this->modifyRoleModalClass() ? null : _DropdownLink('permissions.modify-position')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfGet('getChangeRoleModal', ['personTeamId' => $personTeam->id])->inModal(),
+                    !$this->modifyRoleModalClass() || $personTeam->to ? null : _DropdownLink('permissions.modify-position')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfGet('getChangeRoleModal', ['personTeamId' => $personTeam->id])->inModal(),
                     _DeleteLink('permissions.delete')->class('!py-1 !px-3 text-danger rounded-md text-right justify-end')->byKey($personTeam),
                     ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to)
                         ? _DropdownLink('permissions.terminate')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
