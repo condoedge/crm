@@ -9,6 +9,7 @@ use Condoedge\Crm\Facades\PersonTeamModel;
 use Condoedge\Crm\Kompo\Inscriptions\InscriptionTypeEnum;
 use Condoedge\Utils\Facades\UserModel;
 use Condoedge\Utils\Models\Model;
+use Exception;
 use Kompo\Auth\Contracts\Security\ScopedToTeam;
 use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Concerns\Security\BelongsToOneTeam;
@@ -398,6 +399,11 @@ class Inscription extends Model implements ScopedToTeam
 
     public function confirmInscriptionFilled()
     {
+        if (!$this->event_id || !$this->team_id) {
+            // 100 is just a number to know is an event_id null issue
+            throw new Exception(code: 100);
+        }
+
         $this->status = InscriptionStatusEnum::FILLED;
         $this->save();
     }
