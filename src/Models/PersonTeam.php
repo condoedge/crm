@@ -195,7 +195,7 @@ class PersonTeam extends Model
         $teamRole->save();
     }
 
-    public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null, $inscription = null, $personTeamType = null)
+    public static function createFromTeamRole($teamRole, $status = null, $expirationDate = null, $inscription = null, $personTeamType = null, $startDate = null)
     {
         // Re-use lookup: it must find the existing row even when the membership has ended,
         // or a renewal mints a duplicate person_teams row for the same team_role_id.
@@ -215,7 +215,7 @@ class PersonTeam extends Model
         $personTeam->team_role_id = $teamRole->id;
         $personTeam->person_id = PersonModel::where('user_id', $teamRole->user_id)->first()->id;
         $personTeam->team_id = $teamRole->team_id;
-        $personTeam->from = now();
+        $personTeam->from = $startDate ?: now();
         $personTeam->to = $expirationDate;
         $personTeam->role_type = $personTeamType ?? PersonTeamTypeEnumGlobal::getByRole($teamRole->id);
         $personTeam->inscription_type = $inscription?->type?->value;
