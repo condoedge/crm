@@ -338,7 +338,7 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
     /* ACTIONS */
     public static function retrieveByEmailIdentity($email)
     {
-        $person = PersonModel::searchByEmail($email)->first();
+        $person = PersonModel::asSystemOperation()->searchByEmail($email)->first();
 
         if (!$person) {
             $person = PersonModel::newPersonFromEmail($email);
