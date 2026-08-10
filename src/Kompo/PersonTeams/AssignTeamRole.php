@@ -12,14 +12,14 @@ class AssignTeamRole extends BaseModal
 
     public function afterSave()
     {
-        PersonTeamModel::createFromTeamRole($this->model, startDate: request('from'));
+        PersonTeamModel::createFromTeamRole($this->model, startDate: request('start_date'));
     }
 
     public function extraInputs()
     {
         return [
             // from when the person had this role
-            _Date('crm.start-date')->name('from', false)->required()
+            _Date('crm.start-date')->name('start_date', false)->required()
                 ->default(now()),
         ];
     }
