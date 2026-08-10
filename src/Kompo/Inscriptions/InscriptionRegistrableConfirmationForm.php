@@ -70,7 +70,7 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
                 ->filter(fn ($inscription) => $inscription->isRegistrable())
                 ->each(fn ($inscription) => $inscription->confirmInscriptionFilled());
         } catch (Exception $e) {
-            Log::error('Error trying to confirm inscriptions', $e);
+            Log::error('Error trying to confirm inscriptions', $e->getTrace());
 
             DB::rollback();
 
