@@ -41,5 +41,10 @@
 	"crm.invited": "Invité",
 	"inscriptions.auth-login": "Se connecter",
 	"permissions.modify-position": "Modifier le poste",
-	"inscriptions.inscription-type-not-set": "Le type d'inscription n'est pas défini"
+	"inscriptions.inscription-type-not-set": "Le type d'inscription n'est pas défini",
+	"inscriptions.register-and-add-another-child": "Inscrire et ajouter un autre enfant",
+	"inscriptions.register-and-complete": "Inscrire et compléter",
+	"inscriptions.close": "Fermer",
+	"inscriptions.you-are-trying-to-finalize-an-inscription-without-selected-event": "Vous tentez de compléter une inscription sans événement sélectionné.",
+	"inscriptions.we-got-a-unknown-error-trying-to-finish-your-inscription-please-try-later": "Une erreur inattendue est survenue lors de la finalisation de votre inscription. Veuillez réessayer plus tard."
 }

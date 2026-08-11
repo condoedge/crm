@@ -90,10 +90,10 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     protected function errorNonSelectEventModal()
     {
         return _Rows(
-            _Html('translate.you-are-trying-to-finalize-an-inscription-without-selected-event'),
+            _Html('inscriptions.you-are-trying-to-finalize-an-inscription-without-selected-event'),
 
             _FlexEnd(
-                _Button('translate.closeModal')->run('({modal}) => modal().close()'),
+                _Button('inscriptions.close')->run('({modal}) => modal().close()'),
             )->class('mt-4'),
         )->class('p-8');
     }
@@ -101,10 +101,10 @@ class InscriptionRegistrableConfirmationForm extends ImgFormLayout
     protected function errorUnknownErrorModal()
     {
         return _Rows(
-            _Html('translate.we-got-a-unknown-error-trying-to-finish-your-inscription-please-try-later'),
+            _Html('inscriptions.we-got-a-unknown-error-trying-to-finish-your-inscription-please-try-later'),
 
             _FlexEnd(
-                _Button('translate.close')->run('({modal}) => modal().close()'),
+                _Button('inscriptions.close')->run('({modal}) => modal().close()'),
             )->class('mt-4'),
         );
     }

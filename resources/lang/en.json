@@ -41,5 +41,10 @@
 	"crm.invited": "Invited",
 	"inscriptions.auth-login": "Log in",
 	"permissions.modify-position": "Modify position",
-	"inscriptions.inscription-type-not-set": "The inscription type is not set"
+	"inscriptions.inscription-type-not-set": "The inscription type is not set",
+	"inscriptions.register-and-add-another-child": "Register and add another child",
+	"inscriptions.register-and-complete": "Register and complete",
+	"inscriptions.close": "Close",
+	"inscriptions.you-are-trying-to-finalize-an-inscription-without-selected-event": "You are trying to complete a registration that has no event selected.",
+	"inscriptions.we-got-a-unknown-error-trying-to-finish-your-inscription-please-try-later": "An unexpected error occurred while completing your registration. Please try again later."
 }
