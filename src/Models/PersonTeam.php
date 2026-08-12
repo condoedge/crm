@@ -202,7 +202,9 @@ class PersonTeam extends Model
         if ($personTeam = static::withoutGlobalScopes(['validPersonTeam'])->where('team_role_id', $teamRole->id)->first()) {
             $personTeam->status = $status ?? $personTeam->status;
             $personTeam->to = $expirationDate;
-            $personTeam->role_type = $personTeamType ?? $personTeam->role_type ?? PersonTeamTypeEnumGlobal::getByRole($teamRole->id);
+            // ->role is the role slug; ->id is the team_roles primary key, which
+            // matches no role and silently typed every membership as a volunteer.
+            $personTeam->role_type = $personTeamType ?? $personTeam->role_type ?? PersonTeamTypeEnumGlobal::getByRole($teamRole->role);
             $personTeam->last_inscription_id = $inscription?->id ?? $personTeam->last_inscription_id;
             $personTeam->inscription_type = $inscription?->type?->value ?? $personTeam->inscription_type;
             $personTeam->save();
@@ -217,7 +219,7 @@ class PersonTeam extends Model
         $personTeam->team_id = $teamRole->team_id;
         $personTeam->from = $startDate ?: now();
         $personTeam->to = $expirationDate;
-        $personTeam->role_type = $personTeamType ?? PersonTeamTypeEnumGlobal::getByRole($teamRole->id);
+        $personTeam->role_type = $personTeamType ?? PersonTeamTypeEnumGlobal::getByRole($teamRole->role);
         $personTeam->inscription_type = $inscription?->type?->value;
         $personTeam->last_inscription_id = $inscription?->id;
         $personTeam->save();

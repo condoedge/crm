@@ -76,7 +76,7 @@ enum GenderEnum: int
     public function bgColor2()
     {
         return match ($this) {
-            static::FEMALE => 'bg-pink',
+            static::FEMALE => 'bg-pink-400',
             static::MALE => 'bg-info',
             static::OTHER => 'bg-gray-700',
         };
