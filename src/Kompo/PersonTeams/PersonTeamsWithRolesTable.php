@@ -15,6 +15,8 @@ class PersonTeamsWithRolesTable extends WhiteTable
     public $personId;
     protected $person;
 
+    protected $permissionKey = 'PersonTeam';
+
     public function created()
     {
         $this->personId = $this->prop('person_id');
@@ -40,6 +42,9 @@ class PersonTeamsWithRolesTable extends WhiteTable
     public function query()
     {
         return $this->person->personTeams()
+            // This is a controled view and user had permission to see general person teams
+            // We just bypass so user can see across all the teams including the ones he doesn't have access to
+            ->asSystemOperation() 
             ->when(request('show_all'), fn ($q) => $q->withTrashed()->withoutGlobalScopes(['validPersonTeam']))
             ->orderByDesc('from')
             ->with([
