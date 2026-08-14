@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Kompo\DiciplinaryActions;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Models\DiciplinaryAction;
 use Condoedge\Utils\Kompo\Common\WhiteTable;
+use Kompo\Auth\Models\Teams\PermissionTypeEnum;
 
 class PersonDiciplinaryActionsTable extends WhiteTable
 {
@@ -21,10 +22,13 @@ class PersonDiciplinaryActionsTable extends WhiteTable
 
     public function top()
     {
+        $canAddDiciplinaryAction = auth()->user()->hasPermission('DiciplinaryAction', PermissionTypeEnum::WRITE)
+            && auth()->user()->id != $this->person->relatedUser?->id;
+
         return _FlexBetween(
             _TitleMain('disciplinary.disciplinary-actions'),
             _Button('disciplinary.add-new-disciplinary-action')
-                ->selfCreate('getDiciplinaryActionForm')->inModal()->checkAuthWrite('DiciplinaryAction'),
+                ->selfCreate('getDiciplinaryActionForm')->inModal()->conditionToShow($canAddDiciplinaryAction),
         )->class('mb-4');
     }
 

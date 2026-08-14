@@ -84,7 +84,13 @@ class InscriptionShortLink extends Model
             $inscription->related_inscription_id = $mainInscription->id;
         }
 
-        $inscription->event_id = $this->event_id;
+        // A short link PRE-FILLS. Overwriting meant a link built for one event could
+        // replace the target a returning registrant already picked, leaving team_id
+        // and event_id pointing at two different teams.
+        if ($this->event_id && !$inscription->event_id) {
+            $inscription->event_id = $this->event_id;
+        }
+
         $inscription->save();
 
         return $inscription;
