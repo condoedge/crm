@@ -70,7 +70,7 @@ enum InscriptionStatusEnum: int
 
     public static function filledStatuses(): array
     {
-        return [self::FILLED, self::APPROVED, self::PENDING_PAYMENT, self::COMPLETED_SUCCESSFULLY, self::TT];
+        return [self::FILLED, self::APPROVED, self::PENDING_PAYMENT, self::COMPLETED_SUCCESSFULLY];
     }
 
     public function isNotFilled(): bool
