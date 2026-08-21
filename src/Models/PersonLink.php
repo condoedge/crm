@@ -20,6 +20,11 @@ class PersonLink extends Model implements HasPermissionKey, ScopedToTeam, HasSco
         return 'Person.sensibleRelationships';
     }
 
+    public static function getRelationType()
+    {
+        return (new static())->getMorphClass();
+    }
+
     /* RELATIONS */
     public function person1()
     {
