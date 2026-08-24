@@ -41,8 +41,13 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
     public function save(array $options = [])
     {
         if ($this->email_identity && $this->getDirty('email_identity') && ($email = $this->emails()->where('address_em', $this->getOriginal("email_identity"))->first())) {
-            $email->address_em = $this->email_identity;
-            $email->save();
+            // Renaming onto an address the person already holds is a 1062: trashed rows keep their slot.
+            if ($existing = $this->findEmailByAddress($this->email_identity)) {
+                $this->restoreEmailIfTrashed($existing);
+            } else {
+                $email->address_em = $this->email_identity;
+                $email->save();
+            }
         }
 
         if ($this->exists && $this->email_identity && !$this->emails()->count()) {
