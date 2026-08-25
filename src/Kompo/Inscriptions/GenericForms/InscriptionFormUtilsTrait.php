@@ -33,7 +33,9 @@ trait InscriptionFormUtilsTrait
         if ($this->inscriptionId) {
             $this->inscription = InscriptionModel::findOrFail($this->inscriptionId);
         } elseif ($this->inscriptionCode) {
-            $this->inscription = InscriptionModel::forQrCode($this->inscriptionCode)->first();
+            // firstOrFail: a missing/deleted code must 404, not leave every downstream
+            // dereference to crash on null (the accepted() guard below passes on null).
+            $this->inscription = InscriptionModel::forQrCode($this->inscriptionCode)->firstOrFail();
         }
 
         $this->inscriptionId = $this->inscription?->id;
