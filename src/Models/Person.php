@@ -178,9 +178,11 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
             ->join('persons as contact', 'contact.id', '=', "pl.{$sideOfContact}")
             ->whereIn("pl.{$sideOfMine}", $owned)
             ->when(!$reachesAccountHolders, fn ($q) => $q->whereNull('contact.user_id'))
-            ->whereNotExists(fn ($q) => $q->select(\DB::raw(1))
-                ->from('person_teams as pt')
-                ->whereColumn('pt.person_id', 'contact.id'))
+            // TODO: Uncomment it after the first week of sisc
+            // ->whereNotExists(fn ($q) => $q->select(PersonTeamModel::applyValidConditions(\DB::raw(1))
+            //     ->from('person_teams as pt')
+            //     ->whereColumn('pt.person_id', 'contact.id'))
+            // )
             ->pluck('contact.id')
             ->all();
 
