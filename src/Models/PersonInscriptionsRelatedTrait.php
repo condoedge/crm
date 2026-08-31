@@ -4,6 +4,7 @@ namespace Condoedge\Crm\Models;
 
 use App\Models\Crm\Person;
 use Condoedge\Crm\Facades\PersonModel;
+use Kompo\Auth\Facades\UserModel;
 
 trait PersonInscriptionsRelatedTrait
 {
@@ -37,7 +38,16 @@ trait PersonInscriptionsRelatedTrait
     /* ACTIONS */
     public static function getOrCreatePersonFromEmail($email)
     {
-        $person = PersonModel::where('email_identity', $email)->latest()->first();
+        $user = UserModel::where('email', $email)->first();
+
+        if ($user && method_exists($user, 'getRelatedMainPerson') && ($own = $user->getRelatedMainPerson())) {
+            return $own;
+        }
+
+        $person = PersonModel::where('email_identity', $email)
+            ->orderByRaw('user_id IS NULL')
+            ->orderBy('id')
+            ->first();
 
         if (!$person) {
             $person = PersonModel::createPersonFromEmail($email);
