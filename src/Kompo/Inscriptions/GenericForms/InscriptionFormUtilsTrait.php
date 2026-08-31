@@ -67,6 +67,11 @@ trait InscriptionFormUtilsTrait
     {
         $person = auth()->user()?->getRelatedMainPerson();
 
+        $owner = $this->inscription?->getInscribingPerson();
+        if ($owner && $person && (int) $owner->id !== (int) $person->id) {
+            return redirect()->to(InscriptionModel::createOrGetRegistrationUrl($person->id, $this->inscription->team_id, $type));
+        }
+
         // Needed before updateRegisteringPersonId because that method uses the type inside
         $this->inscription?->updateType($type);
 

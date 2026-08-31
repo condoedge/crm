@@ -31,9 +31,15 @@ class InscriptionEmailStep1Form extends ImgFormLayout
         $email = request('email');
 
         $person = PersonModel::getOrCreatePersonFromEmail($email);
-        $this->inscription?->updateRegisteringPersonId($person->id);
 
-        $redirectTo = $this->getRedirectUrl($person);
+        $owner = $this->inscription?->getInscribingPerson();
+        $isForeignShell = $owner && (int) $owner->id !== (int) $person->id;
+
+        if (!$isForeignShell) {
+            $this->inscription?->updateRegisteringPersonId($person->id);
+        }
+
+        $redirectTo = $this->getRedirectUrl($person, $isForeignShell);
 
         if ($user = User::where('email', $email)->first()) {
             return response()->modal($this->alreadyRegisteredComponent($email, $redirectTo));
@@ -51,9 +57,18 @@ class InscriptionEmailStep1Form extends ImgFormLayout
         }
     }
 
-    protected function getRedirectUrl($person)
+    protected function getRedirectUrl($person, bool $forkedFromForeignShell = false)
     {
-        return $this->inscription?->getRegistrationUrl() ?: InscriptionModel::createOrGetRegistrationUrl($person->id, null, $this->type);
+        if ($this->inscription && !$forkedFromForeignShell) {
+            return $this->inscription->getRegistrationUrl();
+        }
+
+        // Forked visitors keep the team the link was for; open-ended arrivals have none.
+        return InscriptionModel::createOrGetRegistrationUrl(
+            $person->id,
+            $forkedFromForeignShell ? $this->inscription->team_id : null,
+            $this->type,
+        );
     }
 
     public function rightColumnBody()
