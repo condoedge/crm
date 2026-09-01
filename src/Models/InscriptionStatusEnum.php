@@ -87,4 +87,14 @@ enum InscriptionStatusEnum: int
     {
         return [self::APPROVED, self::PENDING_PAYMENT, self::COMPLETED_SUCCESSFULLY];
     }
+
+    /**
+     * Rows an admin never acts on: CREATED is a private draft (an unfinished
+     * wizard), CANCELED is a withdrawal. REJECTED is not here on purpose — a
+     * refusal is an admin decision that must stay visible.
+     */
+    public static function hiddenFromAdminListsStatuses(): array
+    {
+        return [self::CANCELED, self::CREATED];
+    }
 }
