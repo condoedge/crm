@@ -51,7 +51,7 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
         }
 
         if ($this->exists && $this->email_identity && !$this->emails()->count()) {
-            Email::createMainFor($this, $this->email_identity);
+            $this->manageChangesMainEmail($this->email_identity);
         }
 
         parent::save($options);
@@ -356,7 +356,7 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
 
     public function constructFakeEmail()
     {
-        return \Str::slug($this->full_name) . $this->id . '@user.coolecto.com';
+        return \Str::slug($this->full_name) . $this->id . '@noemail.com';
     }
 
     public function getLinkToTeam($teamId)
