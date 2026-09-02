@@ -229,7 +229,7 @@ class PersonTeam extends Model
 
     public static function getOrCreateForAdultInscription($inscription, $teamRole)
     {
-        $personId = $inscription->person->getRegisteringPerson()->id;
+        $personId = $inscription->getInscribingPerson()->getRegisteringPerson()->id;
         $newYear = $inscription->event?->scout_year;
         $inscriptionTypeValue = $inscription->type?->value;
 

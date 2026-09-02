@@ -363,10 +363,10 @@ class Inscription extends Model implements ScopedToTeam
 
     public function getRegisteringRelatedUser()
     {
-        $email = $this->person->getRegisteringPersonEmail();
-        $user = UserModel::where('email', $email)->first();
+        // A BY_PARENT grouping shell has no person; its registering person is inscribedBy.
+        $email = $this->getInscribingPerson()?->getRegisteringPersonEmail();
 
-        return $user;
+        return $email ? UserModel::where('email', $email)->first() : null;
     }
 
     public function confirmInscriptionAsUserIfRegistered()
