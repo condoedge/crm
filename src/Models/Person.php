@@ -378,7 +378,10 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
             PersonTeamModel::createFromTeamRole($teamRole, $inscription->type->getSpecificPersonTeamStatus($inscription), $inscription->getExpirationDate(), $inscription, $inscription->type->getChildPersonTeamType());
         }
 
-        PersonEvent::createPersonEvent($this, $inscription->getEventToAttend(), RegisterStatusEnum::RS_ACCEPTED);
+        // A unit without a weekly meeting yet is a seat without a meeting, not a failed approval.
+        if ($event = $inscription->getEventToAttend()) {
+            PersonEvent::createPersonEvent($this, $event, RegisterStatusEnum::RS_ACCEPTED);
+        }
     }
 
     public function createOrGetUser()

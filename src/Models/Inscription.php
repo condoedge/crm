@@ -361,10 +361,24 @@ class Inscription extends Model implements ScopedToTeam
         return !$this->hasPendingPayment() || !static::managePaymentFromInscription();
     }
 
+    /**
+     * Whose account owns the row: an inscriber other than the subject is already the registering
+     * adult (no second hop); else the subject's registeredBy ?: self. Only BY_PARENT-style types carry one.
+     */
+    public function getRegisteringPerson()
+    {
+        $inscriber = $this->inscribedBy;
+
+        if ($this->type?->basedInInscriptionForOtherPerson() && $inscriber && (int) $inscriber->id !== (int) $this->person_id) {
+            return $inscriber;
+        }
+
+        return $this->person?->getRegisteringPerson();
+    }
+
     public function getRegisteringRelatedUser()
     {
-        // A BY_PARENT grouping shell has no person; its registering person is inscribedBy.
-        $email = $this->getInscribingPerson()?->getRegisteringPersonEmail();
+        $email = $this->getRegisteringPerson()?->email_identity;
 
         return $email ? UserModel::where('email', $email)->first() : null;
     }
