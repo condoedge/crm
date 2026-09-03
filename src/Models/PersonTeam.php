@@ -215,7 +215,7 @@ class PersonTeam extends Model
         $personTeam = new static();
         $personTeam->status = $status ?? PersonTeamStatusEnum::ACTIVE;
         $personTeam->team_role_id = $teamRole->id;
-        $personTeam->person_id = PersonModel::where('user_id', $teamRole->user_id)->first()->id;
+        $personTeam->person_id = $teamRole->user->getRelatedMainPerson()->id;
         $personTeam->team_id = $teamRole->team_id;
         $personTeam->from = $startDate ?: now();
         $personTeam->to = $expirationDate;
