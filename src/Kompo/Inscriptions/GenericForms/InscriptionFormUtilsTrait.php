@@ -67,9 +67,18 @@ trait InscriptionFormUtilsTrait
     {
         $person = auth()->user()?->getRelatedMainPerson();
 
+        // An owned shell is that family's registration; only its owner may continue it.
         $owner = $this->inscription?->getInscribingPerson();
-        if ($owner && $person && (int) $owner->id !== (int) $person->id) {
-            return redirect()->to(InscriptionModel::createOrGetRegistrationUrl($person->id, $this->inscription->team_id, $type));
+
+        if ($owner && (int) $owner->id !== (int) ($person?->id ?? 0)) {
+            if ($person) {
+                return redirect()->to(InscriptionModel::createOrGetRegistrationUrl($person->id, $this->inscription->team_id, $type));
+            }
+
+            return redirect()->route('inscription.email.step1', [
+                'inscription_code' => $this->inscriptionCode ?: $this->inscription->getExistentQrOrCreateNew(),
+                'type' => $type,
+            ]);
         }
 
         // Needed before updateRegisteringPersonId because that method uses the type inside

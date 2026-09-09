@@ -159,6 +159,7 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
         $managedAsP1Parent = DB::table('person_links as pl')
             ->join('link_types as lt', 'lt.id', '=', 'pl.link_type_id')
             ->join('persons as managing', 'managing.id', '=', 'pl.person1_id')
+            ->whereNull('pl.deleted_at')
             ->where('pl.can_manage', true)
             ->where('lt.is_parent', true)
             ->where('managing.user_id', $userId)
@@ -167,6 +168,7 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
         $managedAsP2Parent = DB::table('person_links as pl')
             ->join('link_types as lt', 'lt.id', '=', 'pl.link_type_id')
             ->join('persons as managing', 'managing.id', '=', 'pl.person2_id')
+            ->whereNull('pl.deleted_at')
             ->where('pl.can_manage', true)
             ->where('lt.is_child', true)
             ->where('managing.user_id', $userId)
@@ -176,6 +178,7 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
 
         $externalContactsOf = fn ($sideOfMine, $sideOfContact) => \DB::table('person_links as pl')
             ->join('persons as contact', 'contact.id', '=', "pl.{$sideOfContact}")
+            ->whereNull('pl.deleted_at')
             ->whereIn("pl.{$sideOfMine}", $owned)
             ->when(!$reachesAccountHolders, fn ($q) => $q->whereNull('contact.user_id'))
             // TODO: Uncomment it after the first week of sisc
@@ -200,9 +203,13 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
             ->join('person_links as pl_sibling', 'pl_parent.person1_id', '=', 'pl_sibling.person1_id')
             ->join('link_types as lt', 'pl_parent.link_type_id', '=', 'lt.id')
             ->join('persons as p_current', 'pl_parent.person2_id', '=', 'p_current.id')
+            ->whereNull('pl_parent.deleted_at')
+            ->whereNull('pl_sibling.deleted_at')
             ->where('p_current.user_id', $userId)
             ->where('lt.child_can_access_siblings', 1)
-            ->where('pl_sibling.person2_id', '!=', 'pl_parent.person2_id')
+            // whereColumn: `where(..., '!=', 'pl_parent.person2_id')` bound the column NAME as a
+            // string, so the comparison was against 0 and the child was their own sibling.
+            ->whereColumn('pl_sibling.person2_id', '!=', 'pl_parent.person2_id')
             ->pluck('pl_sibling.person2_id');
     }
 
