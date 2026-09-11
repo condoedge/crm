@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Kompo\Inscriptions\GenericForms;
 use Condoedge\Crm\Facades\InscriptionModel;
 use Condoedge\Crm\Facades\PersonModel;
 use Kompo\Auth\Models\Teams\EmailRequest;
+use Kompo\Auth\Models\Teams\PermissionTypeEnum;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 trait InscriptionFormUtilsTrait
@@ -56,11 +57,36 @@ trait InscriptionFormUtilsTrait
         if ($this->isAStepNotValidAtThisPoint()) {
             throw new HttpException(422, __('error.you-are-already-registered-and-accepted'));
         }
+
+        $this->assertInscriptionBelongsToAuthUser();
     }
 
     protected function isAStepNotValidAtThisPoint()
     {
         return $this->inscription?->status?->accepted();
+    }
+
+    // If person is an authenticated user they can't continue unless they give proof of ownership
+    protected function assertInscriptionBelongsToAuthUser(): void
+    {
+        if (!$this->inscription || !($user = auth()->user())) {
+            return;
+        }
+
+        $parties = array_filter([(int) $this->inscription->inscribed_by, (int) $this->inscription->person_id]);
+
+        if (!$parties || array_intersect($parties, $this->personIdsHeldBy($user))) {
+            return;
+        }
+
+        throw new HttpException(422, __('error.this-registration-belongs-to-another-account'));
+    }
+
+    protected function personIdsHeldBy($user): array
+    {
+        return PersonModel::asSystemOperation()
+            ->where(fn ($q) => $q->where('user_id', $user->id)->orWhere('email_identity', $user->email))
+            ->pluck('id')->map(fn ($id) => (int) $id)->all();
     }
 
     public function manageInscriptionLink($type)
