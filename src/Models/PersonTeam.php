@@ -125,28 +125,6 @@ class PersonTeam extends Model
 
     /* CALCULATED FIELDS */
 
-    /**
-     * The status to DISPLAY, as opposed to the one stored in the column.
-     *
-     * The two dimensions are deliberately split:
-     *
-     *  - stored `status` carries the payment/vetting dimension — PENDING_PAYMENT, PROBATION,
-     *    ACTIVE. Those are real stateful facts about money and background checks, set at the
-     *    events that change them, and they need to stay filterable and sortable in SQL.
-     *  - the lifecycle dimension is DERIVED, from exactly the predicate validPersonTeam uses.
-     *    A membership is over when `to` has passed, whether or not anyone called terminate().
-     *
-     * Without this split the column lies: TERMINATED is only ever written by terminate(), so a
-     * position that simply lapsed kept rendering a green "Active" pill forever.
-     *
-     * Camp derives its whole status this way (CampStatusEnum::getStatusFromEvent). We derive
-     * only the lifecycle half, because PENDING_PAYMENT and PROBATION would each need the
-     * linked inscription and the person's latest background check — an N+1 on every roster,
-     * export and census, and unfilterable in SQL. `to` and `deleted_at` are on the row, so
-     * this costs nothing.
-     *
-     * Null status keeps returning null so callers can fall back to the team role's own pill.
-     */
     public function getEffectiveStatus(): ?PersonTeamStatusEnum
     {
         if (!$this->status) {
@@ -170,15 +148,14 @@ class PersonTeam extends Model
     {
         $at = $at ?: now();
 
-        // Never push an already-past end date forward: SyncTeamRolesCommand sweeps rows whose
-        // `to` has already passed, and PersonTeamList::terminatePersonRoles can bulk-hit
-        // historical rows when show_inactive is on. Without this guard every historical end
-        // date walks forward and every bar in MembersEvolutionService shifts.
         if (is_null($this->to) || $this->to->gt($at)) {
             $this->to = $at;
         }
 
-        $this->status = PersonTeamStatusEnum::TERMINATED;
+        if (now()->gte($at)) {
+            $this->status = PersonTeamStatusEnum::TERMINATED;
+        }
+
         $this->save();
 
         // withTrashed() would NOT lift validTeamRole; name the mask being lifted.
