@@ -74,12 +74,6 @@ class PersonTeam extends Model
     /**
      * Single source of truth for "currently held" memberships (`to` NULL or in the future).
      * Shared by the `validPersonTeam` global scope, scopeValid() and scopeActive().
-     *
-     * Deliberately does NOT filter deleted_at: SoftDeletes owns that, and folding it in here
-     * would silently defeat withTrashed().
-     *
-     * Table-qualified by default because this runs inside joins (Person::getUniqueTeamsWithRoles,
-     * DailyPersonTimeTrackingCommand's joinSub). Pass an alias for aliased SQL, '' for CTE bodies.
      */
     public static function applyValidConditions($query, ?string $alias = null): void
     {
