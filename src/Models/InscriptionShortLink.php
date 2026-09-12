@@ -111,8 +111,7 @@ class InscriptionShortLink extends Model
         if (!Storage::disk($disk)->exists($path)) {
             $qrCode = QrCode::format('png')->size($size)->generate($this->getInscriptionUrl());
 
-            Storage::disk($disk)->put($path, $qrCode);
-            Storage::disk($disk)->setVisibility($path, 'public');
+            Storage::disk($disk)->put($path, $qrCode, 'public');
         }
 
         return Storage::disk($disk)->url($path);
