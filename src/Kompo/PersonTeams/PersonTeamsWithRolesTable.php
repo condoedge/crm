@@ -79,12 +79,13 @@ class PersonTeamsWithRolesTable extends WhiteTable
             _FlexEnd(
                 _TripleDotsDropdown(
                     !$this->modifyRoleModalClass() || $personTeam->to ? null : _DropdownLink('permissions.modify-position')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfGet('getChangeRoleModal', ['personTeamId' => $personTeam->id])->inModal(),
-                    _DeleteLink('permissions.delete')->class('!py-1 !px-3 text-danger rounded-md text-right justify-end')->byKey($personTeam),
+                    // _DeleteLink('permissions.delete')->class('!py-1 !px-3 text-danger rounded-md text-right justify-end')->byKey($personTeam),
                     ($personTeam->teamRoleIncludingDeleted && !$personTeam->teamRoleIncludingDeleted->terminated_at || !$personTeam->to)
-                        ? _DropdownLink('permissions.terminate')->class('!py-1 !px-3 justify-end rounded-md text-right')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
+                        ? _DeleteLink('permissions.terminate')->class('!py-1 !px-3 text-danger justify-end rounded-md text-right')->selfPost('terminateRole', ['team_role_id' => $personTeam->id])->browse()
                         : null,
                     // TODO: TeamRole and PersonTeam permissions should be merged in a single permission since usually they mean the same
-                )->class('text-right w-max')->checkAuthWrite('TeamRole', $personTeam->team_id)
+                )->class('text-right w-max')
+                    ->checkAuthWrite('TeamRole', $personTeam->team_id)
                     ?->checkAuthWrite('PersonTeam', $personTeam->team_id),
             ),
         );

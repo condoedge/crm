@@ -215,12 +215,15 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
 
     public function applyTeamSecurityScope(Builder $query, array $teamIds): void
     {
-        $query->whereHas('personTeams', fn ($q) => $q->whereIn('team_id', $teamIds));
+        $query->whereHas('personTeams', fn ($q) => $q->whereIn('team_id', $teamIds)->withoutGlobalScopes());
     }
 
     public function getRelatedTeamIds(): array
     {
-        return $this->personTeams()->active()->pluck('team_id')->unique()->values()->all();
+        // Also including previous memberships, so old teams can still access to some features on person.
+        return $this->personTeams()->withoutGlobalScopes()
+            // ->active()
+            ->pluck('team_id')->unique()->values()->all();
     }
 
     /**
