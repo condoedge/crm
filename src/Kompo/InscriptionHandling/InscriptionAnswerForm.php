@@ -23,6 +23,11 @@ class InscriptionAnswerForm extends Modal
         $this->otherEventsOptions = collect();
     }
 
+    // Reviewer screen: the approver is never the registrant, its authorization is the component permission
+    protected function assertInscriptionBelongsToAuthUser(): void
+    {
+    }
+
     public function handle()
     {
         $this->model->event_id = request('change_to_event_id');
