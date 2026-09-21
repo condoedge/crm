@@ -212,7 +212,17 @@ class PersonTeam extends Model
             ->where(
                 fn ($q) => $q->whereNull('team_role_id')
                 ->orWhere('team_role_id', $teamRole->id)
-            )->first();
+                // terminate() ends the team role too, and createTeamRole() cannot see an
+                // ended one - it mints a fresh id, so keying on it missed the live row.
+                ->orWhereNotExists(
+                    fn ($sub) => $sub->selectRaw('1')
+                        ->from('team_roles')
+                        ->whereColumn('team_roles.id', 'person_teams.team_role_id')
+                        ->whereNull('team_roles.terminated_at')
+                        ->whereNull('team_roles.suspended_at')
+                        ->whereNull('team_roles.deleted_at')
+                )
+            )->orderByDesc('id')->first();
 
         if (!$personTeam) {
             $personTeam =  static::createFromTeamRole($teamRole, expirationDate: $inscription->getExpirationDate(), inscription: $inscription);
