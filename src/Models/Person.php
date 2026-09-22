@@ -245,8 +245,9 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
             return [];
         }
 
+        // Also including previous memberships, so old teams can still access to some features on person.
         return PersonTeamModel::whereIn('person_id', array_keys($ids))
-            ->active()
+            ->withoutGlobalScopes()
             ->get(['person_id', 'team_id'])
             ->groupBy('person_id')
             ->map(fn ($rows) => $rows->pluck('team_id')->unique()->values()->all())
