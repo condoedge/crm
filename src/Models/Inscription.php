@@ -125,9 +125,22 @@ class Inscription extends Model implements ScopedToTeam
     }
 
     /* CALCULATED FIELDS */
+    /**
+     * The membership this registration is responsible for.
+     */
     public function getActiveRelatedPersonTeam()
     {
-        return PersonTeamModel::where('team_id', $this->team_id)->where('person_id', $this->person_id)->active()->first();
+        $mine = PersonTeamModel::where('team_id', $this->team_id)
+            ->where('person_id', $this->person_id)
+            ->active();
+
+        if ($own = (clone $mine)->where('last_inscription_id', $this->id)->first()) {
+            return $own;
+        }
+
+        // Legacy rows carry no owner and must stay reachable; one stamped with a different
+        // registration belongs to that registration, not this one.
+        return $mine->whereNull('last_inscription_id')->first();
     }
 
     public function getInscriptionRoute($route, $extra = [])
