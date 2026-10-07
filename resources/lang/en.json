@@ -28,6 +28,7 @@
 	"disciplinary.violence": "Violence",
 	"disciplinary.you-are-already-registered": "You are already registered",
 	"disciplinary.you-can-login-to-your-account-and-continue-the-registration-process": "You can log into your account continue the registration process",
+	"error.inscription-team-no-longer-active": "This registration link is no longer valid: the team it was for is no longer active.",
 	"error.must-be-a-valid-phone-number": "Must be a valid phone number (XXX-XXX-XXXX)",
 	"events.absent": "Absent",
 	"events.confirmed": "Confirmed",

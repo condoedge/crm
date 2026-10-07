@@ -73,7 +73,7 @@ class Inscription extends Model implements ScopedToTeam
 
     public function event()
     {
-        return $this->belongsTo(EventModel::getClass());
+        return $this->belongsTo(EventModel::getClass())->throughAuthorizedRelation();
     }
 
     /* SCOPES */
@@ -387,6 +387,22 @@ class Inscription extends Model implements ScopedToTeam
         }
 
         return $this->person?->getRegisteringPerson();
+    }
+
+    /** Why this row's accept link is dead, or null while it still works. Apps refine the wording. */
+    public function deadLinkReason(): ?string
+    {
+        // INVITED_NOT_FILLED passes: the click itself approves it.
+        if (!$this->status?->accepted() && $this->status !== InscriptionStatusEnum::INVITED_NOT_FILLED) {
+            return __('error.inscription-not-accepted-yet');
+        }
+
+        // Closed or deleted: the team's own scopes hide it, so there is nothing left to join.
+        if (!$this->team) {
+            return __('error.inscription-team-no-longer-active');
+        }
+
+        return null;
     }
 
     public function getRegisteringRelatedUser()

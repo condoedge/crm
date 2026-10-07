@@ -4,7 +4,6 @@ namespace Condoedge\Crm\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Condoedge\Crm\Facades\InscriptionModel;
-use Condoedge\Crm\Models\InscriptionStatusEnum;
 
 class PersonRegistrableAcceptController extends Controller
 {
@@ -12,8 +11,9 @@ class PersonRegistrableAcceptController extends Controller
     {
         $inscription = InscriptionModel::findOrFail($id);
 
-        if (!$inscription->status?->accepted() && $inscription->status !== InscriptionStatusEnum::INVITED_NOT_FILLED) {
-            abort(403, __('error.inscription-not-accepted-yet'));
+        // 422, as the create-account page answers: a 403 page does not print the reason.
+        if ($reason = $inscription->deadLinkReason()) {
+            abort(422, $reason);
         }
 
         $user = $inscription->getRegisteringRelatedUser();
