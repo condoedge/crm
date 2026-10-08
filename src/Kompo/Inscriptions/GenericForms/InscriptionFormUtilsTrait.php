@@ -44,7 +44,7 @@ trait InscriptionFormUtilsTrait
         $this->person = $this->inscription?->person;
 
         // A volunteer applies for themselves: registered_by may name a child whose family link created them.
-        if ($this->inscription?->type->basedInInscriptionForOtherPerson()) {
+        if ($this->inscription?->type?->basedInInscriptionForOtherPerson()) {
             $this->mainPerson = $this->inscription?->inscribedBy ?? $this->person?->getRegisteringPerson();
         } else {
             $this->mainPerson = $this->person;
