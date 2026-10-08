@@ -319,7 +319,13 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
                 return __('crm.blocked');
             }
 
-            if (!$this->personTeams()->asSystemOperation()->count()) {
+            // validPersonTeam hides ended memberships: having had one is inactive, not pending.
+            $everSeated = PersonTeamModel::query()->asSystemOperation()
+                ->withoutGlobalScopes(['validPersonTeam'])
+                ->where('person_id', $this->id)
+                ->exists();
+
+            if (!$everSeated) {
                 return __('crm.pending');
             }
 
