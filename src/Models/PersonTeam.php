@@ -37,16 +37,21 @@ class PersonTeam extends Model
         });
 
         static::saving(function ($model) {
-            /** For now these are redundant fields (role_id, role_name).
-             *  But it could be useful if we have people without user so without team_role
-             *  here we set it to have all of them syncronized
+            /** role_id/role_name copy the team role's role. A person without a user holds no
+             *  team role, so their row carries role_id alone: only a team role that resolves
+             *  overwrites it, never a missing one.
              */
             if ($model->isDirty('team_role_id')) {
-                $model->role_id = $model->teamRole?->role;
+                // The relation may still hold the previous team role.
+                $model->unsetRelation('teamRole');
+
+                if ($role = $model->teamRole?->role) {
+                    $model->role_id = $role;
+                }
             }
 
             if ($model->isDirty('role_id')) {
-                $model->role_name = $model->teamRole?->roleRelation?->name;
+                $model->role_name = RoleModel::find($model->role_id)?->name;
             }
         });
     }
