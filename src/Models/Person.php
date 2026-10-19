@@ -12,6 +12,7 @@ use Condoedge\Utils\Models\Contracts\Searchable;
 use Condoedge\Utils\Models\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Kompo\Auth\Contracts\Security\HasOwnedRecords;
 use Kompo\Auth\Contracts\Security\HasScopedOwnedRecords;
 use Kompo\Auth\Contracts\Security\ScopedToTeam;
@@ -319,22 +320,75 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
                 return __('crm.blocked');
             }
 
-            // validPersonTeam hides ended memberships: having had one is inactive, not pending.
-            $everSeated = PersonTeamModel::query()->asSystemOperation()
-                ->withoutGlobalScopes(['validPersonTeam'])
-                ->where('person_id', $this->id)
-                ->exists();
-
-            if (!$everSeated) {
+            if (!$this->hasEverBeenSeated()) {
                 return __('crm.pending');
             }
 
-            if ($this->personTeams()->asSystemOperation()->get()->filter(fn ($team) => is_null($team->to) || $team->to > now())->first()) {
+            if ($this->hasCurrentPersonTeam()) {
                 return __('crm.active');
             }
 
             return __('crm.inactive');
         });
+    }
+
+    // validPersonTeam hides ended memberships: having had one is inactive, not pending.
+    public function hasEverBeenSeated()
+    {
+        return $this->memoize('has_ever_been_seated', function () {
+            return PersonTeamModel::query()->asSystemOperation()
+                ->withoutGlobalScopes(['validPersonTeam'])
+                ->where('person_id', $this->id)
+                ->exists();
+        });
+    }
+
+    public function hasCurrentPersonTeam()
+    {
+        return $this->memoize('has_current_person_team', function () {
+            return $this->personTeams()->asSystemOperation()->get()->contains(fn ($team) => static::isCurrentPersonTeam($team));
+        });
+    }
+
+    protected static function isCurrentPersonTeam($personTeam): bool
+    {
+        return is_null($personTeam->to) || $personTeam->to > now();
+    }
+
+    /**
+     * getActivityStatus() of many people (an export's chunk) in 4 queries instead of up to 4 per person: each of its
+     * checks, read for all of them through the same relations and scopes, then memoized on each.
+     */
+    public static function preloadActivityStatuses($people): void
+    {
+        if ($people->isEmpty()) {
+            return;
+        }
+
+        // The relation as eager loading reads it (one query for all the people), without setting it on them.
+        $forAll = function (string $relation) use ($people) {
+            $query = Relation::noConstraints(fn () => $people->first()->{$relation}());
+            $query->addEagerConstraints($people->all());
+
+            return $query;
+        };
+
+        $banned = $forAll('diciplinaryActions')->asSystemOperation()->active()->banType()->pluck('person_id')->flip();
+        $blocked = $forAll('diciplinaryActions')->asSystemOperation()->active()->blockType()->pluck('person_id')->flip();
+        $everSeated = PersonTeamModel::query()->asSystemOperation()
+            ->withoutGlobalScopes(['validPersonTeam'])
+            ->whereIn('person_id', $people->modelKeys())
+            ->pluck('person_id')->flip();
+        $currentlySeated = $forAll('personTeams')->asSystemOperation()->get()
+            ->filter(fn ($team) => static::isCurrentPersonTeam($team))
+            ->pluck('person_id')->flip();
+
+        foreach ($people as $person) {
+            $person->preMemoize('has_active_ban', $banned->has($person->getKey()));
+            $person->preMemoize('has_active_block', $blocked->has($person->getKey()));
+            $person->preMemoize('has_ever_been_seated', $everSeated->has($person->getKey()));
+            $person->preMemoize('has_current_person_team', $currentlySeated->has($person->getKey()));
+        }
     }
 
     public function hasNegativeStatus()
