@@ -356,8 +356,8 @@ abstract class Person extends Model implements Searchable, HasScopedOwnedRecords
     }
 
     /**
-     * getActivityStatus() of many people (an export's chunk) in 4 queries instead of up to 4 per person: each of its
-     * checks, read for all of them through the same relations and scopes, then memoized on each.
+     * getActivityStatus() of many people in 4 queries instead of up to 4 per person: each of its checks, read for all
+     * of them through the same relations and scopes, then memoized on each.
      */
     public static function preloadActivityStatuses($people): void
     {
