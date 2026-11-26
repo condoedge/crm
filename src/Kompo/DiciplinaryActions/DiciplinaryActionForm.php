@@ -73,7 +73,6 @@ class DiciplinaryActionForm extends Modal
             'action_reason_type_id' => 'required|exists:diciplinary_reason_types,id',
 
             'person_id' => 'required|exists:persons,id',
-            'added_by' => 'required|exists:users,id',
 
             'action_reason_description' => 'nullable|string|max:255',
         ];
