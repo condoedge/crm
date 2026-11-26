@@ -5,6 +5,7 @@ namespace Condoedge\Crm\Models;
 use Condoedge\Crm\Facades\PersonModel;
 use Condoedge\Crm\Facades\PersonTeamTypeEnumGlobal;
 use Condoedge\Utils\Models\Model;
+use Illuminate\Support\Facades\DB;
 use Kompo\Auth\Facades\RoleModel;
 use Kompo\Auth\Models\Teams\TeamRole;
 
@@ -119,7 +120,22 @@ class PersonTeam extends Model
                 ->orWhereNotNull('person_teams.deleted_at'))
             // validTeamRole already means "not terminated, not suspended" — delegating instead
             // of restating it is also how those two definitions had drifted apart.
-            ->whereHas('teamRole');
+            ->whereHas('teamRole')
+            ->whereNotExists(fn ($q) => static::otherCurrentSeatsOnSameTeamRole($q));
+    }
+
+    /**
+     * Correlated to an outer `person_teams`: the other current, not deleted memberships on its
+     * team role. createTeamRole() reuses the live team role, so one role can back several of them.
+     */
+    protected static function otherCurrentSeatsOnSameTeamRole($query): void
+    {
+        $query->selectRaw('1')->from('person_teams as other_seat')
+            ->whereColumn('other_seat.team_role_id', 'person_teams.team_role_id')
+            ->whereColumn('other_seat.id', '<>', 'person_teams.id')
+            ->whereNull('other_seat.deleted_at');
+
+        static::applyValidConditions($query, 'other_seat');
     }
 
     /* CALCULATED FIELDS */
@@ -156,6 +172,15 @@ class PersonTeam extends Model
         }
 
         $this->save();
+
+        // The team role ends with the last current membership on it.
+        $roleStillHeld = DB::table('person_teams')->where('id', $this->id)
+            ->whereExists(fn ($q) => static::otherCurrentSeatsOnSameTeamRole($q))
+            ->exists();
+
+        if ($roleStillHeld) {
+            return;
+        }
 
         // withTrashed() would NOT lift validTeamRole; name the mask being lifted.
         $this->teamRole()->withoutGlobalScopes(['validTeamRole'])->first()?->terminate();
